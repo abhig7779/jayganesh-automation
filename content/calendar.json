@@ -1,0 +1,843 @@
+{
+  "client": "Jay Ganesh Car Accessories",
+  "timezone": "Asia/Kolkata",
+  "period": "2026-10-26 to 2026-11-24",
+  "posts": [
+    {
+      "day": 1,
+      "date": "2026-10-26",
+      "time": "19:30",
+      "occasion": "",
+      "type": "carousel",
+      "format": "Carousel",
+      "business": "Studio",
+      "made_by": "Marketix",
+      "title": "Our PPF & Detailing Studio is open",
+      "platforms": [
+        "instagram",
+        "facebook"
+      ],
+      "approved": false,
+      "caption": "Accessories + PPF + Detailing — ata ek-ach jagi. 🚗✨\n\nOur new PPF & Detailing Studio is now open at Kawadipat Toll Naka. Seat covers, lights and audio as always, and now full paint protection and detailing under the same roof.\n\nThis Diwali 👇\n• Diwali-ready foam wash + interior from ₹{{PRICE_WASH_FROM}}\n• Full-body PPF from ₹{{PRICE_PPF_FROM}} + {{PPF_BONUS}} (first 50 cars)\n• New car? Book PPF before delivery, fitted on delivery day\n\nSwipe ➡️ to see the studio.\nComment STUDIO or WhatsApp us for your car's price.\n\n{{FOOTER}}\n\n{{HASHTAGS}}",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {}
+    },
+    {
+      "day": 2,
+      "date": "2026-10-27",
+      "time": "19:30",
+      "occasion": "",
+      "type": "reel",
+      "format": "Car-tip video",
+      "business": "Studio",
+      "made_by": "Marketix",
+      "title": "Why a new car needs PPF in its first week",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "youtube"
+      ],
+      "approved": false,
+      "caption": "1 mahina Pune–Solapur highway… aani bonnet var 20 chips. 😬\n\n3 things that damage a new car in the first few weeks:\n1️⃣ Stone chips from highway driving\n2️⃣ Swirl marks from roadside washes\n3️⃣ Bird droppings and tree sap that etch the paint\n\nPPF is a clear, self-healing film that takes the hit instead of your paint. {{FILM_BRAND}} film with a {{PPF_WARRANTY_YEARS}}-year warranty, from ₹{{PRICE_PPF_FROM}}.\n\nComment PPF + your car model and we'll DM you the price.\n\n{{FOOTER}}\n\n{{HASHTAGS}} #PaintProtectionFilm #NewCar",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {},
+      "youtube": {
+        "title": "Why your NEW car needs PPF in week 1 🚗 #Shorts",
+        "description": "Stone chips, swirl marks and bird droppings start damaging a new car's paint from day one. Here is why paint protection film (PPF) is worth it, explained at our new studio on the Pune–Solapur highway.\n\nPPF from ₹{{PRICE_PPF_FROM}} · {{FILM_BRAND}} film · {{PPF_WARRANTY_YEARS}}-year warranty.\n\n{{FOOTER}}",
+        "tags": [
+          "car care tips",
+          "Pune",
+          "car detailing",
+          "PPF",
+          "Jay Ganesh Car Accessories",
+          "new car",
+          "paint protection film"
+        ]
+      }
+    },
+    {
+      "day": 3,
+      "date": "2026-10-28",
+      "time": "20:00",
+      "occasion": "",
+      "type": "reel",
+      "format": "Music-edit reel",
+      "business": "Studio",
+      "made_by": "Jay Ganesh team",
+      "title": "Inside the new studio",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "youtube"
+      ],
+      "approved": false,
+      "caption": "Pune–Solapur road varcha navin PPF studio. 🔥\n\nLights on. Film on. Scratch gone. 🎬\n\nPPF from ₹{{PRICE_PPF_FROM}} · Ceramic coating from ₹{{PRICE_CERAMIC_FROM}}\n📲 WhatsApp for your car's price: {{WHATSAPP}}\n\n{{FOOTER}}\n\n{{HASHTAGS}} #DetailingStudio",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {},
+      "youtube": {
+        "title": "Inside our new PPF & Detailing Studio | Pune 🔥 #Shorts",
+        "description": "A first look inside the new Jay Ganesh PPF & Detailing Studio at Kawadipat Toll Naka, Loni Kalbhor (Pune–Solapur Road).\n\n{{FOOTER}}",
+        "tags": [
+          "PPF studio Pune",
+          "car detailing Pune",
+          "Loni Kalbhor",
+          "Jay Ganesh Car Accessories"
+        ]
+      }
+    },
+    {
+      "day": 4,
+      "date": "2026-10-29",
+      "time": "13:00",
+      "occasion": "",
+      "type": "carousel",
+      "format": "Carousel",
+      "business": "Studio",
+      "made_by": "Marketix",
+      "title": "PPF vs ceramic vs wax",
+      "platforms": [
+        "instagram",
+        "facebook"
+      ],
+      "approved": false,
+      "caption": "PPF, ceramic ka wax? 30 second madhe samja. 👇\n\n🛡️ PPF — a physical film. Stops stone chips and scratches, self-heals. Lasts years. Best for new cars and highway drivers.\n💎 Ceramic coating — a hard glossy layer. Easy washing, deep shine, protects from sun and dust. No protection from chips.\n🧴 Wax — shine for a few weeks. Lowest cost, shortest life.\n\nSwipe for the full comparison and save this for later. 📌\nNot sure which one fits your car? Comment your car model and we'll suggest the right one.\n\n{{FOOTER}}\n\n{{HASHTAGS}}",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {}
+    },
+    {
+      "day": 5,
+      "date": "2026-10-30",
+      "time": "19:30",
+      "occasion": "",
+      "type": "reel",
+      "format": "Customer video",
+      "business": "Both",
+      "made_by": "Marketix",
+      "title": "A regular customer tries the new studio",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "youtube"
+      ],
+      "approved": false,
+      "caption": "\"{{CUSTOMER_QUOTE}}\" — {{CUSTOMER_NAME}}, {{CUSTOMER_CAR}} 🙏\n\n{{CUSTOMER_NAME}} has been coming to Jay Ganesh for accessories for years. This time they tried our new detailing studio. Watch what they had to say.\n\nThank you for trusting us again! ❤️\nBook your Diwali slot on WhatsApp: {{WHATSAPP}}\n\n{{FOOTER}}\n\n{{HASHTAGS}} #CustomerReview",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {
+        "CUSTOMER_NAME": null,
+        "CUSTOMER_CAR": null,
+        "CUSTOMER_QUOTE": null
+      },
+      "youtube": {
+        "title": "Why our customers keep coming back | {{CUSTOMER_CAR}} #Shorts",
+        "description": "{{CUSTOMER_NAME}} has trusted Jay Ganesh Car Accessories for years. Here is their honest review of our new detailing studio.\n\n{{FOOTER}}",
+        "tags": [
+          "customer review",
+          "car detailing Pune",
+          "Jay Ganesh Car Accessories",
+          "Loni Kalbhor"
+        ]
+      }
+    },
+    {
+      "day": 6,
+      "date": "2026-10-31",
+      "time": "20:00",
+      "occasion": "",
+      "type": "reel",
+      "format": "Music-edit reel",
+      "business": "Studio",
+      "made_by": "Jay Ganesh team",
+      "title": "Foam wash, start to finish",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "youtube"
+      ],
+      "approved": false,
+      "caption": "Hi gaadi 2 varsha dhutli navhti. 😳 Ata paha…\n\nSnow foam → rinse → interior deep clean → shine. ✨\n\nDiwali-ready foam wash + interior from ₹{{PRICE_WASH_FROM}}.\nComment WASH and we'll send you a slot.\n\n{{FOOTER}}\n\n{{HASHTAGS}} #FoamWash #Satisfying",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {},
+      "youtube": {
+        "title": "2 years without a wash… satisfying foam wash ✨ #Shorts",
+        "description": "Snow foam, rinse, interior deep clean and final shine at the Jay Ganesh detailing studio, Pune.\n\nDiwali-ready wash from ₹{{PRICE_WASH_FROM}}.\n\n{{FOOTER}}",
+        "tags": [
+          "foam wash",
+          "satisfying car wash",
+          "car detailing Pune",
+          "Jay Ganesh Car Accessories"
+        ]
+      }
+    },
+    {
+      "day": 7,
+      "date": "2026-11-01",
+      "time": "11:00",
+      "occasion": "",
+      "type": "image",
+      "format": "Image creative",
+      "business": "Both",
+      "made_by": "Marketix",
+      "title": "Diwali offers at a glance",
+      "platforms": [
+        "instagram",
+        "facebook"
+      ],
+      "approved": false,
+      "caption": "Ya Diwalila gaadi la dya navin chamak. 🪔\n\nOur Diwali offers 👇\n✨ Diwali-ready foam wash + interior — from ₹{{PRICE_WASH_FROM}}\n🛡️ Full-body PPF — from ₹{{PRICE_PPF_FROM}} + {{PPF_BONUS}} (first 50 cars)\n🚘 New car — book before delivery, PPF fitted on delivery day\n🎁 Accessories combos — seat covers, mats and more from ₹{{PRICE_STARTER_KIT_FROM}}\n\nTap WhatsApp to reserve your slot before Dhanteras.\n\n{{FOOTER}}\n\n{{HASHTAGS}} #DiwaliOffer",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {}
+    },
+    {
+      "day": 8,
+      "date": "2026-11-02",
+      "time": "13:00",
+      "occasion": "",
+      "type": "carousel",
+      "format": "Carousel",
+      "business": "Both",
+      "made_by": "Marketix",
+      "title": "New-car starter kit",
+      "platforms": [
+        "instagram",
+        "facebook"
+      ],
+      "approved": false,
+      "caption": "Delivery chya divshich gaadi ready. 🚘🎉\n\nBuying a new car this Diwali? Book with us before delivery:\n✅ PPF or ceramic fitted on delivery day\n✅ Seat covers and mats measured for your model\n✅ Dashcam installed and tested\n\nSwipe for prices on Creta, Nexon, Brezza and XUV 3XO ➡️\nStarter kits from ₹{{PRICE_STARTER_KIT_FROM}} · PPF from ₹{{PRICE_PPF_FROM}}\n\nComment NEWCAR + your model.\n\n{{FOOTER}}\n\n{{HASHTAGS}} #NewCar #DiwaliDelivery",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {}
+    },
+    {
+      "day": 9,
+      "date": "2026-11-03",
+      "time": "19:30",
+      "occasion": "",
+      "type": "reel",
+      "format": "Car-tip video",
+      "business": "Both",
+      "made_by": "Marketix",
+      "title": "5 checks before you take delivery",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "youtube"
+      ],
+      "approved": false,
+      "caption": "Showroom madhe gaadi ghetana he 5 check kara. ✅\n\n1️⃣ Paint — walk around in daylight, look for scratches and dents\n2️⃣ Panel gaps — even on both sides\n3️⃣ Tyres — check the manufacture date on the sidewall\n4️⃣ Accessories — everything on your booking sheet is fitted\n5️⃣ Documents — invoice, insurance, RC, warranty book\n\nSave this 📌 and send it to a friend buying a car this Diwali.\n\n{{FOOTER}}\n\n{{HASHTAGS}} #NewCarDelivery #CarTips",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {},
+      "youtube": {
+        "title": "5 checks BEFORE you take delivery of a new car ✅ #Shorts",
+        "description": "Taking delivery of a new car this Diwali? Check these 5 things before you sign: paint, panel gaps, tyre manufacture date, accessories and documents.\n\n{{FOOTER}}",
+        "tags": [
+          "car care tips",
+          "Pune",
+          "car detailing",
+          "PPF",
+          "Jay Ganesh Car Accessories",
+          "new car delivery",
+          "PDI checklist"
+        ]
+      }
+    },
+    {
+      "day": 10,
+      "date": "2026-11-04",
+      "time": "20:00",
+      "occasion": "",
+      "type": "reel",
+      "format": "Music-edit reel",
+      "business": "Brand",
+      "made_by": "Jay Ganesh team",
+      "title": "Diwali-ready cars",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "youtube"
+      ],
+      "approved": false,
+      "caption": "Diwali ready. 🪔✨\n\nDetailed, protected and shining for the festival.\nOnly {{SLOTS_LEFT}} Dhanteras slots left — WhatsApp {{WHATSAPP}}\n\n{{FOOTER}}\n\n{{HASHTAGS}} #Diwali2026",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {
+        "SLOTS_LEFT": null
+      },
+      "youtube": {
+        "title": "Diwali-ready cars at Jay Ganesh 🪔✨ #Shorts",
+        "description": "Diwali-ready cars from the Jay Ganesh PPF & Detailing Studio, Pune.\n\n{{FOOTER}}",
+        "tags": [
+          "Diwali car",
+          "car detailing Pune",
+          "Jay Ganesh Car Accessories"
+        ]
+      }
+    },
+    {
+      "day": 11,
+      "date": "2026-11-05",
+      "time": "19:30",
+      "occasion": "",
+      "type": "reel",
+      "format": "Customer video",
+      "business": "Studio",
+      "made_by": "Marketix",
+      "title": "A new-car owner on choosing PPF",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "youtube"
+      ],
+      "approved": false,
+      "caption": "\"{{CUSTOMER_QUOTE}}\" — {{CUSTOMER_NAME}}, {{CUSTOMER_CAR}} 🛡️\n\n{{CUSTOMER_NAME}} picked up a brand-new {{CUSTOMER_CAR}} and chose Jay Ganesh for full-body PPF. Here's why.\n\nDhanteras slots are closing — only {{SLOTS_LEFT}} left.\n📲 WhatsApp {{WHATSAPP}}\n\n{{FOOTER}}\n\n{{HASHTAGS}} #CustomerReview #PPF",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {
+        "CUSTOMER_NAME": null,
+        "CUSTOMER_CAR": null,
+        "CUSTOMER_QUOTE": null,
+        "SLOTS_LEFT": null
+      },
+      "youtube": {
+        "title": "New {{CUSTOMER_CAR}} owner on choosing PPF 🛡️ #Shorts",
+        "description": "{{CUSTOMER_NAME}} explains why they chose Jay Ganesh for paint protection film on their new {{CUSTOMER_CAR}}.\n\n{{FOOTER}}",
+        "tags": [
+          "PPF review",
+          "paint protection film Pune",
+          "customer review",
+          "Jay Ganesh Car Accessories"
+        ]
+      }
+    },
+    {
+      "day": 12,
+      "date": "2026-11-06",
+      "time": "08:00",
+      "occasion": "Dhanteras",
+      "type": "image",
+      "format": "Festive post",
+      "business": "Brand",
+      "made_by": "Marketix",
+      "title": "Shubh Dhanteras",
+      "platforms": [
+        "instagram",
+        "facebook"
+      ],
+      "approved": false,
+      "caption": "Shubh Dhanteras! 🪔✨\n\nMay this Dhanteras bring prosperity, good health and safe journeys to you and your family.\n\n— Team Jay Ganesh Car Accessories\n\nWe're open till late today for deliveries and fittings.\n\n{{FOOTER}}\n\n#Dhanteras #ShubhDhanteras #Diwali2026 #JayGaneshCarAccessories #LoniKalbhor",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {}
+    },
+    {
+      "day": 13,
+      "date": "2026-11-07",
+      "time": "20:00",
+      "occasion": "",
+      "type": "reel",
+      "format": "Music-edit reel",
+      "business": "Studio",
+      "made_by": "Jay Ganesh team",
+      "title": "Delivered this week",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "youtube"
+      ],
+      "approved": false,
+      "caption": "Ya athavdyat {{CARS_COUNT}} navin gaadya protect kelya. 🙏\n\nThank you to every family who trusted us with their new car this Dhanteras. ❤️\n\nBooking post-Diwali slots now — WhatsApp {{WHATSAPP}}\n\n{{FOOTER}}\n\n{{HASHTAGS}} #DeliveryDay",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {
+        "CARS_COUNT": null
+      },
+      "youtube": {
+        "title": "Dhanteras delivery week at Jay Ganesh 🚘 #Shorts",
+        "description": "New cars protected and delivered during Dhanteras week at the Jay Ganesh studio, Pune.\n\n{{FOOTER}}",
+        "tags": [
+          "new car delivery",
+          "Dhanteras",
+          "PPF Pune",
+          "Jay Ganesh Car Accessories"
+        ]
+      }
+    },
+    {
+      "day": 14,
+      "date": "2026-11-08",
+      "time": "09:00",
+      "occasion": "Diwali (Lakshmi Puja)",
+      "type": "reel",
+      "format": "Festive post (video)",
+      "business": "Brand",
+      "made_by": "Marketix",
+      "title": "Happy Diwali from the Jay Ganesh family",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "youtube"
+      ],
+      "approved": false,
+      "caption": "Jay Ganesh parivaratarfe Diwalichya hardik shubhechha! 🪔🎆\n\nThank you for making this year special. Wishing you light, happiness and many safe kilometres ahead.\n\nHoliday hours: {{DIWALI_HOURS}}\n\n{{FOOTER}}\n\n#HappyDiwali #Diwali2026 #JayGaneshCarAccessories #LoniKalbhor #Pune",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {
+        "DIWALI_HOURS": null
+      },
+      "youtube": {
+        "title": "Happy Diwali from the Jay Ganesh family 🪔 #Shorts",
+        "description": "Diwali wishes from the Jay Ganesh Car Accessories family, Loni Kalbhor, Pune.\n\n{{FOOTER}}",
+        "tags": [
+          "Happy Diwali",
+          "Diwali 2026",
+          "Jay Ganesh Car Accessories"
+        ]
+      }
+    },
+    {
+      "day": 15,
+      "date": "2026-11-09",
+      "time": "08:00",
+      "occasion": "Diwali Padwa",
+      "type": "image",
+      "format": "Festive post",
+      "business": "Brand",
+      "made_by": "Marketix",
+      "title": "Diwali Padwa greetings",
+      "platforms": [
+        "instagram",
+        "facebook"
+      ],
+      "approved": false,
+      "caption": "Diwali Padwa chya hardik shubhechha! 🌼🚗\n\nA new beginning for your family — and maybe a new car too.\nBought a car on Padwa? Get same-day accessories fitting at Jay Ganesh.\n\n{{FOOTER}}\n\n#DiwaliPadwa #Padwa #JayGaneshCarAccessories #LoniKalbhor #Pune",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {}
+    },
+    {
+      "day": 16,
+      "date": "2026-11-10",
+      "time": "19:30",
+      "occasion": "",
+      "type": "reel",
+      "format": "Car-tip video",
+      "business": "Studio",
+      "made_by": "Marketix",
+      "title": "Cleaning firecracker ash without scratches",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "youtube"
+      ],
+      "approved": false,
+      "caption": "Raakh pusu naka! Aadhi he kara. 🧨🚫\n\nAfter Diwali, firecracker ash and dust sit on your paint. Wiping it dry drags grit across the clear coat and leaves scratches.\n\nThe right way:\n1️⃣ Rinse with plenty of water first\n2️⃣ Foam or pH-neutral shampoo\n3️⃣ Clean microfibre, straight lines, no circles\n\nOr let us do it: post-Diwali deep clean from ₹{{PRICE_DEEPCLEAN_FROM}}. Comment CLEAN.\n\n{{FOOTER}}\n\n{{HASHTAGS}} #AfterDiwali #CarCare",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {},
+      "youtube": {
+        "title": "Firecracker ash on your car? Don't wipe it! 🧨 #Shorts",
+        "description": "How to clean firecracker ash and dust off your car after Diwali without scratching the paint.\n\nPost-Diwali deep clean from ₹{{PRICE_DEEPCLEAN_FROM}}.\n\n{{FOOTER}}",
+        "tags": [
+          "car care tips",
+          "Pune",
+          "car detailing",
+          "PPF",
+          "Jay Ganesh Car Accessories",
+          "after Diwali car wash",
+          "firecracker ash"
+        ]
+      }
+    },
+    {
+      "day": 17,
+      "date": "2026-11-11",
+      "time": "09:00",
+      "occasion": "Bhau Beej",
+      "type": "image",
+      "format": "Festive post",
+      "business": "Studio",
+      "made_by": "Marketix",
+      "title": "A Bhau Beej gift that shines",
+      "platforms": [
+        "instagram",
+        "facebook"
+      ],
+      "approved": false,
+      "caption": "Yanda Bhau Beej la gift — chamakti gaadi! 🎁✨\n\nHappy Bhau Beej to every brother and sister. 💛\n\nThis year, gift your sister's car a full detailing. Gift vouchers available on WhatsApp/UPI — comment GIFT.\n\n{{FOOTER}}\n\n#BhauBeej #BhaiDooj #JayGaneshCarAccessories #CarDetailingPune",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {}
+    },
+    {
+      "day": 18,
+      "date": "2026-11-12",
+      "time": "20:00",
+      "occasion": "",
+      "type": "reel",
+      "format": "Music-edit reel",
+      "business": "Studio",
+      "made_by": "Jay Ganesh team",
+      "title": "After Diwali: before and after",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "youtube"
+      ],
+      "approved": false,
+      "caption": "Before… After. 😬➡️🤩\n\nAsh, dust and Diwali traffic — gone.\nPost-Diwali deep clean + ceramic top-up from ₹{{PRICE_DEEPCLEAN_FROM}}, till {{OFFER_VALID_POSTDIWALI}}.\n\n📲 WhatsApp {{WHATSAPP}}\n\n{{FOOTER}}\n\n{{HASHTAGS}} #BeforeAndAfter",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {},
+      "youtube": {
+        "title": "After Diwali: before vs after 🤩 #Shorts",
+        "description": "Post-Diwali deep clean and ceramic top-up at the Jay Ganesh detailing studio, Pune.\n\n{{FOOTER}}",
+        "tags": [
+          "before and after",
+          "car detailing Pune",
+          "ceramic coating",
+          "Jay Ganesh Car Accessories"
+        ]
+      }
+    },
+    {
+      "day": 19,
+      "date": "2026-11-13",
+      "time": "19:30",
+      "occasion": "",
+      "type": "reel",
+      "format": "Customer video",
+      "business": "Studio",
+      "made_by": "Marketix",
+      "title": "Diwali-week customer review",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "youtube"
+      ],
+      "approved": false,
+      "caption": "\"{{CUSTOMER_QUOTE}}\" — {{CUSTOMER_NAME}}, {{CUSTOMER_CAR}} ⭐\n\n{{CUSTOMER_NAME}} brought their {{CUSTOMER_CAR}} to our studio during Diwali week. Here's their honest review of the finish and the experience.\n\nThank you! 🙏 Your review means a lot to our team.\n\n{{FOOTER}}\n\n{{HASHTAGS}} #CustomerReview",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {
+        "CUSTOMER_NAME": null,
+        "CUSTOMER_CAR": null,
+        "CUSTOMER_QUOTE": null
+      },
+      "youtube": {
+        "title": "Honest review: {{CUSTOMER_CAR}} at Jay Ganesh studio ⭐ #Shorts",
+        "description": "{{CUSTOMER_NAME}} reviews their PPF/detailing job at the Jay Ganesh studio, Pune.\n\n{{FOOTER}}",
+        "tags": [
+          "customer review",
+          "car detailing Pune",
+          "PPF Pune",
+          "Jay Ganesh Car Accessories"
+        ]
+      }
+    },
+    {
+      "day": 20,
+      "date": "2026-11-14",
+      "time": "20:00",
+      "occasion": "",
+      "type": "reel",
+      "format": "Music-edit reel",
+      "business": "Accessories",
+      "made_by": "Jay Ganesh team",
+      "title": "Interior makeover",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "youtube"
+      ],
+      "approved": false,
+      "caption": "₹{{PRICE_INTERIOR_FROM}} madhe interior completely badla. 🤯\n\nNew seat covers, mats and ambient lights — fitted in one visit.\nSeat covers from ₹{{PRICE_SEATCOVER_FROM}} · made for your car model.\n\n📍 Walk in or WhatsApp {{WHATSAPP}}\n\n{{FOOTER}}\n\n{{HASHTAGS}} #InteriorMakeover #SeatCovers",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {},
+      "youtube": {
+        "title": "Complete car interior makeover 🤯 #Shorts",
+        "description": "Seat covers, mats and ambient lights fitted at Jay Ganesh Car Accessories, Loni Kalbhor, Pune.\n\n{{FOOTER}}",
+        "tags": [
+          "car interior makeover",
+          "seat covers Pune",
+          "car accessories Pune",
+          "Jay Ganesh Car Accessories"
+        ]
+      }
+    },
+    {
+      "day": 21,
+      "date": "2026-11-15",
+      "time": "11:00",
+      "occasion": "",
+      "type": "image",
+      "format": "Image creative",
+      "business": "Studio",
+      "made_by": "Marketix",
+      "title": "Post-Diwali deep clean offer",
+      "platforms": [
+        "instagram",
+        "facebook"
+      ],
+      "approved": false,
+      "caption": "Diwali nantar gaadi parat navin sarkhi. ✨\n\nPost-Diwali offer 👇\n🧽 Exterior decontamination wash\n🪑 Interior deep clean\n💎 Ceramic top-up for extra gloss\n\nFrom ₹{{PRICE_DEEPCLEAN_FROM}} · valid till {{OFFER_VALID_POSTDIWALI}}\nTap WhatsApp to book.\n\n{{FOOTER}}\n\n{{HASHTAGS}}",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {}
+    },
+    {
+      "day": 22,
+      "date": "2026-11-16",
+      "time": "13:00",
+      "occasion": "",
+      "type": "image",
+      "format": "Image creative",
+      "business": "Accessories",
+      "made_by": "Marketix",
+      "title": "Ready for fog season",
+      "platforms": [
+        "instagram",
+        "facebook"
+      ],
+      "approved": false,
+      "caption": "Dhuke suru… tumche lights ready aahet ka? 🌫️🚗\n\nFog lamps and LED projectors, in stock now:\n💡 Basic fog lamps — from ₹{{PRICE_FOGLAMP_FROM}}\n💡 LED projectors — ask for your model\n\nWalk in for a free light check at Kawadipat Toll Naka.\n\n{{FOOTER}}\n\n{{HASHTAGS}} #FogLamps #LEDHeadlights",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {}
+    },
+    {
+      "day": 23,
+      "date": "2026-11-17",
+      "time": "19:30",
+      "occasion": "",
+      "type": "reel",
+      "format": "Car-tip video",
+      "business": "Accessories",
+      "made_by": "Marketix",
+      "title": "Driving safely in fog",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "youtube"
+      ],
+      "approved": false,
+      "caption": "Dhukyat gaadi chalavtana ya 4 chuka karu naka. 🌫️\n\n1️⃣ High beam in fog — it reflects back and blinds you. Use low beam + fog lamps.\n2️⃣ Worn wipers — replace them before winter.\n3️⃣ Foggy windscreen — AC on, fresh-air mode, demister on.\n4️⃣ Tailgating — keep double the usual distance.\n\nSave this 📌 · Free 10-point road-trip check at our shop.\n\n{{FOOTER}}\n\n{{HASHTAGS}} #WinterDriving #RoadSafety",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {},
+      "youtube": {
+        "title": "4 mistakes when driving in fog 🌫️ #Shorts",
+        "description": "Winter fog driving tips: low beam and fog lamps, wipers, demister and following distance. Free 10-point road-trip check at Jay Ganesh Car Accessories, Pune–Solapur Road.\n\n{{FOOTER}}",
+        "tags": [
+          "car care tips",
+          "Pune",
+          "car detailing",
+          "PPF",
+          "Jay Ganesh Car Accessories",
+          "fog driving tips",
+          "winter driving"
+        ]
+      }
+    },
+    {
+      "day": 24,
+      "date": "2026-11-18",
+      "time": "20:00",
+      "occasion": "",
+      "type": "reel",
+      "format": "Music-edit reel",
+      "business": "Accessories",
+      "made_by": "Jay Ganesh team",
+      "title": "Creta tech upgrade",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "youtube"
+      ],
+      "approved": false,
+      "caption": "Creta la ha upgrade. 🔥📱\n\nAndroid stereo + 360° camera, installed and tested in one visit.\nAndroid stereos from ₹{{PRICE_STEREO_FROM}} · fitted for your model.\n\n📲 WhatsApp {{WHATSAPP}}\n\n{{FOOTER}}\n\n{{HASHTAGS}} #AndroidStereo #360Camera #Creta",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {},
+      "youtube": {
+        "title": "Creta upgrade: Android stereo + 360° camera 🔥 #Shorts",
+        "description": "Android stereo and 360° camera installation on a Hyundai Creta at Jay Ganesh Car Accessories, Pune.\n\n{{FOOTER}}",
+        "tags": [
+          "Creta modification",
+          "Android stereo",
+          "360 camera",
+          "car accessories Pune",
+          "Jay Ganesh Car Accessories"
+        ]
+      }
+    },
+    {
+      "day": 25,
+      "date": "2026-11-19",
+      "time": "13:00",
+      "occasion": "",
+      "type": "carousel",
+      "format": "Carousel",
+      "business": "Studio",
+      "made_by": "Marketix",
+      "title": "PPF myths vs facts",
+      "platforms": [
+        "instagram",
+        "facebook"
+      ],
+      "approved": false,
+      "caption": "PPF baddal 4 gairsamaj. ❌✅\n\n❌ \"PPF turns yellow\" — good TPU film stays clear for years.\n❌ \"Ceramic is scratch-proof\" — it isn't; only PPF stops chips.\n❌ \"All PPF is the same\" — TPU and cheaper TPH films are very different.\n❌ \"Warranty doesn't matter\" — always ask for the warranty card.\n\nWe use {{FILM_BRAND}} film with a {{PPF_WARRANTY_YEARS}}-year warranty card.\n\nWhich myth did you believe? Comment below 👇\n\n{{FOOTER}}\n\n{{HASHTAGS}} #PaintProtectionFilm",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {}
+    },
+    {
+      "day": 26,
+      "date": "2026-11-20",
+      "time": "19:30",
+      "occasion": "",
+      "type": "reel",
+      "format": "Customer video",
+      "business": "Accessories",
+      "made_by": "Marketix",
+      "title": "Why they drive to Jay Ganesh",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "youtube"
+      ],
+      "approved": false,
+      "caption": "\"{{CUSTOMER_QUOTE}}\" — {{CUSTOMER_NAME}}, {{CUSTOMER_CAR}} 🙌\n\n{{CUSTOMER_NAME}} drives all the way to Kawadipat Toll Naka for their accessories. Here's why.\n\nThank you for the trust! 🙏\n📍 Visit us at Kawadipat Toll Naka, Loni Kalbhor.\n\n{{FOOTER}}\n\n{{HASHTAGS}} #CustomerReview",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {
+        "CUSTOMER_NAME": null,
+        "CUSTOMER_CAR": null,
+        "CUSTOMER_QUOTE": null
+      },
+      "youtube": {
+        "title": "Why customers drive to Jay Ganesh for accessories 🙌 #Shorts",
+        "description": "{{CUSTOMER_NAME}} shares why they choose Jay Ganesh Car Accessories, Loni Kalbhor.\n\n{{FOOTER}}",
+        "tags": [
+          "customer review",
+          "car accessories Pune",
+          "Jay Ganesh Car Accessories"
+        ]
+      }
+    },
+    {
+      "day": 27,
+      "date": "2026-11-21",
+      "time": "08:00",
+      "occasion": "Kartiki Ekadashi",
+      "type": "image",
+      "format": "Festive post",
+      "business": "Brand",
+      "made_by": "Marketix",
+      "title": "Kartiki Ekadashi greetings",
+      "platforms": [
+        "instagram",
+        "facebook"
+      ],
+      "approved": false,
+      "caption": "Vitthal Vitthal. 🙏🚩\n\nKartiki Ekadashichya hardik shubhechha!\nTo everyone travelling to Pandharpur on the Pune–Solapur road — surakshit pravas kara.\n\nFree 10-point safety check for Pandharpur travellers at our shop.\n\n{{FOOTER}}\n\n#KartikiEkadashi #Vitthal #Pandharpur #JayGaneshCarAccessories #LoniKalbhor",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {}
+    },
+    {
+      "day": 28,
+      "date": "2026-11-22",
+      "time": "20:00",
+      "occasion": "",
+      "type": "reel",
+      "format": "Music-edit reel",
+      "business": "Studio",
+      "made_by": "Jay Ganesh team",
+      "title": "Ceramic gloss and water test",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "youtube"
+      ],
+      "approved": false,
+      "caption": "Hi chamak paha. 💧✨\n\nWater beads off a fresh ceramic coating like glass.\nCeramic coating from ₹{{PRICE_CERAMIC_FROM}}.\n\n📲 WhatsApp {{WHATSAPP}}\n\n{{FOOTER}}\n\n{{HASHTAGS}} #CeramicCoating #WaterBeading",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {},
+      "youtube": {
+        "title": "Ceramic coating water test 💧 so satisfying #Shorts",
+        "description": "Ceramic coating gloss and water-beading test at the Jay Ganesh detailing studio, Pune.\n\n{{FOOTER}}",
+        "tags": [
+          "ceramic coating",
+          "water beading",
+          "car detailing Pune",
+          "Jay Ganesh Car Accessories"
+        ]
+      }
+    },
+    {
+      "day": 29,
+      "date": "2026-11-23",
+      "time": "13:00",
+      "occasion": "",
+      "type": "image",
+      "format": "Image creative",
+      "business": "Brand",
+      "made_by": "Marketix",
+      "title": "Thank you, Pune",
+      "platforms": [
+        "instagram",
+        "facebook"
+      ],
+      "approved": false,
+      "caption": "Thank you Pune! {{CARS_COUNT}} gaadya ya Diwalit. 🙏❤️\n\nOur first festive season with the new PPF & Detailing Studio — {{CARS_COUNT}} cars protected and detailed. Thank you for trusting Jay Ganesh.\n\nHappy with your car? Leave us a Google review ⭐ {{GOOGLE_REVIEW_LINK}}\n\n{{FOOTER}}\n\n{{HASHTAGS}}",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {
+        "CARS_COUNT": null
+      }
+    },
+    {
+      "day": 30,
+      "date": "2026-11-24",
+      "time": "19:30",
+      "occasion": "",
+      "type": "reel",
+      "format": "Car-tip video",
+      "business": "Studio",
+      "made_by": "Marketix",
+      "title": "First 7 days after coating or PPF",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "youtube"
+      ],
+      "approved": false,
+      "caption": "Coating kelyavar he 7 divas karu naka. 🚫💧\n\n1️⃣ No washing for 7 days — let it cure\n2️⃣ No automatic or brush car washes, ever\n3️⃣ Use pH-neutral shampoo and microfibre only\n4️⃣ Park in shade when you can\n\nSave this 📌 and book your free first maintenance check on WhatsApp.\n\n{{FOOTER}}\n\n{{HASHTAGS}} #CeramicCoating #CarCare",
+      "first_comment": "",
+      "collaborators": [],
+      "vars": {},
+      "youtube": {
+        "title": "First 7 days after ceramic coating or PPF 🚫 #Shorts",
+        "description": "Aftercare for ceramic coating and PPF: what to avoid in the first 7 days and how to wash your car after.\n\n{{FOOTER}}",
+        "tags": [
+          "car care tips",
+          "Pune",
+          "car detailing",
+          "PPF",
+          "Jay Ganesh Car Accessories",
+          "ceramic coating aftercare",
+          "PPF aftercare"
+        ]
+      }
+    }
+  ]
+}

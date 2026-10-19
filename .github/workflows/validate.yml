@@ -1,0 +1,18 @@
+name: Validate calendar
+
+# Runs whenever the calendar or config changes, so a broken edit is caught before posting time.
+on:
+  push:
+    paths: ["content/**", "config/**", "src/**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node src/validate.mjs

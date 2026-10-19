@@ -1,0 +1,20 @@
+name: Readiness check
+
+# Every day at 09:30 IST: fails (and GitHub emails you) if any post in the next 36 hours
+# is missing its media, its approval, or a price/value in the caption.
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+jobs:
+  readiness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node src/check.mjs readiness
+        env:
+          MEDIA_BASE_URL: ${{ vars.MEDIA_BASE_URL }}

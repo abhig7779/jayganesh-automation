@@ -1,0 +1,15 @@
+{
+  "name": "jayganesh-content-engine",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Auto-posts the Jay Ganesh content calendar to Instagram, Facebook and YouTube Shorts from GitHub Actions, with media in Cloudflare R2.",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "validate": "node src/validate.mjs",
+    "publish": "node src/publish.mjs",
+    "dry-run": "DRY_RUN=true REQUIRE_APPROVAL=false node src/publish.mjs",
+    "check:setup": "node src/check.mjs setup",
+    "check:readiness": "node src/check.mjs readiness"
+  }
+}

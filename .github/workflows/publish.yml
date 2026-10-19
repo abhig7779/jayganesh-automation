@@ -1,0 +1,63 @@
+name: Publish posts
+
+# Every 30 minutes from 06:35 to 22:05 IST (01:05–16:35 UTC). Calendar times are on the
+# hour or half hour IST, so each post goes out within a few minutes of its slot.
+on:
+  schedule:
+    - cron: "5,35 1-16 * * *"
+  workflow_dispatch:
+    inputs:
+      day:
+        description: "Post one day now, ignoring its time (e.g. 3). Leave empty for normal run."
+        required: false
+      platforms:
+        description: "Only these platforms, comma separated (instagram,facebook,youtube). Empty = all."
+        required: false
+      dry_run:
+        description: "Dry run: show what would post, post nothing"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Publish due posts
+        env:
+          MEDIA_BASE_URL: ${{ vars.MEDIA_BASE_URL }}
+          FB_PAGE_ID: ${{ vars.FB_PAGE_ID }}
+          IG_USER_ID: ${{ vars.IG_USER_ID }}
+          GRAPH_VERSION: ${{ vars.GRAPH_VERSION }}
+          YT_PRIVACY: ${{ vars.YT_PRIVACY }}
+          META_TOKEN: ${{ secrets.META_TOKEN }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          FORCE_DAY: ${{ inputs.day }}
+          ONLY_PLATFORMS: ${{ inputs.platforms }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: node src/publish.mjs
+
+      - name: Save posting log
+        if: always() && inputs.dry_run != true
+        run: |
+          if [[ -n "$(git status --porcelain state/)" ]]; then
+            git config user.name "jayganesh-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add state/posted.json
+            git commit -m "Posting log $(date -u +%Y-%m-%dT%H:%MZ)"
+            for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
+          fi

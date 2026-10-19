@@ -1,0 +1,28 @@
+name: Check setup
+
+# Run by hand after adding secrets. Confirms the Meta and YouTube tokens work and prints
+# the Facebook Page ID and Instagram account ID to save as variables.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 3 * * 1" # every Monday 09:00 IST, to catch an expired token early
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node src/check.mjs setup
+        env:
+          MEDIA_BASE_URL: ${{ vars.MEDIA_BASE_URL }}
+          FB_PAGE_ID: ${{ vars.FB_PAGE_ID }}
+          IG_USER_ID: ${{ vars.IG_USER_ID }}
+          GRAPH_VERSION: ${{ vars.GRAPH_VERSION }}
+          YT_PRIVACY: ${{ vars.YT_PRIVACY }}
+          META_TOKEN: ${{ secrets.META_TOKEN }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
