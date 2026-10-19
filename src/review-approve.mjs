@@ -21,8 +21,8 @@ if (/^\/approve\b/i.test(comment)) {
 if (!text) throw new Error("Nothing to post: use /approve, or /reply followed by the reply text.");
 
 const api = gbp({
-  clientId: e.GOOGLE_CLIENT_ID || e.YT_CLIENT_ID,
-  clientSecret: e.GOOGLE_CLIENT_SECRET || e.YT_CLIENT_SECRET,
+  clientId: e.GBP_CLIENT_ID || e.GOOGLE_CLIENT_ID || e.YT_CLIENT_ID,
+  clientSecret: e.GBP_CLIENT_SECRET || e.GOOGLE_CLIENT_SECRET || e.YT_CLIENT_SECRET,
   refreshToken: e.GBP_REFRESH_TOKEN,
 });
 await api.reply(reviewName, text);

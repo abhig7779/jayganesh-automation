@@ -32,8 +32,8 @@ jobs:
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           ISSUE_BODY: ${{ github.event.issue.body }}
           COMMENT_BODY: ${{ github.event.comment.body }}
-          GOOGLE_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          GBP_CLIENT_ID: ${{ secrets.GBP_CLIENT_ID || secrets.YT_CLIENT_ID }}
+          GBP_CLIENT_SECRET: ${{ secrets.GBP_CLIENT_SECRET || secrets.YT_CLIENT_SECRET }}
           GBP_REFRESH_TOKEN: ${{ secrets.GBP_REFRESH_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node src/review-approve.mjs

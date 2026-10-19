@@ -37,8 +37,8 @@ jobs:
           GBP_LOCATION: ${{ vars.GBP_LOCATION }}
           AUTO_REPLY_MIN_STARS: ${{ vars.AUTO_REPLY_MIN_STARS }}
           REVIEW_SINCE_DAYS: ${{ vars.REVIEW_SINCE_DAYS }}
-          GOOGLE_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          GBP_CLIENT_ID: ${{ secrets.GBP_CLIENT_ID || secrets.YT_CLIENT_ID }}
+          GBP_CLIENT_SECRET: ${{ secrets.GBP_CLIENT_SECRET || secrets.YT_CLIENT_SECRET }}
           GBP_REFRESH_TOKEN: ${{ secrets.GBP_REFRESH_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

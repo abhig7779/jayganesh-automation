@@ -70,6 +70,8 @@ Upload in the Cloudflare dashboard: **R2 → jayganesh-content → Upload**, typ
 | `YT_CLIENT_ID` | Secret | Google OAuth client ID (step 4) |
 | `YT_CLIENT_SECRET` | Secret | Google OAuth client secret (step 4) |
 | `YT_REFRESH_TOKEN` | Secret | From OAuth Playground (step 4) |
+| `GBP_CLIENT_ID` | Secret | OAuth client ID for reviews (falls back to `YT_CLIENT_ID` if not set) |
+| `GBP_CLIENT_SECRET` | Secret | OAuth client secret for reviews (falls back to `YT_CLIENT_SECRET`) |
 | `GBP_REFRESH_TOKEN` | Secret | Business Profile token (see *Google review auto-replies*) |
 | `ANTHROPIC_API_KEY` | Secret | Claude API key for writing review replies |
 | `GBP_LOCATION` | Variable | `accounts/…/locations/…`, printed by the first reviews run |
@@ -129,7 +131,7 @@ The *Reply to Google reviews* workflow runs every 2 hours (07:45–21:45 IST). I
    - In the same Google Cloud project, enable *My Business Account Management API*, *My Business Business Information API* and *Google My Business API*.
    - Then submit Google's **Business Profile API access request form** (search "GBP API access request") with the project number. Approval usually takes a few days to two weeks.
    - Until then, runs fail with a quota error. That is expected.
-2. **Refresh token**: in the OAuth Playground (same client ID and secret as YouTube), authorise the scope
+2. **Refresh token**: in the OAuth Playground (with the reviews OAuth client — save its ID and secret as `GBP_CLIENT_ID` / `GBP_CLIENT_SECRET`, or reuse the YouTube client), authorise the scope
    `https://www.googleapis.com/auth/business.manage` while signed in as the Google account that **manages the Jay Ganesh Business Profile**. Save the refresh token as the secret `GBP_REFRESH_TOKEN`.
 3. **Claude API key**: create a key at console.anthropic.com and save it as the secret `ANTHROPIC_API_KEY`. Each reply costs well under ₹1.
 4. **Location**: run *Reply to Google reviews* once by hand. It lists the profiles the account manages as `GBP_LOCATION=accounts/…/locations/…`. Save the right one as the variable `GBP_LOCATION`.

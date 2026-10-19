@@ -10,8 +10,8 @@ import { replyWriter } from "./lib/reply-writer.mjs";
 
 const e = process.env;
 const cfg = {
-  clientId: e.GOOGLE_CLIENT_ID || e.YT_CLIENT_ID,
-  clientSecret: e.GOOGLE_CLIENT_SECRET || e.YT_CLIENT_SECRET,
+  clientId: e.GBP_CLIENT_ID || e.GOOGLE_CLIENT_ID || e.YT_CLIENT_ID,
+  clientSecret: e.GBP_CLIENT_SECRET || e.GOOGLE_CLIENT_SECRET || e.YT_CLIENT_SECRET,
   refreshToken: e.GBP_REFRESH_TOKEN,
   location: e.GBP_LOCATION, // accounts/123/locations/456
   minAutoStars: Number(e.AUTO_REPLY_MIN_STARS || 4),
@@ -33,7 +33,7 @@ const log = (r) => {
 };
 
 if (!cfg.clientId || !cfg.clientSecret || !cfg.refreshToken) {
-  console.error("Missing GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET / GBP_REFRESH_TOKEN (see README → Google reviews).");
+  console.error("Missing GBP_CLIENT_ID / GBP_CLIENT_SECRET / GBP_REFRESH_TOKEN (see README → Google reviews).");
   process.exit(1);
 }
 const api = gbp(cfg);
