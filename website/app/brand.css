@@ -1,0 +1,95 @@
+/* Jay Ganesh Car Accessories: brand tokens for the website.
+ * Generated from Brand/design-system/project/tokens.json. Edit tokens.json, not this file.
+ * Fonts: <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Hind:wght@400;500;600;700&display=swap"> */
+
+:root, [data-theme="dark"] {
+  --surface-000: #0f1013;
+  --surface-100: #1a1c20;
+  --surface-200: #24272d;
+  --line: #33363d;
+  --line-strong: #5a5e67;
+  --ink: #f4f5f6;
+  --ink-muted: #a6aab2;
+  --brand-yellow: #ffe500;
+  --brand-yellow-press: #e6ce00;
+  --on-yellow: #121317;
+  --yellow-text: #ffe500;
+  --accent-red: #ff5a52;
+  --on-red: #121317;
+  --whatsapp: #25d366;
+  --success: #4cc38a;
+  color-scheme: dark;
+}
+[data-theme="light"] {
+  --surface-000: #f6f6f4;
+  --surface-100: #ffffff;
+  --surface-200: #ecedee;
+  --line: #d9dbde;
+  --line-strong: #8a8f98;
+  --ink: #121317;
+  --ink-muted: #5a5f68;
+  --brand-yellow: #ffe500;
+  --brand-yellow-press: #e6ce00;
+  --on-yellow: #121317;
+  --yellow-text: #7a6a00;
+  --accent-red: #d32f2f;
+  --on-red: #ffffff;
+  --whatsapp: #25d366;
+  --success: #1e7f4f;
+  color-scheme: light;
+}
+:root {
+  --font-display: "Archivo", "Arial Black", system-ui, sans-serif;
+  --font-body: "Hind", "Noto Sans Devanagari", system-ui, sans-serif;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --radius-xs: 2px;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-pill: 999px;
+}
+
+.display-xl { font-family: var(--font-display); font-size: 72px; line-height: 0.95; font-weight: 900; letter-spacing: -0.01em; font-stretch: 125%; text-transform: uppercase; }
+.display-l { font-family: var(--font-display); font-size: 48px; line-height: 1; font-weight: 900; font-stretch: 125%; text-transform: uppercase; }
+.heading { font-family: var(--font-display); font-size: 30px; line-height: 1.1; font-weight: 800; font-stretch: 112%; }
+.title { font-family: var(--font-display); font-size: 21px; line-height: 1.25; font-weight: 700; }
+.label { font-family: var(--font-display); font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.body-l { font-family: var(--font-body); font-size: 18px; line-height: 28px; font-weight: 400; }
+.body { font-family: var(--font-body); font-size: 16px; line-height: 26px; font-weight: 400; }
+.body-strong { font-family: var(--font-body); font-size: 16px; line-height: 26px; font-weight: 600; }
+.caption { font-family: var(--font-body); font-size: 13px; line-height: 20px; font-weight: 400; }
+
+body { margin: 0; background: var(--surface-000); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 26px; }
+
+/* Jay Ganesh components. CSS only; every value comes from tokens.css. */
+.jg-btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);min-height:44px;padding:var(--space-3) var(--space-6);border-radius:var(--radius-sm);border:1px solid transparent;font-family:var(--font-display);font-weight:800;font-stretch:112%;font-size:13px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:background-color .15s ease}
+.jg-btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.jg-btn--primary{background:var(--brand-yellow);color:var(--on-yellow)}
+.jg-btn--primary:hover{background:var(--brand-yellow-press)}
+[data-theme="light"] .jg-btn--primary{border-color:var(--line-strong)}
+.jg-btn--secondary{background:transparent;color:var(--ink);border-color:var(--line-strong)}
+.jg-btn--secondary:hover{background:var(--surface-200)}
+.jg-btn--whatsapp{background:var(--whatsapp);color:var(--on-yellow)}
+.jg-btn svg{width:18px;height:18px;flex:none}
+
+.jg-badge{display:inline-flex;align-items:center;gap:var(--space-1);padding:var(--space-1) var(--space-2);border-radius:var(--radius-xs);font-family:var(--font-display);font-weight:700;font-size:11px;line-height:16px;letter-spacing:.12em;text-transform:uppercase}
+.jg-badge--brand{background:var(--brand-yellow);color:var(--on-yellow)}
+.jg-badge--offer{background:var(--accent-red);color:var(--on-red)}
+.jg-badge--neutral{background:var(--surface-200);color:var(--ink)}
+.jg-badge--outline{border:1px solid var(--line-strong);color:var(--ink-muted)}
+
+.jg-highlight{background:var(--brand-yellow);color:var(--on-yellow);padding:0 .12em;border-radius:var(--radius-xs);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+
+.jg-chat{display:flex;flex-direction:column;gap:var(--space-2);max-width:360px;font-family:var(--font-body)}
+.jg-bubble{max-width:85%;padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);font-size:15px;line-height:22px;white-space:pre-line}
+.jg-bubble--customer{align-self:flex-end;background:var(--surface-200);color:var(--ink);border-bottom-right-radius:var(--radius-xs)}
+.jg-bubble--shop{align-self:flex-start;background:var(--surface-100);color:var(--ink);border:1px solid var(--line);border-bottom-left-radius:var(--radius-xs)}
+.jg-bubble__meta{display:block;margin-top:var(--space-1);font-size:12px;line-height:16px;color:var(--ink-muted)}
+.jg-chips{display:flex;flex-wrap:wrap;gap:var(--space-2)}
+.jg-chip{padding:6px var(--space-3);border-radius:var(--radius-pill);border:1px solid var(--brand-yellow);color:var(--ink);background:transparent;font-family:var(--font-body);font-size:14px;line-height:20px}

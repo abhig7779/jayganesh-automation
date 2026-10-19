@@ -3,13 +3,16 @@ name: Validate calendar
 # Runs whenever the calendar or config changes, so a broken edit is caught before posting time.
 on:
   push:
-    paths: ["content/**", "config/**", "src/**"]
+    paths: ["automation/**"]
   pull_request:
   workflow_dispatch:
 
 jobs:
   validate:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: automation
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
