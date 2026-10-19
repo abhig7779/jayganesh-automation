@@ -1,0 +1,57 @@
+name: Reply to Google reviews
+
+# Every 2 hours, 07:45–21:45 IST. 4–5★ reviews get a reply straight away;
+# 1–3★ reviews open an issue with a suggested reply for a person to approve.
+on:
+  schedule:
+    - cron: "15 2-16/2 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run: write replies but post nothing"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: reviews
+  cancel-in-progress: false
+
+jobs:
+  reviews:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+
+      - name: Reply to new reviews
+        env:
+          GBP_LOCATION: ${{ vars.GBP_LOCATION }}
+          AUTO_REPLY_MIN_STARS: ${{ vars.AUTO_REPLY_MIN_STARS }}
+          REVIEW_SINCE_DAYS: ${{ vars.REVIEW_SINCE_DAYS }}
+          GOOGLE_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          GBP_REFRESH_TOKEN: ${{ secrets.GBP_REFRESH_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: node src/reviews.mjs
+
+      - name: Save review log
+        if: always() && inputs.dry_run != true
+        run: |
+          if [[ -n "$(git status --porcelain state/)" ]]; then
+            git config user.name "jayganesh-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add state/reviews.json
+            git commit -m "Review log $(date -u +%Y-%m-%dT%H:%MZ)"
+            for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
+          fi

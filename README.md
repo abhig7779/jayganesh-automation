@@ -28,6 +28,8 @@ If one platform fails (for example YouTube), only that platform is retried on th
 | **Readiness check** | Daily 09:30 IST | Fails and emails you if the next 36 hours aren't ready |
 | **Check setup** | By hand, and every Monday | Confirms tokens work; prints the Page ID and Instagram ID |
 | **Validate calendar** | On every edit | Catches broken JSON, captions that are too long, too many hashtags |
+| **Reply to Google reviews** | Every 2 hours, 07:45–21:45 IST | Auto-replies to 4–5★ reviews; opens an approval issue for 1–3★ |
+| **Approve review reply** | When you comment `/approve` or `/reply` on a review issue | Posts the reply to Google and closes the issue |
 
 ## Media (Cloudflare R2)
 
@@ -68,6 +70,9 @@ Upload in the Cloudflare dashboard: **R2 → jayganesh-content → Upload**, typ
 | `YT_CLIENT_ID` | Secret | Google OAuth client ID (step 4) |
 | `YT_CLIENT_SECRET` | Secret | Google OAuth client secret (step 4) |
 | `YT_REFRESH_TOKEN` | Secret | From OAuth Playground (step 4) |
+| `GBP_REFRESH_TOKEN` | Secret | Business Profile token (see *Google review auto-replies*) |
+| `ANTHROPIC_API_KEY` | Secret | Claude API key for writing review replies |
+| `GBP_LOCATION` | Variable | `accounts/…/locations/…`, printed by the first reviews run |
 
 Paste tokens straight into GitHub secrets. Don't send them over chat or email.
 
@@ -103,6 +108,31 @@ Requirements: the Instagram account is a **Professional (Business)** account, **
 7. Save `YT_CLIENT_ID`, `YT_CLIENT_SECRET` and `YT_REFRESH_TOKEN` as secrets, then run *Check setup* again.
 
 > **Important: YouTube's API audit.** Google locks videos uploaded through the API by an *unaudited* project to **private**. Until the project passes YouTube's API compliance audit (free form: *YouTube API Services – Audit and Quota Extension*), Shorts upload as private and someone must switch them to public in YouTube Studio. Apply on day one; it usually takes a few weeks. Instagram and Facebook are not affected.
+
+## Google review auto-replies
+
+The *Reply to Google reviews* workflow runs every 2 hours (07:45–21:45 IST). It reads the Jay Ganesh Business Profile and handles reviews from the last 30 days that have no owner reply:
+
+| Rating | What happens |
+|---|---|
+| **4–5★** | Claude writes a short, personal reply in the reviewer's language (English, Marathi or Hindi), naming the car or job they mentioned, and it is **posted straight away** |
+| **1–3★** | Claude writes a careful draft and the engine opens a **GitHub issue** labelled `review`. Comment `/approve` to post it, or `/reply` with your own text on the next line. Call the customer first if something needs fixing |
+
+- Replies never include prices, offers or links. Negative replies give the shop's WhatsApp number from `config/brand.json`.
+- At most 10 replies per run, so a backlog clears over a few runs instead of all at once.
+- `state/reviews.json` records every review handled, so nothing is replied to twice.
+- Change the auto-reply threshold with the variable `AUTO_REPLY_MIN_STARS` (default `4`), and how far back to look with `REVIEW_SINCE_DAYS` (default `30`).
+- First time: run the workflow by hand with **Dry run** ticked (the default for manual runs) to read the replies it would post.
+
+### Setup (one time)
+1. **Ask Google for API access** (required: new projects get a quota of 0 for the Business Profile APIs).
+   - In the same Google Cloud project, enable *My Business Account Management API*, *My Business Business Information API* and *Google My Business API*.
+   - Then submit Google's **Business Profile API access request form** (search "GBP API access request") with the project number. Approval usually takes a few days to two weeks.
+   - Until then, runs fail with a quota error. That is expected.
+2. **Refresh token**: in the OAuth Playground (same client ID and secret as YouTube), authorise the scope
+   `https://www.googleapis.com/auth/business.manage` while signed in as the Google account that **manages the Jay Ganesh Business Profile**. Save the refresh token as the secret `GBP_REFRESH_TOKEN`.
+3. **Claude API key**: create a key at console.anthropic.com and save it as the secret `ANTHROPIC_API_KEY`. Each reply costs well under ₹1.
+4. **Location**: run *Reply to Google reviews* once by hand. It lists the profiles the account manages as `GBP_LOCATION=accounts/…/locations/…`. Save the right one as the variable `GBP_LOCATION`.
 
 ## Running things by hand (GitHub website)
 

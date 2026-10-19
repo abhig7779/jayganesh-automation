@@ -2,7 +2,8 @@
   "_note": "Values used in every caption. A null value blocks posting until it is filled in. Run `npm run validate` to see what is missing.",
   "BUSINESS_NAME": "Jay Ganesh Car Accessories",
   "ADDRESS": "Kawadipat Toll Naka, Pune–Solapur Road, Loni Kalbhor",
-  "WHATSAPP": null,
+  "WHATSAPP": "099813 97676",
+  "INSTAGRAM": "@jayganeshcar_accessories_pune",
   "GOOGLE_REVIEW_LINK": null,
   "FOOTER": "📍 {{BUSINESS_NAME}}, {{ADDRESS}}\n📲 WhatsApp: {{WHATSAPP}}\n⭐ 4.9 on Google",
   "HASHTAGS": "#JayGaneshCarAccessories #LoniKalbhor #PuneCars #CarDetailingPune #PPFPune #CeramicCoatingPune #CarAccessoriesPune #Hadapsar"

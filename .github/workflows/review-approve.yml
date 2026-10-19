@@ -1,0 +1,48 @@
+name: Approve review reply
+
+# Comment /approve (or /reply + your text) on a review issue to post the reply on Google.
+# Only the repo owner, org members and collaborators can trigger it.
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: reviews
+  cancel-in-progress: false
+
+jobs:
+  approve:
+    if: >-
+      !github.event.issue.pull_request &&
+      contains(github.event.issue.labels.*.name, 'review') &&
+      contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
+      (startsWith(github.event.comment.body, '/approve') || startsWith(github.event.comment.body, '/reply'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Post reply to Google
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          GOOGLE_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          GBP_REFRESH_TOKEN: ${{ secrets.GBP_REFRESH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node src/review-approve.mjs
+      - name: Save review log
+        run: |
+          if [[ -n "$(git status --porcelain state/)" ]]; then
+            git config user.name "jayganesh-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add state/reviews.json
+            git commit -m "Review reply approved in #${{ github.event.issue.number }}"
+            for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
+          fi
