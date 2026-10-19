@@ -34,7 +34,6 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: automation/package-lock.json
-          cache-dependency-path: automation/package-lock.json
       - run: npm ci --no-audit --no-fund
 
       - name: Reply to new reviews
