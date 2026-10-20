@@ -32,9 +32,20 @@ const log = (r) => {
   console.log(`${"★".repeat(r.stars)}${"☆".repeat(5 - r.stars)} ${r.name.padEnd(22)} ${r.status}${r.detail ? " — " + r.detail : ""}`);
 };
 
-if (!cfg.clientId || !cfg.clientSecret || !cfg.refreshToken) {
-  console.error("Missing GBP_CLIENT_ID / GBP_CLIENT_SECRET / GBP_REFRESH_TOKEN (see README → Google reviews).");
-  process.exit(1);
+// Not set up yet: skip quietly (exit 0) so the schedule doesn't send a failure email every 2 hours.
+const missing = Object.entries({
+  GBP_CLIENT_ID: cfg.clientId,
+  GBP_CLIENT_SECRET: cfg.clientSecret,
+  GBP_REFRESH_TOKEN: cfg.refreshToken,
+  ANTHROPIC_API_KEY: e.ANTHROPIC_API_KEY,
+})
+  .filter(([, v]) => !v)
+  .map(([k]) => k);
+if (missing.length) {
+  const msg = `Review replies not set up yet, skipping. Add these repository secrets: ${missing.join(", ")} (see README → Google review auto-replies).`;
+  console.log(msg);
+  if (e.GITHUB_STEP_SUMMARY) appendFileSync(e.GITHUB_STEP_SUMMARY, `### Google reviews · skipped\n\n${msg}\n`);
+  process.exit(0);
 }
 const api = gbp(cfg);
 
