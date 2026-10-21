@@ -35,6 +35,33 @@ if (mode === "setup") {
     return `${cfg.mediaBaseUrl} reachable (day-01/1.jpg: ${r.ok ? "found" : "not uploaded yet"})`;
   });
 
+  // Upload a throwaway file over FTPS from wherever this runs, check it is public, then delete it.
+  // Uses no Drive files and no day folder, so it never approves or triggers a post.
+  if (process.env.FTP_HOST && process.env.FTP_USER && process.env.FTP_PASSWORD) {
+    await check("Media upload (FTP)", async () => {
+      const { Client } = await import("basic-ftp");
+      const { Readable } = await import("node:stream");
+      const { isIP } = await import("node:net");
+      const e = process.env;
+      const dir = (e.FTP_DIR || "/").replace(/\/+$/, "");
+      const selfSigned = ["1", "true", "yes"].includes(String(e.FTP_TLS_SELF_SIGNED || "").toLowerCase());
+      const name = `_ftp-check-${Date.now()}.txt`;
+      const c = new Client(30_000);
+      try {
+        await c.access({ host: e.FTP_HOST, user: e.FTP_USER, password: e.FTP_PASSWORD, secure: true, secureOptions: { ...(isIP(e.FTP_HOST) ? {} : { servername: e.FTP_HOST }), rejectUnauthorized: !selfSigned } });
+        await c.uploadFrom(Readable.from(Buffer.from("ftp check")), `${dir}/${name}`);
+        const r = await fetch(`${cfg.mediaBaseUrl}/${name}`);
+        await c.remove(`${dir}/${name}`);
+        if (!r.ok) throw new Error(`uploaded, but ${cfg.mediaBaseUrl}/${name} returned ${r.status} — FTP_DIR may point at the wrong folder`);
+        return `login, upload and public URL all work (FTP_DIR=${e.FTP_DIR || "/"}); test file removed`;
+      } finally {
+        c.close();
+      }
+    });
+  } else {
+    say(null, "Media upload (FTP): FTP_HOST / FTP_USER / FTP_PASSWORD not set, skipped");
+  }
+
   if (!cfg.metaToken) {
     bad++;
     say(false, "META_TOKEN secret not set");

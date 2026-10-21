@@ -18,9 +18,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: automation/package-lock.json
+      - run: npm ci --no-audit --no-fund
       - run: node src/check.mjs setup
         env:
           MEDIA_BASE_URL: ${{ vars.MEDIA_BASE_URL }}
+          FTP_HOST: ${{ vars.FTP_HOST }}
+          FTP_USER: ${{ vars.FTP_USER }}
+          FTP_DIR: ${{ vars.FTP_DIR }}
+          FTP_TLS_SELF_SIGNED: ${{ vars.FTP_TLS_SELF_SIGNED }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FB_PAGE_ID: ${{ vars.FB_PAGE_ID }}
           IG_USER_ID: ${{ vars.IG_USER_ID }}
           GRAPH_VERSION: ${{ vars.GRAPH_VERSION }}
