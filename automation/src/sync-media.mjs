@@ -1,8 +1,12 @@
 // Runs before every publish. Copies new or changed files from the shared Google Drive folder to the
-// public media host (MilesWeb, over FTPS), renamed to what the publisher expects:
-//   Drive: <root>/Day 5/anything.mp4          → media: day-05/video.mp4
-//   Drive: <root>/day-07/poster.jpg, b.jpg   → media: day-07/1.jpg, 2.jpg (sorted by name)
-//   Drive: <root>/day-02/cover.jpg           → media: day-02/cover.jpg (optional reel cover)
+// public media host (MilesWeb, over FTPS), renamed to what the publisher expects.
+// Drive layout (made by src/make-drive-folders.mjs):
+//   <root>/2026-10-26 → 2026-11-24 · …/Day 02 · 27 Oct (Tue) · Car-tip video · Abhi/
+//       1 Raw/                         ← raw clips for editing (never posted)
+//       2 Edited (posts automatically)/anything.mp4     → media: day-02/video.mp4
+//   Images: …/2 Edited/poster.jpg, b.jpg → day-07/1.jpg, 2.jpg (sorted by name); cover….jpg → cover.jpg
+// The month folder is the one whose name starts with the calendar's first date. Older flat layouts
+// (<root>/day-05/…) still work.
 // A day whose files have been synced counts as approved (see isApproved in lib/config.mjs).
 // Logged in state/media.json so unchanged files are not uploaded again.
 import { appendFileSync } from "node:fs";
@@ -45,7 +49,8 @@ if (missing.length) {
   finish(0);
 }
 
-const DAY_RE = /^day[\s_-]*0*(\d{1,2})$/i;
+const DAY_RE = /^day[\s_-]*0*(\d{1,2})(?!\d)/i;
+const EDITED_RE = /edited|final/i;
 const natural = (a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" });
 const isJpeg = (f) => /\.jpe?g$/i.test(f.name) || f.mimeType === "image/jpeg";
 
@@ -54,6 +59,7 @@ function plan(post, files) {
   const out = [];
   const problems = [];
   const live = files.filter((f) => f.mimeType !== FOLDER && !f.name.startsWith("."));
+  if (!live.length) return { out, problems }; // nothing in Edited yet: not ready, nothing to report
   if (post.type === "reel") {
     const videos = live.filter((f) => /\.mp4$/i.test(f.name) || f.mimeType === "video/mp4");
     if (!videos.length) {
@@ -82,13 +88,27 @@ const { posts } = loadCalendar();
 const byDay = new Map(posts.map((p) => [p.day, p]));
 const log = loadMediaLog();
 
-const folders = (await g.children(cfg.folderId)).filter((f) => f.mimeType === FOLDER);
+// Find this calendar's month folder (name starts with the first post date), else use the root itself.
+const rootFolders = (await g.children(cfg.folderId)).filter((f) => f.mimeType === FOLDER);
+const month = rootFolders.find((f) => f.name.trim().startsWith(posts[0].date));
+const folders = month ? (await g.children(month.id)).filter((f) => f.mimeType === FOLDER) : rootFolders;
+if (month) say(`Month folder: ${month.name}`);
 const dayFolders = folders.map((f) => ({ f, day: Number(f.name.trim().match(DAY_RE)?.[1]) })).filter((x) => byDay.has(x.day));
-const ignored = folders.filter((f) => !DAY_RE.test(f.name.trim())).map((f) => f.name);
-if (ignored.length) say(`Ignored folders (name them "day-01" … "day-30"): ${ignored.join(", ")}`);
+const ignored = folders.filter((f) => !DAY_RE.test(f.name.trim()) && !/^\d{4}-\d{2}-\d{2}/.test(f.name.trim())).map((f) => f.name);
+if (ignored.length) say(`Ignored folders (day folders must start with "Day 01" … "Day 30"): ${ignored.join(", ")}`);
 if (!dayFolders.length) {
-  say("No day folders in the Drive folder yet.");
+  say(month ? "No day folders in the month folder yet." : `No month folder starting with ${posts[0].date} and no day folders in the Drive folder yet.`);
   finish(0);
+}
+
+// Files to post for one day: the "Edited" subfolder if the day folder has subfolders (Raw is never
+// posted); a day folder with no subfolders (older layout) is used directly.
+async function editedFiles(dayFolder) {
+  const items = await g.children(dayFolder.id);
+  const subs = items.filter((f) => f.mimeType === FOLDER);
+  if (!subs.length) return items;
+  const edited = subs.find((f) => EDITED_RE.test(f.name));
+  return edited ? g.children(edited.id) : [];
 }
 
 let ftp = null;
@@ -112,7 +132,7 @@ let failures = 0;
 for (const { f, day } of dayFolders.sort((a, b) => a.day - b.day)) {
   const post = byDay.get(day);
   const key = dayKey(day);
-  const { out, problems } = plan(post, await g.children(f.id));
+  const { out, problems } = plan(post, await editedFiles(f));
   problems.forEach((p) => say(`${key}: ${p}`));
   for (const { file, target } of out) {
     const path = `${key}/${target}`;

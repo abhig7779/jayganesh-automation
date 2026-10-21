@@ -47,7 +47,33 @@ export function drive({ clientId, clientSecret, refreshToken }) {
     return Buffer.from(await res.arrayBuffer());
   }
 
-  return { children, download };
+  // Writing needs the drive.file scope (files this app creates).
+  async function createFolder(name, parentId) {
+    const res = await fetch("https://www.googleapis.com/drive/v3/files?supportsAllDrives=true&fields=id,name,webViewLink", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${await token()}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ name, mimeType: FOLDER, ...(parentId ? { parents: [parentId] } : {}) }),
+    });
+    const d = await res.json();
+    if (!res.ok) throw new Error(`Drive create "${name}": ${d.error?.message || res.statusText} (${res.status})`);
+    return d;
+  }
+
+  async function createText(name, parentId, text) {
+    const boundary = "jg" + Math.random().toString(36).slice(2);
+    const meta = { name, mimeType: "application/vnd.google-apps.document", parents: [parentId] };
+    const body = `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${boundary}\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n${text}\r\n--${boundary}--`;
+    const res = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&supportsAllDrives=true&fields=id,webViewLink", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${await token()}`, "Content-Type": `multipart/related; boundary=${boundary}` },
+      body,
+    });
+    const d = await res.json();
+    if (!res.ok) throw new Error(`Drive create "${name}": ${d.error?.message || res.statusText} (${res.status})`);
+    return d;
+  }
+
+  return { children, download, createFolder, createText };
 }
 
 export const FOLDER = "application/vnd.google-apps.folder";
