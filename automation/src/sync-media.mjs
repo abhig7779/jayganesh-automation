@@ -7,6 +7,7 @@
 // Logged in state/media.json so unchanged files are not uploaded again.
 import { appendFileSync } from "node:fs";
 import { Readable } from "node:stream";
+import { isIP } from "node:net";
 import { Client } from "basic-ftp";
 import { loadCalendar, loadMediaLog, saveMediaLog, dayKey } from "./lib/config.mjs";
 import { drive, FOLDER } from "./lib/drive.mjs";
@@ -102,7 +103,7 @@ async function ftpClient() {
     user: cfg.ftp.user,
     password: cfg.ftp.password,
     secure: true,
-    secureOptions: { servername: cfg.ftp.host, rejectUnauthorized: !selfSigned },
+    secureOptions: { ...(isIP(cfg.ftp.host) ? {} : { servername: cfg.ftp.host }), rejectUnauthorized: !selfSigned },
   });
   return ftp;
 }
