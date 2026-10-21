@@ -1,0 +1,169 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { categories, primaryNav, studioLinks } from "@/lib/catalog";
+import { site, whatsapp } from "@/lib/site";
+import { IconChevron, IconPhone, IconPin, IconWhatsApp, WhatsAppButton } from "./ui";
+import ThemeToggle from "./ThemeToggle";
+
+const groups = ["Interior", "Lights", "Tech", "Exterior"] as const;
+
+function categoryHref(c: (typeof categories)[number]) {
+  return c.href ?? "/accessories/#" + c.key;
+}
+
+export default function Header() {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+
+  // Close the mobile menu on navigation, and lock page scroll while it's open.
+  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    document.documentElement.style.overflow = open ? "hidden" : "";
+    return () => { document.documentElement.style.overflow = ""; };
+  }, [open]);
+
+  const isActive = (href: string) =>
+    pathname === href ||
+    (href === "/detailing-studio/" && studioLinks.some((l) => pathname === l.href)) ||
+    (href === "/accessories/" && pathname === "/seat-covers/");
+
+  return (
+    <>
+      <a className="skip-link" href="#main">Skip to content</a>
+
+      <div className="topbar">
+        <div className="wrap label">
+          <a href={site.mapsHref} target="_blank" rel="noopener noreferrer">📍 {site.addressShort}</a>
+          <span>{site.hoursShort}</span>
+          <a href={site.reviewsHref} target="_blank" rel="noopener noreferrer">★ {site.rating} on Google · {site.reviews} reviews</a>
+        </div>
+      </div>
+
+      <header className="header">
+        <div className="wrap">
+          <Link className="brand" href="/" aria-label={`${site.name}, home`}>
+            <Image src="/logo.png" alt="" width={69} height={48} priority />
+            <span className="brand-name">
+              <strong>Jay Ganesh</strong>
+              <span className="label">Detailing &amp; Accessories</span>
+            </span>
+          </Link>
+
+          <nav className="nav" aria-label="Main">
+            {primaryNav.map((item) => (
+              <div className="nav-item" key={item.href}>
+                <Link className="nav-link" href={item.href} aria-current={isActive(item.href) ? "page" : undefined}>
+                  {item.label}
+                  {item.menu && <IconChevron className="chev" />}
+                </Link>
+
+                {item.menu === "studio" && (
+                  <div className="mega">
+                    <div className="wrap">
+                      <div style={{ gridColumn: "span 2" }}>
+                        <h4 className="label label--yellow">Detailing studio</h4>
+                        <ul>
+                          {studioLinks.map((l) => (
+                            <li key={l.href}><Link href={l.href}><strong>{l.label}</strong><span>{l.note}</span></Link></li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div style={{ gridColumn: "span 2" }}>
+                        <h4 className="label label--yellow">Not sure what you need?</h4>
+                        <p style={{ color: "var(--ink-muted)", maxWidth: "36ch" }}>
+                          PPF stops chips. Ceramic adds gloss. Detailing cleans. Send a photo of your car and we'll suggest the right one.
+                        </p>
+                      </div>
+                      <div className="mega-card">
+                        <p className="label">Free paint inspection</p>
+                        <p>Bring your car in and we'll check the paint with you under studio lights.</p>
+                        <WhatsAppButton size="sm" message="Hi Jay Ganesh, I'd like to book a free paint inspection. Car model: ">Book on WhatsApp</WhatsAppButton>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {item.menu === "accessories" && (
+                  <div className="mega">
+                    <div className="wrap">
+                      {groups.map((g) => (
+                        <div key={g}>
+                          <h4 className="label label--yellow">{g}</h4>
+                          <ul>
+                            {categories.filter((c) => c.group === g).map((c) => (
+                              <li key={c.key}><Link href={categoryHref(c)}><strong>{c.name}</strong><span>{c.blurb}</span></Link></li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                      <div className="mega-card">
+                        <p className="label">Fitted at our shop</p>
+                        <p>Tell us your car model and what you're looking for. We'll send options and prices.</p>
+                        <Link className="text-link" href="/accessories/">All accessories →</Link>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </nav>
+
+          <div className="header-actions">
+            <ThemeToggle />
+            <a className="btn btn--ghost btn--sm btn--call" href={site.phoneHref}><IconPhone />Call</a>
+            <WhatsAppButton size="sm">WhatsApp</WhatsAppButton>
+            <button
+              className="menu-toggle"
+              type="button"
+              aria-expanded={open}
+              aria-controls="mobile-menu"
+              aria-label={open ? "Close menu" : "Open menu"}
+              onClick={() => setOpen((v) => !v)}
+            >
+              <span />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {open && (
+        <nav className="mobile-menu" id="mobile-menu" aria-label="Main">
+          <details open>
+            <summary>Detailing Studio</summary>
+            <ul>
+              {studioLinks.map((l) => (
+                <li key={l.href}><Link href={l.href}><strong>{l.label}</strong>{l.note}</Link></li>
+              ))}
+              <li><Link href="/detailing-studio/"><strong>All studio services</strong></Link></li>
+            </ul>
+          </details>
+          <details>
+            <summary>Accessories</summary>
+            <ul>
+              {categories.map((c) => (
+                <li key={c.key}><Link href={categoryHref(c)}><strong>{c.name}</strong>{c.blurb}</Link></li>
+              ))}
+            </ul>
+          </details>
+          {primaryNav.filter((i) => !i.menu).map((i) => (
+            <Link key={i.href} href={i.href}>{i.label}<span className="label">→</span></Link>
+          ))}
+          <div className="mobile-contact">
+            <p className="label">{site.hoursShort}</p>
+            <p className="label">{site.addressShort}</p>
+          </div>
+        </nav>
+      )}
+
+      <div className="action-bar" aria-label="Contact the shop">
+        <a href={whatsapp()} target="_blank" rel="noopener noreferrer" data-track="whatsapp"><IconWhatsApp />WhatsApp</a>
+        <a href={site.phoneHref} data-track="call"><IconPhone />Call</a>
+        <a href={site.mapsHref} target="_blank" rel="noopener noreferrer" data-track="directions"><IconPin />Map</a>
+      </div>
+    </>
+  );
+}

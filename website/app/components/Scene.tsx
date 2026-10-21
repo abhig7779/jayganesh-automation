@@ -8,16 +8,9 @@ import { Environment, Lightformer, Sparkles } from "@react-three/drei";
 const YELLOW = "#ffe500";
 const RED = "#ff3b30";
 
-// Page scroll progress, 0 at the top and 1 at the bottom.
-function scrollProgress() {
-  if (typeof window === "undefined") return 0;
-  const max = document.documentElement.scrollHeight - window.innerHeight;
-  return max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
-}
-
 // The shield from the logo: a pitched "roof" on top, straight sides, and a
 // curved point at the bottom. Built as an outline (outer shape minus inner).
-function shieldPath(s: number) {
+export function shieldPath(s: number) {
   const p = new THREE.Shape();
   p.moveTo(0, 1.55 * s);
   p.lineTo(1.25 * s, 0.85 * s);
@@ -29,7 +22,7 @@ function shieldPath(s: number) {
   return p;
 }
 
-function Shield() {
+export function Shield() {
   const geometry = useMemo(() => {
     const outer = shieldPath(1);
     const inner = shieldPath(0.86);
@@ -54,7 +47,7 @@ function Shield() {
 }
 
 // The yellow car swoosh: a glowing tube along the roof line of the logo's car.
-function Swoosh() {
+export function Swoosh() {
   const [roof, sill] = useMemo(() => {
     const roofCurve = new THREE.CatmullRomCurve3(
       [
@@ -101,7 +94,7 @@ function Swoosh() {
 
 function Badge() {
   const group = useRef<THREE.Group>(null);
-  const { viewport, pointer } = useThree();
+  const { pointer } = useThree();
   const reduced = useMemo(
     () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
     [],
@@ -110,42 +103,17 @@ function Badge() {
   useFrame((state, delta) => {
     const g = group.current;
     if (!g) return;
-    const p = scrollProgress();
-    // Narrow screens: keep the badge closer to the middle.
-    const spread = Math.min(1, viewport.aspect / 1.3);
-
-    // Three stops that match the three sections of the page.
-    const stops = [
-      { x: 2.3, y: 0.1, rot: -0.45, scale: 1 },
-      { x: -2.5, y: 0, rot: 0.55, scale: 0.95 },
-      { x: 0, y: 1.25, rot: Math.PI * 2 - 0.2, scale: 0.6 },
-    ];
-    const t = p * 2;
-    const i = Math.min(1, Math.floor(t));
-    const f = THREE.MathUtils.smootherstep(t - i, 0, 1);
-    const a = stops[i];
-    const b = stops[i + 1];
-    const target = {
-      x: THREE.MathUtils.lerp(a.x, b.x, f) * spread,
-      y: THREE.MathUtils.lerp(a.y, b.y, f),
-      rot: THREE.MathUtils.lerp(a.rot, b.rot, f),
-      scale: THREE.MathUtils.lerp(a.scale, b.scale, f) * (spread < 1 ? 0.8 : 1),
-    };
-
-    const idle = reduced ? 0 : Math.sin(state.clock.elapsedTime * 0.6) * 0.08;
-    const k = reduced ? 1000 : 4;
-    g.position.x = THREE.MathUtils.damp(g.position.x, target.x, k, delta);
-    g.position.y = THREE.MathUtils.damp(g.position.y, target.y + idle, k, delta);
-    g.rotation.y = THREE.MathUtils.damp(g.rotation.y, target.rot + (reduced ? 0 : pointer.x * 0.25), k, delta);
-    g.rotation.x = THREE.MathUtils.damp(g.rotation.x, reduced ? 0 : -pointer.y * 0.15, k, delta);
-    const s = THREE.MathUtils.damp(g.scale.x, target.scale, k, delta);
-    g.scale.setScalar(s);
-
-    state.camera.position.z = THREE.MathUtils.damp(state.camera.position.z, 7 + p * 1.5, k, delta);
+    // Turn gently as the hero scrolls away; follow the pointer a little.
+    const scroll = Math.min(1, window.scrollY / Math.max(1, window.innerHeight));
+    const idle = reduced ? 0 : Math.sin(state.clock.elapsedTime * 0.5) * 0.06;
+    const k = reduced ? 1000 : 3.5;
+    g.rotation.y = THREE.MathUtils.damp(g.rotation.y, -0.42 + scroll * 0.9 + (reduced ? 0 : pointer.x * 0.22), k, delta);
+    g.rotation.x = THREE.MathUtils.damp(g.rotation.x, reduced ? 0 : -pointer.y * 0.12, k, delta);
+    g.position.y = THREE.MathUtils.damp(g.position.y, 0.15 + idle - scroll * 0.6, k, delta);
   });
 
   return (
-    <group ref={group}>
+    <group ref={group} scale={0.86}>
       <Shield />
       <Swoosh />
     </group>
@@ -157,16 +125,15 @@ export default function Scene() {
     <Canvas
       dpr={[1, 1.75]}
       camera={{ position: [0, 0.4, 7], fov: 40 }}
-      gl={{ antialias: true, powerPreference: "high-performance" }}
+      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
     >
-      <color attach="background" args={["#0f1013"]} />
-      <fog attach="fog" args={["#0f1013", 9, 22]} />
+            
       <ambientLight intensity={0.25} />
       <spotLight position={[4, 6, 6]} angle={0.4} penumbra={0.8} intensity={60} color="#ffffff" />
       <pointLight position={[-4, 1, 3]} intensity={12} color={YELLOW} />
 
       <Badge />
-      <Sparkles count={70} scale={[14, 6, 6]} size={2.2} speed={0.35} color={YELLOW} opacity={0.55} />
+      <Sparkles count={40} scale={[8, 5, 5]} size={2.2} speed={0.35} color={YELLOW} opacity={0.55} />
 
       {/* Studio-style reflections without loading any image files */}
       <Environment resolution={256}>
