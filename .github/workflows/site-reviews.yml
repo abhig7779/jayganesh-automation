@@ -1,0 +1,54 @@
+name: Refresh website Google reviews
+
+# Daily at 07:00 IST. Pulls the live Google rating, review count and latest reviews
+# into website/lib/reviews.json so the site never shows a stale number.
+# On any API problem the script leaves the file untouched (the site keeps its last good data).
+# (Not to be confused with reviews.yml, which replies to reviews.)
+on:
+  schedule:
+    - cron: "30 1 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: site-reviews
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+      GOOGLE_PLACE_ID: ${{ secrets.GOOGLE_PLACE_ID }}
+    steps:
+      - name: Skip when the API key is missing
+        if: env.GOOGLE_MAPS_API_KEY == ''
+        run: echo "::notice title=Website reviews::GOOGLE_MAPS_API_KEY secret is not set, so the Google reviews refresh was skipped."
+
+      - uses: actions/checkout@v4
+        if: env.GOOGLE_MAPS_API_KEY != ''
+
+      - uses: actions/setup-node@v4
+        if: env.GOOGLE_MAPS_API_KEY != ''
+        with:
+          node-version: 20
+
+      - name: Fetch rating, count and reviews
+        if: env.GOOGLE_MAPS_API_KEY != ''
+        run: node website/scripts/fetch-reviews.mjs
+
+      - name: Commit if changed
+        if: env.GOOGLE_MAPS_API_KEY != ''
+        run: |
+          if [[ -n "$(git status --porcelain website/lib/reviews.json)" ]]; then
+            git config user.name "jayganesh-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add website/lib/reviews.json
+            git commit -m "Update Google reviews"
+            for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
+          else
+            echo "No change to website/lib/reviews.json"
+          fi

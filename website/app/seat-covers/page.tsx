@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { CtaBand, Crumbs, Faq, JsonLd, Photo, Price, SectionHead, Visit, WhatsAppButton, CallButton } from "../components/ui";
+import { CtaBand, Faq, JsonLd, PageHero, Photo, Price, SectionHead, Visit, WhatsAppButton, CallButton } from "../components/ui";
+import Reveal from "../components/Reveal";
 import { popularCars } from "@/lib/catalog";
 import { whatsapp } from "@/lib/site";
 
@@ -27,64 +28,60 @@ export default function SeatCovers() {
   return (
     <>
       <JsonLd data={{ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) }} />
-      <section className="page-hero">
-        <div className="wrap">
-          <div className="page-hero-copy">
-            <Crumbs items={[{ label: "Accessories", href: "/accessories/" }, { label: "Seat covers" }]} />
-            <p className="label label--yellow">Accessories · Interior</p>
-            <h1>Car seat covers, made for your model</h1>
-            <hr className="rule" />
-            <p className="lead">Seat covers chosen for your car's exact seats, fitted at our shop. One of the most-asked-for jobs at Jay Ganesh.</p>
-            <Price k="seatCoverFrom" />
-            <div className="actions">
-              <WhatsAppButton message="Hi Jay Ganesh, I want seat covers. Car model and year: ">WhatsApp your car model</WhatsAppButton>
-              <CallButton />
-            </div>
-          </div>
-          <Photo label="Fitted seat covers in an MUV, second row" m="interior" ratio="4 / 5" eager sizes="(min-width: 1024px) 45vw, 100vw" />
+      <PageHero
+        crumbs={[{ label: "Accessories", href: "/accessories/" }, { label: "Seat covers" }]}
+        eyebrow="Accessories · Interior"
+        title="Car seat covers, made for your model"
+        lead="Seat covers chosen for your car's exact seats, fitted at our shop. One of the most-asked-for jobs at Jay Ganesh."
+        media={<Photo label="Fitted seat covers in an MUV, second row" m="interior" ratio="4 / 5" eager sizes="(min-width: 1024px) 45vw, 100vw" />}
+      >
+        <Price k="seatCoverFrom" />
+        <div className="actions">
+          <WhatsAppButton message="Hi Jay Ganesh, I want seat covers. Car model and year: ">WhatsApp your car model</WhatsAppButton>
+          <CallButton />
         </div>
-      </section>
+      </PageHero>
 
       <section className="band band--panel">
         <div className="wrap">
-          <SectionHead eyebrow="Popular with our customers" title="Seat covers by car" lead="Tap your model to ask for options and prices on WhatsApp." />
-          <div className="cars">
+          <Reveal><SectionHead eyebrow="Popular with our customers" title="Seat covers by car" lead="Tap your model to ask for options and prices on WhatsApp." /></Reveal>
+          <Reveal className="cars">
             {popularCars.map((car) => (
               <a key={car} href={whatsapp(`Hi Jay Ganesh, I want seat covers for my ${car}. Year: `)} target="_blank" rel="noopener noreferrer" data-track="whatsapp">
                 <strong>{car.split(" ").slice(1).join(" ")}</strong>
                 <span className="label">{car.split(" ")[0]}</span>
               </a>
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
 
       <section className="band">
         <div className="wrap">
-          <SectionHead eyebrow="How it works" title="Three steps" />
-          <ol className="process">{steps.map((s) => <li key={s.step}><strong>{s.step}</strong><span>{s.detail}</span></li>)}</ol>
+          <Reveal><SectionHead eyebrow="How it works" title="Three steps" /></Reveal>
+          <Reveal as="ol" className="process">{steps.map((s) => <li key={s.step}><strong>{s.step}</strong><span>{s.detail}</span></li>)}</Reveal>
         </div>
       </section>
 
-      <section className="band">
+      <section className="band band--panel">
         <div className="wrap">
-          <SectionHead eyebrow="Recent fittings" title="From the shop" />
-          <div className="grid grid-3">
+          <Reveal><SectionHead eyebrow="Recent fittings" title="From the shop" /></Reveal>
+          <Reveal className="grid grid-3">
             <Photo label="Front seats, quilted pattern" m="interior" />
             <Photo label="Third row in a 7-seater" m="dashClean" />
             <Photo label="Stitching close-up" />
-          </div>
+          </Reveal>
         </div>
       </section>
 
-      <section className="band band--paper">
-        <div className="wrap split" style={{ alignItems: "start" }}>
+      <section className="band">
+        <Reveal className="wrap split split--start split--sticky">
           <SectionHead eyebrow="Questions" title="Seat covers: common questions" />
           <Faq items={faqs} />
-        </div>
+        </Reveal>
       </section>
 
-      <section className="band band--tight"><div className="wrap"><Visit /></div></section>
+      <section className="band band--tight"><Reveal className="wrap"><Visit /></Reveal></section>
       <CtaBand message="Hi Jay Ganesh, I want seat covers. Car model and year: " />
     </>
   );

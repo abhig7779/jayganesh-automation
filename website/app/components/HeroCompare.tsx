@@ -33,9 +33,10 @@ export default function HeroCompare() {
     <img
       src={imageUrl(media[key].src, 1400)}
       srcSet={srcSet(media[key].src, [640, 960, 1400, 2000])}
-      sizes="(min-width: 1024px) 50vw, 100vw"
+      sizes="(min-width: 1320px) 1240px, 100vw"
       alt={media[key].alt}
-      fetchPriority="high"
+      loading="lazy"
+      decoding="async"
       draggable={false}
     />
   );

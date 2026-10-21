@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { CtaBand, Crumbs, Price, SectionHead, Visit, WhatsAppButton } from "../components/ui";
+import { CtaBand, PageHero, Price, SectionHead, Visit, WhatsAppButton } from "../components/ui";
+import Reveal from "../components/Reveal";
 import { offers, offerSeason } from "@/lib/offers";
 import { facts } from "@/lib/prices";
 
@@ -13,23 +14,19 @@ export default function Offers() {
   const active = offers.filter((o) => o.active);
   return (
     <>
-      <section className="page-hero">
-        <div className="wrap">
-          <div className="page-hero-copy">
-            <Crumbs items={[{ label: "Offers" }]} />
-            <p className="label label--yellow">{offerSeason}</p>
-            <h1>Offers this season</h1>
-            <hr className="rule" />
-            <p className="lead">Book on WhatsApp to hold your slot. Offers are for bookings made during the dates shown.</p>
-            {facts.slotsLeft != null && <p className="price-ask" style={{ width: "fit-content" }}>{facts.slotsLeft} slots left before Dhanteras</p>}
-          </div>
-        </div>
-      </section>
+      <PageHero
+        crumbs={[{ label: "Offers" }]}
+        eyebrow={offerSeason}
+        title="Offers this season"
+        lead="Book on WhatsApp to hold your slot. Offers are for bookings made during the dates shown."
+      >
+        {facts.slotsLeft != null && <p className="price-ask offer-slots">{facts.slotsLeft} slots left before Dhanteras</p>}
+      </PageHero>
 
-      <section className="band">
+      <section className="band band--panel">
         <div className="wrap">
           {active.length ? (
-            <div className="grid grid-2">
+            <Reveal className="grid grid-2">
               {active.map((o) => (
                 <article key={o.title} className="offer">
                   <span className="label label--yellow offer-until">{o.until}</span>
@@ -42,15 +39,15 @@ export default function Offers() {
                   <WhatsAppButton message={o.whatsappMessage}>Book this offer</WhatsAppButton>
                 </article>
               ))}
-            </div>
+            </Reveal>
           ) : (
             <SectionHead title="No offers right now" lead="Follow us on Instagram to hear about the next one, or WhatsApp us for a price today." />
           )}
-          <p className="label" style={{ marginTop: 24 }}>Offers can&apos;t be combined unless stated. See our <a href="/terms/">terms</a>.</p>
+          <p className="offers-note">Offers can&apos;t be combined unless stated. See our <a href="/terms/">terms</a>.</p>
         </div>
       </section>
 
-      <section className="band band--tight"><div className="wrap"><Visit /></div></section>
+      <section className="band band--tight"><Reveal className="wrap"><Visit /></Reveal></section>
       <CtaBand />
     </>
   );

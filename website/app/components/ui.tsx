@@ -139,10 +139,45 @@ export function SectionHead({ eyebrow, title, lead, as = "h2" }: { eyebrow?: str
   const H = as;
   return (
     <div className="section-head">
-      {eyebrow && <p className="label label--yellow">{eyebrow}</p>}
+      {eyebrow && <p className="label label--yellow eyebrow">{eyebrow}</p>}
       <H>{title}</H>
       {lead && <p className="lead">{lead}</p>}
     </div>
+  );
+}
+
+/* ---------- Page hero (inner pages) ---------- */
+
+export function PageHero({
+  crumbs,
+  eyebrow,
+  title,
+  lead,
+  children,
+  media,
+}: {
+  crumbs: { label: string; href?: string }[];
+  eyebrow?: string;
+  title: string;
+  lead?: React.ReactNode;
+  /** Extra hero content under the lead: notes, price, actions. */
+  children?: React.ReactNode;
+  /** A photo or card shown beside the copy on wide screens. */
+  media?: React.ReactNode;
+}) {
+  return (
+    <section className={media ? "page-hero" : "page-hero page-hero--solo"}>
+      <div className="wrap">
+        <div className="page-hero-copy">
+          <Crumbs items={crumbs} />
+          {eyebrow && <p className="label label--yellow eyebrow">{eyebrow}</p>}
+          <h1>{title}</h1>
+          {lead && (typeof lead === "string" ? <p className="lead">{lead}</p> : lead)}
+          {children}
+        </div>
+        {media && <div className="page-hero-media">{media}</div>}
+      </div>
+    </section>
   );
 }
 
@@ -153,7 +188,10 @@ export function Faq({ items }: { items: { q: string; a: string }[] }) {
     <div className="faq">
       {items.map((f) => (
         <details key={f.q}>
-          <summary>{f.q}</summary>
+          <summary>
+            <span>{f.q}</span>
+            <span className="faq-icon" aria-hidden />
+          </summary>
           <p>{f.a}</p>
         </details>
       ))}
@@ -166,7 +204,7 @@ export function Faq({ items }: { items: { q: string; a: string }[] }) {
 export function Crumbs({ items }: { items: { label: string; href?: string }[] }) {
   return (
     <nav aria-label="Breadcrumb">
-      <ol className="crumbs label">
+      <ol className="crumbs">
         <li><Link href="/">Home</Link></li>
         {items.map((c) => (
           <li key={c.label}>{c.href ? <Link href={c.href}>{c.label}</Link> : <span aria-current="page">{c.label}</span>}</li>
@@ -183,7 +221,10 @@ export function Trust() {
     <div className="trust-band">
       <div className="wrap">
         <div className="trust">
-          <div><strong>{site.rating}<span className="trust-star">★</span></strong><span className="label">{site.reviews} Google reviews</span></div>
+          <div>
+            <strong>{site.rating}<span className="trust-star" aria-hidden>★</span></strong>
+            <span className="label">{site.reviews} Google reviews</span>
+          </div>
           <div><strong>{site.customers}</strong><span className="label">Customers served</span></div>
           <div><strong>7 days</strong><span className="label">Open 10 am – 8 pm</span></div>
           <div><strong>{site.instagramFollowers}</strong><span className="label">On Instagram</span></div>
@@ -205,13 +246,14 @@ export function CtaBand({
   return (
     <section className="cta" aria-label="Get a price">
       <div className="wrap">
-        <div className="stack">
-          <p className="label">WhatsApp · {site.phoneDisplay}</p>
+        <div className="cta-copy">
+          <p className="label eyebrow">WhatsApp · {site.phoneDisplay}</p>
           <h2>{title}</h2>
+          <p className="cta-note">{site.hoursShort} · {site.addressShort}</p>
         </div>
         <div className="actions">
           <WhatsAppButton message={message}>WhatsApp us</WhatsAppButton>
-          <a className="btn btn--ghost" href={site.phoneHref}><IconPhone />Call the shop</a>
+          <a className="btn btn--ghost" href={site.phoneHref} data-track="call"><IconPhone />Call the shop</a>
         </div>
       </div>
     </section>
@@ -224,14 +266,14 @@ export function Visit() {
   return (
     <div className="visit">
       <div>
-        <p className="label label--yellow">Visit the shop</p>
+        <p className="label label--yellow eyebrow">Visit the shop</p>
         <p className="big">{site.addressShort}</p>
-        <p className="label">On the Pune–Solapur road, at the toll naka</p>
+        <p className="visit-note">On the Pune–Solapur road, at the toll naka</p>
       </div>
       <div>
         <p className="label">Hours</p>
         <p className="big">10 am – 8 pm</p>
-        <p className="label">Every day</p>
+        <p className="visit-note">Every day</p>
       </div>
       <div>
         <p className="label">Directions</p>

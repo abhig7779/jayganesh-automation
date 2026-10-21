@@ -40,7 +40,16 @@ export const primaryNav = [
   { label: "Accessories", href: "/accessories/", menu: "accessories" as const },
   { label: "Our Work", href: "/our-work/" },
   { label: "Offers", href: "/offers/" },
-  { label: "Visit Us", href: "/visit-us/" },
+  { label: "About", href: "/about-us/" },
+  { label: "Contact", href: "/contact-us/" },
+];
+
+// Company pages: footer "Company" column and the mobile menu.
+export const companyLinks: NavLink[] = [
+  { label: "About us", href: "/about-us/" },
+  { label: "Contact", href: "/contact-us/" },
+  { label: "Partnerships", href: "/partnerships/" },
+  { label: "Become a vendor", href: "/become-a-vendor/" },
 ];
 
 // The car models customers ask about most (Leads sheet, Oct 2026).

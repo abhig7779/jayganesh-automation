@@ -1,5 +1,5 @@
 import { site } from "@/lib/site";
-import { Crumbs } from "./ui";
+import { PageHero } from "./ui";
 
 export default function LegalShell({
   title,
@@ -11,16 +11,10 @@ export default function LegalShell({
 }) {
   return (
     <>
-      <section className="page-hero">
-        <div className="wrap">
-          <div className="page-hero-copy">
-            <Crumbs items={[{ label: title }]} />
-            <h1>{title}</h1>
-            <p className="label">Last updated {site.legalUpdated}</p>
-          </div>
-        </div>
-      </section>
-      <section className="band band--paper">
+      <PageHero crumbs={[{ label: title }]} title={title}>
+        <p className="label">Last updated {site.legalUpdated}</p>
+      </PageHero>
+      <section className="band band--panel">
         <div className="wrap">
           <div className="legal prose">{children}</div>
         </div>

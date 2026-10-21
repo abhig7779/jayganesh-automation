@@ -4,9 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { categories, primaryNav, studioLinks } from "@/lib/catalog";
+import { categories, companyLinks, primaryNav, studioLinks } from "@/lib/catalog";
 import { site, whatsapp } from "@/lib/site";
-import { IconChevron, IconPhone, IconPin, IconWhatsApp, WhatsAppButton } from "./ui";
+import { IconArrow, IconChevron, IconPhone, IconPin, IconWhatsApp, WhatsAppButton } from "./ui";
 import ThemeToggle from "./ThemeToggle";
 
 const groups = ["Interior", "Lights", "Tech", "Exterior"] as const;
@@ -18,35 +18,56 @@ function categoryHref(c: (typeof categories)[number]) {
 export default function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // Transparent over the top of the page; a dark glass bar once scrolled.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   // Close the mobile menu on navigation, and lock page scroll while it's open.
   useEffect(() => setOpen(false), [pathname]);
   useEffect(() => {
     document.documentElement.style.overflow = open ? "hidden" : "";
-    return () => { document.documentElement.style.overflow = ""; };
+    if (!open) return () => { document.documentElement.style.overflow = ""; };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.documentElement.style.overflow = "";
+      document.removeEventListener("keydown", onKey);
+    };
   }, [open]);
 
   const isActive = (href: string) =>
     pathname === href ||
     (href === "/detailing-studio/" && studioLinks.some((l) => pathname === l.href)) ||
-    (href === "/accessories/" && pathname === "/seat-covers/");
+    (href === "/accessories/" && pathname === "/seat-covers/") ||
+    (href === "/contact-us/" && pathname === "/visit-us/");
 
   return (
     <>
       <a className="skip-link" href="#main">Skip to content</a>
 
       <div className="topbar">
-        <div className="wrap label">
-          <a href={site.mapsHref} target="_blank" rel="noopener noreferrer">📍 {site.addressShort}</a>
-          <span>{site.hoursShort}</span>
-          <a href={site.reviewsHref} target="_blank" rel="noopener noreferrer">★ {site.rating} on Google · {site.reviews} reviews</a>
+        <div className="wrap">
+          <a href={site.mapsHref} target="_blank" rel="noopener noreferrer"><IconPin />{site.addressShort}</a>
+          <span className="topbar-right">
+            <span>{site.hoursShort}</span>
+            <span className="topbar-dot" aria-hidden />
+            <a href={site.reviewsHref} target="_blank" rel="noopener noreferrer">
+              <span className="topbar-star" aria-hidden>★</span> {site.rating} on Google · {site.reviews} reviews
+            </a>
+          </span>
         </div>
       </div>
 
-      <header className="header">
+      <header className={["header", scrolled && "is-scrolled", open && "is-open"].filter(Boolean).join(" ")}>
         <div className="wrap">
           <Link className="brand" href="/" aria-label={`${site.name}, home`}>
-            <Image src="/logo.png" alt="" width={69} height={48} priority />
+            <Image src="/logo.png" alt="" width={58} height={40} priority />
             <span className="brand-name">
               <strong>Jay Ganesh</strong>
               <span className="label">Detailing &amp; Accessories</span>
@@ -74,7 +95,7 @@ export default function Header() {
                       </div>
                       <div style={{ gridColumn: "span 2" }}>
                         <h4 className="label label--yellow">Not sure what you need?</h4>
-                        <p style={{ color: "var(--ink-muted)", maxWidth: "36ch" }}>
+                        <p className="mega-note">
                           PPF stops chips. Ceramic adds gloss. Detailing cleans. Send a photo of your car and we'll suggest the right one.
                         </p>
                       </div>
@@ -103,7 +124,7 @@ export default function Header() {
                       <div className="mega-card">
                         <p className="label">Fitted at our shop</p>
                         <p>Tell us your car model and what you're looking for. We'll send options and prices.</p>
-                        <Link className="text-link" href="/accessories/">All accessories →</Link>
+                        <Link className="text-link" href="/accessories/">All accessories <IconArrow /></Link>
                       </div>
                     </div>
                   </div>
@@ -150,11 +171,27 @@ export default function Header() {
             </ul>
           </details>
           {primaryNav.filter((i) => !i.menu).map((i) => (
-            <Link key={i.href} href={i.href}>{i.label}<span className="label">→</span></Link>
+            <Link key={i.href} href={i.href}>{i.label}<IconArrow /></Link>
           ))}
+          <Link href="/visit-us/">Visit Us<IconArrow /></Link>
+          <details>
+            <summary>Work with us</summary>
+            <ul>
+              {companyLinks.filter((l) => l.href === "/partnerships/" || l.href === "/become-a-vendor/").map((l) => (
+                <li key={l.href}><Link href={l.href}><strong>{l.label}</strong></Link></li>
+              ))}
+            </ul>
+          </details>
           <div className="mobile-contact">
+            <div className="actions">
+              <WhatsAppButton block>WhatsApp us</WhatsAppButton>
+              <a className="btn btn--ghost btn--block" href={site.phoneHref} data-track="call"><IconPhone />Call {site.phoneDisplay}</a>
+            </div>
             <p className="label">{site.hoursShort}</p>
             <p className="label">{site.addressShort}</p>
+            <a className="mobile-rating" href={site.reviewsHref} target="_blank" rel="noopener noreferrer">
+              <span aria-hidden>★</span> {site.rating} on Google · {site.reviews} reviews
+            </a>
           </div>
         </nav>
       )}

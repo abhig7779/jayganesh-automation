@@ -1,0 +1,43 @@
+# BEGIN MilesWeb-ErrorPages
+ErrorDocument 503 /error_pages/503.html
+# END MilesWeb-ErrorPages
+
+# api.jayganeshcaraccessories.com : Jay Ganesh website API
+# Keep any lines cPanel/MilesWeb adds (e.g. a PHP handler block) when you edit this file.
+
+Options -Indexes
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Force HTTPS. 308 keeps the method and body, so a POST to http:// stays a POST.
+  # .well-known is left alone so AutoSSL / Let's Encrypt validation keeps working.
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteCond %{REQUEST_URI} !^/\.well-known/
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=308,L]
+
+  # Private folders and include-only files.
+  RewriteRule ^(data|templates|previews)(/|$) - [F,L]
+  RewriteRule ^(config|lib|preview)\.php$ - [F,L]
+
+  # Dotfiles (except .well-known).
+  RewriteCond %{REQUEST_URI} !^/\.well-known/
+  RewriteRule (^|/)\. - [F,L]
+</IfModule>
+
+# Second layer, in case rewrites are off.
+<FilesMatch "^(config|lib|preview)\.php$">
+  Require all denied
+</FilesMatch>
+<FilesMatch "\.(jsonl|json|log|md|txt|bak|lock)$">
+  Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "no-referrer"
+  Header always set X-Frame-Options "DENY"
+  Header always set Strict-Transport-Security "max-age=31536000"
+</IfModule>

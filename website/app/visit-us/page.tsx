@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Crumbs, Photo, SectionHead, WhatsAppButton, IconPhone, IconPin } from "../components/ui";
+import { PageHero, Photo, SectionHead, WhatsAppButton, IconArrow, IconPhone, IconPin } from "../components/ui";
+import Reveal from "../components/Reveal";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -17,32 +18,32 @@ const from = [
 export default function VisitUs() {
   return (
     <>
-      <section className="page-hero">
-        <div className="wrap">
-          <div className="page-hero-copy">
-            <Crumbs items={[{ label: "Visit us" }]} />
-            <p className="label label--yellow">Loni Kalbhor</p>
-            <h1>Visit the shop</h1>
-            <hr className="rule" />
-            <address style={{ fontStyle: "normal" }} className="stack">
-              <span className="lead" style={{ color: "var(--ink)" }}>{site.address}</span>
-              <span className="label">{site.hours}</span>
-            </address>
-            <div className="actions">
-              <a className="btn btn--primary" href={site.mapsHref} target="_blank" rel="noopener noreferrer" data-track="directions"><IconPin />Get directions</a>
-              <a className="btn btn--ghost" href={site.phoneHref} data-track="call"><IconPhone />{site.phoneDisplay}</a>
-            </div>
-          </div>
+      <PageHero
+        crumbs={[{ label: "Visit us" }]}
+        eyebrow="Loni Kalbhor"
+        title="Visit the shop"
+        lead={
+          <address className="stack" style={{ fontStyle: "normal" }}>
+            <span className="lead" style={{ color: "var(--ink)" }}>{site.address}</span>
+            <span className="label">{site.hours}</span>
+          </address>
+        }
+        media={
           <a className="map-card" href={site.mapsHref} target="_blank" rel="noopener noreferrer" aria-label="Open the shop's location in Google Maps">
             <span className="map-pin" aria-hidden />
             <span className="label">Kawadipat Toll Naka · Pune–Solapur Road</span>
-            <span className="text-link">Open in Google Maps →</span>
+            <span className="text-link">Open in Google Maps <IconArrow /></span>
           </a>
+        }
+      >
+        <div className="actions">
+          <a className="btn btn--primary" href={site.mapsHref} target="_blank" rel="noopener noreferrer" data-track="directions"><IconPin />Get directions</a>
+          <a className="btn btn--ghost" href={site.phoneHref} data-track="call"><IconPhone />{site.phoneDisplay}</a>
         </div>
-      </section>
+      </PageHero>
 
-      <section className="band band--paper">
-        <div className="wrap split" style={{ alignItems: "start" }}>
+      <section className="band band--panel">
+        <Reveal className="wrap split split--start">
           <SectionHead eyebrow="Getting here" title="On the Pune–Solapur road" lead="We're right at Kawadipat Toll Naka in Loni Kalbhor." />
           <dl className="specs">
             {from.map((f) => (
@@ -52,18 +53,18 @@ export default function VisitUs() {
             <div><dt className="label">Phone and WhatsApp</dt><dd><a href={site.phoneHref}>{site.phoneDisplay}</a></dd></div>
             <div><dt className="label">Payment</dt><dd>UPI, cards and cash</dd></div>
           </dl>
-        </div>
+        </Reveal>
       </section>
 
       <section className="band">
         <div className="wrap">
-          <SectionHead eyebrow="When you arrive" title="The shop and the studio" />
-          <div className="grid grid-3">
+          <Reveal><SectionHead eyebrow="When you arrive" title="The shop and the studio" /></Reveal>
+          <Reveal className="grid grid-3">
             <Photo label="Shop front from the highway" m="studioBay" />
             <Photo label="Accessories display inside" />
             <Photo label="Studio entrance" m="hero" />
-          </div>
-          <div className="actions" style={{ marginTop: 28 }}>
+          </Reveal>
+          <div className="actions" style={{ marginTop: 36 }}>
             <WhatsAppButton message="Hi Jay Ganesh, I'd like to visit. When is a good time? Car model: ">Tell us you&apos;re coming</WhatsAppButton>
           </div>
         </div>

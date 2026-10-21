@@ -1,8 +1,15 @@
 import Link from "next/link";
-import PpfStory from "./components/PpfStory";
+import Hero from "./components/Hero";
 import QuickQuote from "./components/QuickQuote";
-import HeroCompare from "./components/HeroCompare";
-import { CtaBand, Photo, Price, SectionHead, Trust, Visit, WhatsAppButton, IconArrow } from "./components/ui";
+import ModelTiles from "./components/ModelTiles";
+import HowItWorks from "./components/HowItWorks";
+import AccessoryRail from "./components/AccessoryRail";
+import HomeGallery from "./components/HomeGallery";
+import ReviewsCarousel from "./components/ReviewsCarousel";
+import ReelsShowcase from "./components/ReelsShowcase";
+import GoogleRating from "./components/GoogleRating";
+import Reveal from "./components/Reveal";
+import { CtaBand, Photo, Price, Visit, WhatsAppButton, IconArrow } from "./components/ui";
 import { popularCars } from "@/lib/catalog";
 import { offers, offerSeason } from "@/lib/offers";
 import { site, whatsapp } from "@/lib/site";
@@ -12,166 +19,171 @@ import type { PriceKey } from "@/lib/prices";
 const studio: { href: string; name: string; line: string; m: MediaKey; price: PriceKey }[] = [
   { href: "/ppf-pune/", name: "Paint protection film", line: "Stops stone chips and scratches. Self-heals light marks.", m: "ppfApply", price: "ppfFrontKit" },
   { href: "/ceramic-coating-pune/", name: "Ceramic coating", line: "Deep gloss, water beading and easier washing for years.", m: "beadingDark", price: "ceramicFrom" },
-  { href: "/car-detailing-pune/", name: "Detailing", line: "Snow foam wash and interior deep cleaning, done by hand.", m: "foam", price: "washFrom" },
+  { href: "/car-detailing-pune/", name: "Detailing", line: "Exterior decontamination and interior deep cleaning, done by hand.", m: "polish", price: "washFrom" },
 ];
 
-const accessories = [
-  { name: "Seat covers", href: "/seat-covers/" },
-  { name: "Headlights", href: "/accessories/#headlights" },
-  { name: "Ambient lighting", href: "/accessories/#ambient" },
-  { name: "Android stereos", href: "/accessories/#stereo" },
-  { name: "360° cameras", href: "/accessories/#camera" },
-  { name: "Dashcams", href: "/accessories/#dashcam" },
-];
+function Head({ id, eyebrow, title, lead, children }: { id: string; eyebrow?: string; title: React.ReactNode; lead?: string; children?: React.ReactNode }) {
+  return (
+    <div className="h-head">
+      <div className="h-head-text">
+        {eyebrow && <p className="label">{eyebrow}</p>}
+        <h2 id={id}>{title}</h2>
+        {lead && <p className="h-lead">{lead}</p>}
+      </div>
+      {children && <div className="h-head-aside">{children}</div>}
+    </div>
+  );
+}
 
 export default function Home() {
   const liveOffer = offers.find((o) => o.active);
 
   return (
     <>
-      {/* Hero */}
-      <section className="hero" aria-labelledby="hero-title">
-        <div className="wrap hero-grid">
-          <div className="hero-copy">
-            {liveOffer && (
-              <Link href="/offers/" className="hero-offer">
-                <span className="hero-offer-dot" aria-hidden />
-                {offerSeason} · {liveOffer.title}
-                <IconArrow />
-              </Link>
-            )}
-            <h1 id="hero-title">Your car, done right. <em>Close to home.</em></h1>
-            <p className="lead">
-              PPF, ceramic coating and detailing in our new studio, plus the seat covers, lights and stereos eastern Pune already comes to us for.
-            </p>
-            <div className="hero-proof">
-              <span className="hero-stars" aria-hidden>★★★★★</span>
-              <span><strong>{site.rating}</strong> from {site.reviews} Google reviews</span>
-              <span className="hero-sep" aria-hidden />
-              <span>{site.customers} customers</span>
-            </div>
-            <QuickQuote />
-          </div>
-          <div className="hero-visual">
-            <HeroCompare />
-            <p className="compare-caption label"><span>Drag to compare</span><span>Same car · before and after PPF</span></p>
-          </div>
+      <Hero />
+
+      {/* Trust strip */}
+      <div className="trust-x" role="group" aria-label="Why customers choose us">
+        <div className="wrap">
+          <ul>
+            <li><GoogleRating variant="compact" /></li>
+            <li>{site.customers} customers</li>
+            <li>{site.hoursShort}</li>
+          </ul>
         </div>
-      </section>
-      <Trust />
+      </div>
 
       {/* Studio services */}
-      <section className="band" aria-labelledby="studio-title">
+      <section className="h-sec" id="studio" aria-labelledby="studio-title">
         <div className="wrap">
-          <div className="section-row">
-            <SectionHead eyebrow="The detailing studio" title="Protection that lasts longer than the shine" />
-            <Link className="text-link" href="/detailing-studio/">All studio services <IconArrow /></Link>
-          </div>
-          <div className="svc-grid">
-            {studio.map((s) => (
-              <Link key={s.href} href={s.href} className="svc">
-                <Photo label={s.name} m={s.m} ratio="4 / 5" sizes="(min-width: 900px) 33vw, 100vw" />
-                <div className="svc-body">
-                  <h3>{s.name}</h3>
-                  <p>{s.line}</p>
-                  <div className="svc-foot"><Price k={s.price} /><span className="svc-go" aria-hidden><IconArrow /></span></div>
-                </div>
-              </Link>
-            ))}
-          </div>
+          <Reveal>
+            <Head id="studio-title" eyebrow="Studio services" title="The detailing studio" lead="PPF, ceramic coating and detailing, done by hand in our new studio at the toll naka.">
+              <Link className="h-link" href="/detailing-studio/">All studio services <IconArrow /></Link>
+            </Head>
+            <div className="svc-x-grid">
+              {studio.map((s) => (
+                <Link key={s.href} href={s.href} className="svc-x">
+                  <Photo label={s.name} m={s.m} ratio="3 / 4" sizes="(min-width: 900px) 33vw, 100vw" />
+                  <div className="svc-x-body">
+                    <h3>{s.name}</h3>
+                    <p>{s.line}</p>
+                    <div className="svc-x-foot">
+                      <Price k={s.price} />
+                      <span className="svc-x-go" aria-hidden><IconArrow /></span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* 3D scroll story */}
-      <PpfStory />
+      {/* Google reviews */}
+      <section className="h-sec" aria-labelledby="reviews-title">
+        <div className="wrap">
+          <Reveal>
+            <Head id="reviews-title" eyebrow="Reviews" title={<>Rated {site.rating} on Google</>} lead="Families from Loni Kalbhor, Hadapsar, Manjri and Uruli Kanchan keep coming back, and now bring their new cars to the studio too.">
+              <GoogleRating variant="inline" />
+            </Head>
+            <ReviewsCarousel />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Instagram reels */}
+      <section className="h-sec h-sec--deep" aria-labelledby="reels-title">
+        <div className="wrap">
+          <Reveal>
+            <Head id="reels-title" eyebrow="On Instagram" title="Watch our work" lead="Real cars, filmed in our studio: PPF, coatings and interiors." />
+            <ReelsShowcase />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="h-sec h-sec--panel" aria-labelledby="how-title">
+        <div className="wrap">
+          <Reveal>
+            <Head id="how-title" eyebrow="How it works" title="From inspection to handover" lead="The same careful process for every car that comes into the studio." />
+            <HowItWorks />
+          </Reveal>
+        </div>
+      </section>
 
       {/* Accessories */}
-      <section className="band band--panel" aria-labelledby="acc-title">
-        <div className="wrap split">
-          <div className="stack-lg">
-            <SectionHead eyebrow="Accessories" title="Upgrades, fitted at our shop" lead="Chosen for your exact model and fitted by our team. Tell us your car and we'll send options." />
-            <ul className="chips">
-              {accessories.map((a) => <li key={a.name}><Link href={a.href}>{a.name}</Link></li>)}
-            </ul>
-            <div className="actions">
-              <Link className="btn btn--ghost" href="/accessories/">Browse accessories <IconArrow /></Link>
-            </div>
-          </div>
-          <div className="mosaic">
-            <Photo label="Interior" m="interior" ratio="1 / 1" sizes="(min-width: 960px) 25vw, 50vw" />
-            <Photo label="Headlights" m="headlight" ratio="1 / 1" sizes="(min-width: 960px) 25vw, 50vw" />
-            <Photo label="Lights" m="lightsDark" ratio="2 / 1" className="mosaic-wide" sizes="(min-width: 960px) 50vw, 100vw" />
-          </div>
+      <section className="h-sec" aria-labelledby="acc-title">
+        <div className="wrap">
+          <Reveal>
+            <Head id="acc-title" eyebrow="Accessories" title="Upgrades, fitted at our shop" lead="Chosen for your exact model and fitted by our team. Tell us your car and we'll send options.">
+              <Link className="h-link" href="/accessories/">Browse accessories <IconArrow /></Link>
+            </Head>
+            <AccessoryRail />
+          </Reveal>
         </div>
       </section>
 
       {/* Shop by car */}
-      <section className="band" aria-labelledby="cars-title">
+      <section className="h-sec h-sec--panel" aria-labelledby="cars-title">
         <div className="wrap">
-          <div className="section-row">
-            <SectionHead eyebrow="Shop by car" title="What fits your car?" lead="Tap your model. We'll reply with seat covers, lights, audio and PPF options made for it." />
-          </div>
-          <div className="cars">
-            {popularCars.map((car) => (
-              <a key={car} href={whatsapp(`Hi Jay Ganesh, what accessories and PPF options do you have for my ${car}?`)} target="_blank" rel="noopener noreferrer" data-track="whatsapp">
-                <span className="label">{car.split(" ")[0]}</span>
-                <strong>{car.split(" ").slice(1).join(" ")}</strong>
-              </a>
-            ))}
-          </div>
+          <Reveal>
+            <Head id="cars-title" eyebrow="Shop by car" title="What fits your car?" lead="Tap your model. We'll reply on WhatsApp with seat covers, lights, audio and PPF options made for it." />
+            <ModelTiles />
+          </Reveal>
         </div>
       </section>
 
-      {/* Gallery */}
-      <section className="band band--panel" aria-labelledby="gallery-title">
+      {/* Our work */}
+      <section className="h-sec" aria-labelledby="gallery-title">
         <div className="wrap">
-          <div className="section-row">
-            <SectionHead eyebrow="From the studio" title="Work you can see" />
-            <Link className="text-link" href="/our-work/">See our work <IconArrow /></Link>
-          </div>
-          <div className="gallery">
-            <Photo label="Polishing" m="polish" ratio="3 / 4" sizes="(min-width: 900px) 25vw, 50vw" />
-            <Photo label="Foam wash" m="foamDark" ratio="3 / 4" sizes="(min-width: 900px) 25vw, 50vw" />
-            <Photo label="Water beading" m="beadingClose" ratio="3 / 4" sizes="(min-width: 900px) 25vw, 50vw" />
-            <Photo label="Interior detailing" m="dashClean" ratio="3 / 4" sizes="(min-width: 900px) 25vw, 50vw" />
-          </div>
+          <Reveal>
+            <Head id="gallery-title" eyebrow="From the studio" title="Work you can see">
+              <Link className="h-link" href="/our-work/">See our work <IconArrow /></Link>
+            </Head>
+            <HomeGallery />
+          </Reveal>
         </div>
       </section>
 
-      {/* Reviews */}
-      <section className="band" aria-labelledby="reviews-title">
-        <div className="wrap split">
-          <SectionHead eyebrow="Reviews" title="Trusted on the highway for years" lead="Families from Loni Kalbhor, Hadapsar, Manjri and Uruli Kanchan keep coming back, and now bring their new cars to the studio too." />
-          <div className="rating">
-            <div className="rating-score"><strong>{site.rating}</strong><span className="stars" aria-hidden>★★★★★</span></div>
-            <p>From {site.reviews} reviews on Google</p>
-            <div className="actions">
-              <a className="btn btn--ghost" href={site.reviewsHref} target="_blank" rel="noopener noreferrer">Read the reviews</a>
+      {/* Quick quote */}
+      <section className="h-sec h-sec--panel" aria-labelledby="qq-title">
+        <div className="wrap">
+          <Reveal>
+            <div className="qq-x">
+              <div className="qq-x-text">
+                <p className="label">Quick quote</p>
+                <h2 id="qq-title">Get your price in 30 seconds</h2>
+                <p className="h-lead">Pick what you need, type your car, and the message opens in WhatsApp, ready to send.</p>
+                <p className="label">Reply on WhatsApp · {site.hoursShort}</p>
+              </div>
+              <QuickQuote />
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Offer */}
       {liveOffer && (
-        <section className="band band--tight" aria-label="Current offer">
+        <section className="h-sec h-sec--tight" aria-label="Current offer">
           <div className="wrap">
-            <div className="offer-banner">
-              <div className="stack">
-                <p className="label label--yellow">{offerSeason} · {liveOffer.until}</p>
-                <h3>{liveOffer.title}</h3>
-                <Price k={liveOffer.price} />
+            <Reveal>
+              <div className="offer-banner">
+                <div className="stack">
+                  <p className="label label--yellow">{offerSeason} · {liveOffer.until}</p>
+                  <h3>{liveOffer.title}</h3>
+                  <Price k={liveOffer.price} />
+                </div>
+                <div className="actions">
+                  <Link className="btn btn--ghost" href="/offers/">All offers</Link>
+                  <WhatsAppButton message={liveOffer.whatsappMessage}>Book this offer</WhatsAppButton>
+                </div>
               </div>
-              <div className="actions">
-                <Link className="btn btn--ghost" href="/offers/">All offers</Link>
-                <WhatsAppButton message={liveOffer.whatsappMessage}>Book this offer</WhatsAppButton>
-              </div>
-            </div>
+            </Reveal>
           </div>
         </section>
       )}
 
-      <section className="band band--tight" aria-label="Visit the shop">
+      <section className="h-sec h-sec--tight" aria-label="Visit the shop">
         <div className="wrap"><Visit /></div>
       </section>
 

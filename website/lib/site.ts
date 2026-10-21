@@ -1,3 +1,5 @@
+import { countText, ratingText } from "./reviews";
+
 // Business details used across the site. Keep these identical to the Google
 // Business Profile (name, address, phone) so search engines see one business.
 export const site = {
@@ -24,8 +26,9 @@ export const site = {
   facebookHref: "https://www.facebook.com/100063980594625",
   mapsHref: "https://www.google.com/maps/search/?api=1&query=Jay+Ganesh+Car+Accessories+Loni+Kalbhor",
   reviewsHref: "https://www.google.com/maps/search/?api=1&query=Jay+Ganesh+Car+Accessories+Loni+Kalbhor",
-  rating: "4.9",
-  reviews: "697",
+  // Live from lib/reviews.json (refreshed daily from Google). Never hard-code these.
+  rating: ratingText,
+  reviews: countText,
   customers: "8,000+",
   instagramFollowers: "12.3K",
   legalUpdated: "19 October 2026",
