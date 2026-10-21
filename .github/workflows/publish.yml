@@ -37,6 +37,25 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: automation/package-lock.json
+      - run: npm ci --no-audit --no-fund
+
+      # Copy new files from the shared Google Drive folder to the media host.
+      # A failed sync never blocks posting of files that are already there.
+      - name: Sync media from Google Drive
+        continue-on-error: true
+        env:
+          DRIVE_FOLDER_ID: ${{ vars.DRIVE_FOLDER_ID }}
+          FTP_HOST: ${{ vars.FTP_HOST }}
+          FTP_USER: ${{ vars.FTP_USER }}
+          FTP_DIR: ${{ vars.FTP_DIR }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          GBP_CLIENT_ID: ${{ secrets.GBP_CLIENT_ID }}
+          GBP_CLIENT_SECRET: ${{ secrets.GBP_CLIENT_SECRET }}
+          DRIVE_REFRESH_TOKEN: ${{ secrets.DRIVE_REFRESH_TOKEN || secrets.GBP_REFRESH_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: node src/sync-media.mjs
 
       - name: Publish due posts
         env:
@@ -60,7 +79,7 @@ jobs:
           if [[ -n "$(git status --porcelain state/)" ]]; then
             git config user.name "jayganesh-bot"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add state/posted.json
+            git add state/posted.json state/media.json
             git commit -m "Posting log $(date -u +%Y-%m-%dT%H:%MZ)"
             for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
           fi

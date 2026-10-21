@@ -23,6 +23,27 @@ export function saveState(state) {
   writeFileSync(path.join(ROOT, STATE), JSON.stringify(state, null, 2) + "\n");
 }
 
+// Files copied from Google Drive to the media host (written by src/sync-media.mjs).
+const MEDIA_LOG = "state/media.json";
+export function loadMediaLog() {
+  try {
+    return { files: {}, ...readJson(MEDIA_LOG) };
+  } catch {
+    return { files: {} };
+  }
+}
+export function saveMediaLog(log) {
+  writeFileSync(path.join(ROOT, MEDIA_LOG), JSON.stringify(log, null, 2) + "\n");
+}
+
+// A post is approved if "approved" is true in the calendar, or if the team has dropped its
+// files into the shared Google Drive folder and they have been synced to the media host.
+export function isApproved(post, mediaLog = loadMediaLog()) {
+  if (post.approved) return true;
+  const prefix = `${dayKey(post.day)}/`;
+  return Object.keys(mediaLog.files).some((p) => p.startsWith(prefix));
+}
+
 const flag = (v, dflt) => (v === undefined || v === "" ? dflt : ["1", "true", "yes"].includes(String(v).toLowerCase()));
 
 export function env() {

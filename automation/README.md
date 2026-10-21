@@ -20,6 +20,21 @@ content/calendar.json  ──►  (captions, times, approval)    ──►  stat
 
 If one platform fails (for example YouTube), only that platform is retried on the next run. A post is never published twice: the engine checks the account's recent posts before posting again.
 
+## Auto-upload from Google Drive
+
+The team never uploads to the server. They drop finished files into the shared Drive folder (owned by marutikalbhor760@gmail.com), and every *Publish posts* run copies new files to the media host first:
+
+| Drive folder | Put in it | Becomes |
+|---|---|---|
+| `day-02` (or `Day 2`, `day_02`) | the edited reel, any name, **.mp4** | `day-02/video.mp4` (+ `cover.jpg` if you add one named `cover…jpg`) |
+| `day-07` | one **.jpg** | `day-07/1.jpg` |
+| `day-01` | 2–10 **.jpg** slides, named so they sort in order (`1.jpg`, `2.jpg` … or `slide 1`, `slide 2` …) | `day-01/1.jpg` … |
+
+- **Dropping a day's files counts as approval.** No need to edit `content/calendar.json`. Only add files when they're final.
+- Replacing a file before the post time uploads the new version. After posting, changes are ignored.
+- PNG, HEIC and .mov aren't accepted by Instagram's API. The sync names them in the run summary so they can be re-exported.
+- Needs: Drive API on in the Cloud project, a refresh token with the `drive.readonly` scope (`DRIVE_REFRESH_TOKEN`, or the same token as `GBP_REFRESH_TOKEN`), variables `DRIVE_FOLDER_ID`, `FTP_HOST`, `FTP_USER`, `FTP_DIR` and secret `FTP_PASSWORD`. Until these are set, the sync step skips quietly.
+
 ## Workflows
 
 | Workflow | When | What it does |

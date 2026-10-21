@@ -15,6 +15,7 @@
     "check:readiness": "node src/check.mjs readiness"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.135.0"
+    "@anthropic-ai/sdk": "^0.135.0",
+    "basic-ftp": "5.0.5"
   }
 }

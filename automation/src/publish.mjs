@@ -2,7 +2,7 @@
 // and whose media is in Cloudflare R2. Each platform is logged in state/posted.json, so a
 // post that failed on one platform is retried on the next run without repeating the others.
 import { appendFileSync } from "node:fs";
-import { loadCalendar, loadVars, loadState, saveState, env, dayKey } from "./lib/config.mjs";
+import { loadCalendar, loadVars, loadState, saveState, loadMediaLog, isApproved, env, dayKey } from "./lib/config.mjs";
 import { renderPost } from "./lib/render.mjs";
 import { timing, fmtIST } from "./lib/schedule.mjs";
 import { findMedia } from "./lib/media.mjs";
@@ -14,6 +14,7 @@ const cfg = env();
 const { posts } = loadCalendar();
 const vars = loadVars();
 const state = loadState();
+const mediaLog = loadMediaLog();
 const rows = [];
 let failures = 0;
 
@@ -65,8 +66,8 @@ for (const post of posts) {
     continue;
   }
 
-  if (cfg.requireApproval && !post.approved) {
-    problem(post, log, pending.join("+"), "WAITING", `due ${fmtIST(t.at)} IST but "approved" is false in content/calendar.json`);
+  if (cfg.requireApproval && !isApproved(post, mediaLog)) {
+    problem(post, log, pending.join("+"), "WAITING", `due ${fmtIST(t.at)} IST but its files are not in the Google Drive folder yet (or set "approved": true)`);
     continue;
   }
 

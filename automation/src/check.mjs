@@ -2,7 +2,7 @@
 //   node src/check.mjs setup      → checks every token and prints the IDs to save in GitHub
 //   node src/check.mjs readiness  → checks the next 36 hours of posts (media, approval, values)
 import { appendFileSync } from "node:fs";
-import { loadCalendar, loadVars, env, dayKey } from "./lib/config.mjs";
+import { loadCalendar, loadVars, loadMediaLog, isApproved, env, dayKey } from "./lib/config.mjs";
 import { renderPost } from "./lib/render.mjs";
 import { scheduledAt, fmtIST } from "./lib/schedule.mjs";
 import { findMedia } from "./lib/media.mjs";
@@ -95,7 +95,7 @@ if (mode === "readiness") {
   if (!soon.length) say(null, "No posts in the next 36 hours.");
   for (const p of soon) {
     const issues = [];
-    if (cfg.requireApproval && !p.approved) issues.push("not approved");
+    if (cfg.requireApproval && !isApproved(p, loadMediaLog())) issues.push("files not in the Google Drive folder yet");
     const r = renderPost(p, vars);
     if (r.missing.length) issues.push(`fill in ${r.missing.join(", ")}`);
     const m = await findMedia(p, cfg.mediaBaseUrl);
