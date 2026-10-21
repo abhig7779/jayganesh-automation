@@ -94,7 +94,16 @@ let ftp = null;
 async function ftpClient() {
   if (ftp) return ftp;
   ftp = new Client(60_000);
-  await ftp.access({ host: cfg.ftp.host, user: cfg.ftp.user, password: cfg.ftp.password, secure: true, secureOptions: { servername: cfg.ftp.host } });
+  // FTP_TLS_SELF_SIGNED=true: shared hosts often use a self-signed FTPS certificate. The link stays
+  // encrypted; only the certificate's issuer check is skipped.
+  const selfSigned = ["1", "true", "yes"].includes(String(e.FTP_TLS_SELF_SIGNED || "").toLowerCase());
+  await ftp.access({
+    host: cfg.ftp.host,
+    user: cfg.ftp.user,
+    password: cfg.ftp.password,
+    secure: true,
+    secureOptions: { servername: cfg.ftp.host, rejectUnauthorized: !selfSigned },
+  });
   return ftp;
 }
 

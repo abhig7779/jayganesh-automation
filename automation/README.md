@@ -33,7 +33,7 @@ The team never uploads to the server. They drop finished files into the shared D
 - **Dropping a day's files counts as approval.** No need to edit `content/calendar.json`. Only add files when they're final.
 - Replacing a file before the post time uploads the new version. After posting, changes are ignored.
 - PNG, HEIC and .mov aren't accepted by Instagram's API. The sync names them in the run summary so they can be re-exported.
-- Needs: Drive API on in the Cloud project, a refresh token with the `drive.readonly` scope (`DRIVE_REFRESH_TOKEN`, or the same token as `GBP_REFRESH_TOKEN`), variables `DRIVE_FOLDER_ID`, `FTP_HOST`, `FTP_USER`, `FTP_DIR` and secret `FTP_PASSWORD`. Until these are set, the sync step skips quietly.
+- Needs: Drive API on in the Cloud project, a refresh token with the `drive.readonly` scope (`DRIVE_REFRESH_TOKEN`, or the same token as `GBP_REFRESH_TOKEN`), variables `DRIVE_FOLDER_ID`, `FTP_HOST`, `FTP_USER`, `FTP_DIR` (and `FTP_TLS_SELF_SIGNED=true` for MilesWeb's self-signed FTPS certificate) and secret `FTP_PASSWORD`. Until these are set, the sync step skips quietly.
 
 ## Workflows
 

@@ -50,6 +50,7 @@ jobs:
           FTP_HOST: ${{ vars.FTP_HOST }}
           FTP_USER: ${{ vars.FTP_USER }}
           FTP_DIR: ${{ vars.FTP_DIR }}
+          FTP_TLS_SELF_SIGNED: ${{ vars.FTP_TLS_SELF_SIGNED }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           GBP_CLIENT_ID: ${{ secrets.GBP_CLIENT_ID }}
           GBP_CLIENT_SECRET: ${{ secrets.GBP_CLIENT_SECRET }}
