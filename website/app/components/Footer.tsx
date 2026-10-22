@@ -50,7 +50,7 @@ export default function Footer() {
             <div>
               <h2 className="label">Accessories</h2>
               <ul>
-                {categories.slice(0, 6).map((c) => <li key={c.key}><Link href={c.href ?? `/accessories/#${c.key}`}>{c.name}</Link></li>)}
+                {categories.filter((c) => c.href).map((c) => <li key={c.key}><Link href={c.href!}>{c.name}</Link></li>)}
                 <li><Link href="/accessories/">All accessories</Link></li>
               </ul>
             </div>
@@ -60,6 +60,8 @@ export default function Footer() {
                 <li><Link href="/our-work/">Our work</Link></li>
                 <li><Link href="/offers/">Offers</Link></li>
                 <li><Link href="/visit-us/">Visit us</Link></li>
+                <li><Link href="/car-accessories-hadapsar/">Near Hadapsar</Link></li>
+                <li><Link href="/car-accessories-kharadi/">Near Kharadi</Link></li>
                 <li><a href={site.reviewsHref} target="_blank" rel="noopener noreferrer">Google reviews</a></li>
               </ul>
             </div>

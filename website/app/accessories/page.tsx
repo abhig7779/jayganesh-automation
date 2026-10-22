@@ -6,8 +6,8 @@ import { categories } from "@/lib/catalog";
 import { breadcrumbLd, faqLd, graph, pageMetadata, serviceLd, webPageLd } from "@/lib/seo";
 
 const path = "/accessories/";
-const title = "Car Accessories in Pune: Seat Covers, Lights | Jay Ganesh";
-const description = "Seat covers, LED headlights, fog lamps, Android stereos, 360° cameras and dashcams, fitted at our Loni Kalbhor shop, Pune. WhatsApp your car model.";
+const title = "Car Accessories & Car Decor in Pune | Jay Ganesh";
+const description = "Car accessories and car decor in Pune: seat covers, LED headlights, Android stereos, 360° cameras and dashcams, fitted at our Loni Kalbhor shop.";
 const lead = "Jay Ganesh Car Accessories sells and fits seat covers, LED headlights, fog lamps, ambient lighting, Android stereos, speakers, 360° cameras and dashcams, chosen for your car model. Everything is fitted by our own team at Kawadipat Toll Naka on the Pune–Solapur road, Loni Kalbhor, for car owners across Pune.";
 
 export const metadata: Metadata = pageMetadata({ title, description, path });
@@ -35,7 +35,7 @@ export default function Accessories() {
       <PageHero
         crumbs={[{ label: "Accessories" }]}
         eyebrow="Fitted at our shop"
-        title="Car accessories in Pune"
+        title="Car accessories & car decor in Pune"
         lead={lead}
         media={<Photo label="The accessories shop floor" m="interior" ratio="4 / 5" eager sizes="(min-width: 1024px) 45vw, 100vw" />}
       >

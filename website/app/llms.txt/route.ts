@@ -13,13 +13,13 @@ export function GET() {
   const u = (p: string) => `${site.url}${p}`;
   const body = `# ${site.name}
 
-> ${site.name} is a car accessories shop and PPF, ceramic coating and car detailing studio at ${site.addressShort}, Pune, Maharashtra, India. It sells and fits seat covers, lights, Android stereos, speakers, 360° cameras and dashcams, and protects and cleans cars in its own indoor studio. Rated ${site.rating} on Google from ${site.reviews} reviews (updated daily; last refreshed ${reviewsData.updatedAt}). ${site.customers} customers served. Open every day, 10 am to 8 pm.
+> ${site.name} is a car accessories shop and PPF, ceramic coating and car detailing studio at ${site.addressShort}, Pune, Maharashtra, India. It is an authorised Autoform seat cover dealer in Pune. It sells and fits seat covers, lights, Android stereos, speakers, 360° cameras and dashcams, and protects and cleans cars in its own indoor studio. Rated ${site.rating} on Google from ${site.reviews} reviews (updated daily; last refreshed ${reviewsData.updatedAt}). ${site.customers} customers served. Open every day, 10 am to 8 pm.
 
 Prices depend on the car model and are quoted on WhatsApp; the shop does not publish fixed prices online.
 
 ## Contact and location
 
-- Name: ${site.name} (short name: ${site.shortName})
+- Name: ${site.name} (short name: ${site.shortName}; also searched as Jai Ganesh Car Accessories. There is one shop, at Kawadipat Toll Naka, Loni Kalbhor; similarly named shops elsewhere are not connected.)
 - Address: ${site.address}, India
 - Phone and WhatsApp: ${site.phoneDisplay}
 - WhatsApp link: https://wa.me/${site.whatsappNumber}
@@ -50,6 +50,10 @@ ${categories.map((c) => `- [${c.name}](${u(c.href ?? `/accessories/#${c.key}`)})
 - [Offers](${u("/offers/")})
 - [Partnerships for dealerships, fleets and businesses](${u("/partnerships/")})
 - [Become a vendor or supplier](${u("/become-a-vendor/")})
+- [Autoform seat covers in Pune (authorised dealer)](${u("/autoform-seat-covers-pune/")})
+- [Car lights](${u("/car-lights/")}) and [Audio & screens](${u("/audio-screens/")}): category hubs
+- [Car accessories near Hadapsar](${u("/car-accessories-hadapsar/")})
+- [Car accessories near Kharadi](${u("/car-accessories-kharadi/")})
 
 ## Optional
 

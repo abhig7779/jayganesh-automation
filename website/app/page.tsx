@@ -25,7 +25,7 @@ const studio: { href: string; name: string; line: string; m: MediaKey; price: Pr
 
 const faqs = [
   { q: "What does Jay Ganesh Car Accessories do?", a: "We sell and fit car accessories (seat covers, lights, Android stereos, speakers, 360° cameras and dashcams) and run a detailing studio for PPF, ceramic coating, car detailing and new-car protection, at Loni Kalbhor, Pune." },
-  { q: "Where is the shop, and when is it open?", a: `At ${site.addressShort}, Pune. We're open every day, 10 am to 8 pm. Call or WhatsApp ${site.phoneDisplay}.` },
+  { q: "Where is the shop, and when is it open?", a: `Jay Ganesh Car Accessories (also searched as Jai Ganesh Car Accessories) is at ${site.addressShort}, Pune. We're open every day, 10 am to 8 pm. Call or WhatsApp ${site.phoneDisplay}.` },
   { q: "Should I choose PPF or ceramic coating?", a: "PPF is a clear film that stops stone chips and scratches. Ceramic coating adds deep gloss and makes washing easier but does not stop chips. Many owners fit PPF first and coat on top." },
   { q: "How do I get a price?", a: "Send your car model and what you need on WhatsApp. Prices depend on the car and the product, so we reply with options and prices for your model." },
   { q: "Is Jay Ganesh Car Accessories well reviewed?", a: `We're rated ${site.rating} on Google from ${site.reviews} reviews, and have served ${site.customers} customers from Loni Kalbhor, Hadapsar, Manjri, Uruli Kanchan and across Pune.` },
@@ -51,7 +51,7 @@ export default function Home() {
     <>
       <JsonLd
         data={graph(
-          webPageLd({ name: "Car accessories and PPF detailing studio in Loni Kalbhor, Pune", description: `Car accessories shop and PPF, ceramic coating and detailing studio at ${site.addressShort}, Pune.`, path: "/" }),
+          webPageLd({ name: "Car accessories and PPF detailing studio in Loni Kalbhor, Pune", description: `Car accessories and car decor shop, and PPF, ceramic coating and detailing studio at ${site.addressShort}, Pune.`, path: "/" }),
           faqLd(faqs, "/"),
           breadcrumbLd([]),
         )}
@@ -131,7 +131,7 @@ export default function Home() {
       <section className="h-sec" aria-labelledby="acc-title">
         <div className="wrap">
           <Reveal>
-            <Head id="acc-title" eyebrow="Accessories" title="Upgrades, fitted at our shop" lead="Chosen for your exact model and fitted by our team. Tell us your car and we'll send options.">
+            <Head id="acc-title" eyebrow="Accessories" title="Upgrades, fitted at our shop" lead="Car accessories and car decor, chosen for your exact model and fitted by our team. Tell us your car and we'll send options.">
               <Link className="h-link" href="/accessories/">Browse accessories <IconArrow /></Link>
             </Head>
             <AccessoryRail />

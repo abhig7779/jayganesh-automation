@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { site, whatsapp } from "@/lib/site";
 import { IconWhatsApp } from "./ui";
+import { track } from "./Analytics";
 
 // Floating help chat (bottom right): tap a ready question, get a ready answer,
 // then carry on in WhatsApp with the message already filled in. No AI and no
@@ -81,13 +82,14 @@ export default function HelpWidget() {
     log.current?.scrollTo({ top: log.current.scrollHeight, behavior: "smooth" });
   }, [msgs]);
 
-  const ask = (a: Answer) => setMsgs((m) => [...m, { from: "me", text: a.q }, { from: "bot", text: a.a, answer: a }]);
+  const ask = (a: Answer) => { track("help_question", { question: a.q }); setMsgs((m) => [...m, { from: "me", text: a.q }, { from: "bot", text: a.a, answer: a }]); };
   const asked = new Set(msgs.filter((m) => m.from === "me").map((m) => m.text));
 
   const send = (e: React.FormEvent) => {
     e.preventDefault();
     const t = text.trim();
     if (!t) return;
+    track("help_typed_question");
     window.open(whatsapp(`Hi Jay Ganesh, ${t}`), "_blank", "noopener,noreferrer");
     setMsgs((m) => [...m, { from: "me", text: t }, { from: "bot", text: "Opening WhatsApp with your message. Just press send there and we'll reply." }]);
     setText("");
@@ -154,7 +156,7 @@ export default function HelpWidget() {
         className="help-fab"
         aria-expanded={open}
         aria-label={open ? "Close help" : "Open help"}
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => { if (!open) track("help_open"); setOpen((v) => !v); }}
       >
         {open ? (
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden><path d="M6 6l12 12M18 6L6 18" /></svg>

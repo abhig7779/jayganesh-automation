@@ -11,6 +11,7 @@ import Footer from "./components/Footer";
 import { JsonLd } from "./components/ui";
 import WhatsAppWidget from "./components/WhatsAppWidget";
 import HelpWidget from "./components/HelpWidget";
+import Analytics from "./components/Analytics";
 import { themeScript } from "./components/ThemeToggle";
 import { site } from "@/lib/site";
 import { reviewsData } from "@/lib/reviews";
@@ -26,7 +27,7 @@ const hanken = Hanken_Grotesk({ subsets: ["latin"], weight: ["400", "500", "600"
 const hind = Hind({ subsets: ["devanagari"], weight: ["400", "600"], variable: "--font-hind", display: "swap" });
 
 const homeTitle = "Car Accessories in Pune & PPF Studio | Jay Ganesh";
-const homeDescription = `Seat covers, lights, stereos and dashcams, plus a PPF, ceramic coating and detailing studio at Loni Kalbhor, Pune. Rated ${site.rating} on Google.`;
+const homeDescription = `Car accessories and car decor: seat covers, lights, stereos, dashcams, plus a PPF and detailing studio at Loni Kalbhor, Pune. Rated ${site.rating} on Google.`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -66,7 +67,10 @@ const business = {
   "@type": ["AutoPartsStore", "AutoRepair"],
   "@id": BUSINESS_ID,
   name: site.name,
-  alternateName: site.shortName,
+  // Other ways people spell and search for the shop (Google search data, Oct 2026).
+  alternateName: [site.shortName, "Jai Ganesh Car Accessories", "Jayganesh Car Accessories", "Jay Ganesh Car Decor"],
+  description:
+    "Car accessories and car decor shop with a PPF, ceramic coating and detailing studio at Kawadipat Toll Naka on the Pune–Solapur Road, Loni Kalbhor, Pune. Authorised dealer of Autoform seat covers.",
   slogan: site.tagline,
   url: `${site.url}/`,
   logo: `${site.url}/logo.png`,
@@ -124,10 +128,16 @@ const business = {
         "@type": "OfferCatalog",
         name: "Car accessories, fitted at the shop",
         url: `${site.url}/accessories/`,
-        itemListElement: categories.map((c) => ({
-          "@type": "Offer",
-          itemOffered: { "@type": "Service", name: c.name, description: c.blurb, url: `${site.url}${c.href ?? `/accessories/#${c.key}`}` },
-        })),
+        itemListElement: [
+          ...categories.map((c) => ({
+            "@type": "Offer",
+            itemOffered: { "@type": "Service", name: c.name, description: c.blurb, url: `${site.url}${c.href ?? `/accessories/#${c.key}`}` },
+          })),
+          {
+            "@type": "Offer",
+            itemOffered: { "@type": "Service", "@id": `${site.url}/autoform-seat-covers-pune/#service`, name: "Autoform seat covers", url: `${site.url}/autoform-seat-covers-pune/` },
+          },
+        ],
       },
     ],
   },
@@ -155,6 +165,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Footer />
         <WhatsAppWidget />
         <HelpWidget />
+        <Analytics />
       </body>
     </html>
   );

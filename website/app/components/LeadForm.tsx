@@ -3,6 +3,7 @@
 import "../styles/forms.css";
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { site, whatsapp } from "@/lib/site";
+import { track } from "./Analytics";
 import {
   LEAD_ENDPOINT,
   normalizeIndianMobile,
@@ -191,6 +192,7 @@ export default function LeadForm({ kind, title, intro }: { kind: LeadKind; title
       try { data = await res.json(); } catch { /* not JSON */ }
       if (res.ok && data.ok) {
         setStatus("success");
+        track("generate_lead", { form: kind, page_path: location.pathname });
       } else {
         setServerError(data.error || "We couldn't send your message just now.");
         setStatus("error");

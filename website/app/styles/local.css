@@ -1,0 +1,33 @@
+/* Autoform and area pages: dealer callout, quoted review, reel feature. */
+
+.callout {
+  display: grid; gap: 18px; align-items: center;
+  padding: clamp(20px, 3vw, 28px);
+  background: var(--card); border-radius: var(--radius-card); box-shadow: var(--shadow-card);
+  border-left: 3px solid var(--brand-yellow);
+}
+.callout h2 { font-size: clamp(22px, 2.6vw, 28px); line-height: 1.15; letter-spacing: -0.02em; }
+.callout p:not(.label) { color: var(--ink-muted); max-width: 60ch; }
+.callout .stack { gap: 10px; }
+@media (min-width: 720px) { .callout { grid-template-columns: minmax(0, 1fr) auto; gap: 32px; } }
+
+.review-quote {
+  margin: 0; padding: clamp(22px, 3vw, 32px);
+  background: var(--card); border-radius: var(--radius-card); box-shadow: var(--shadow-card);
+  display: grid; gap: 16px; max-width: 820px;
+}
+.review-quote blockquote { margin: 0; display: grid; gap: 12px; }
+.review-quote blockquote p { color: var(--ink); font-size: clamp(16.5px, 1.6vw, 18.5px); line-height: 1.6; }
+.review-quote figcaption { color: var(--ink-muted); font-size: 15px; }
+.review-quote figcaption strong { color: var(--ink); font-weight: 600; }
+
+.reel-feature { display: grid; gap: 32px; align-items: center; }
+.reel-feature video {
+  display: block; width: 100%; max-width: 360px; height: auto; aspect-ratio: 9 / 16;
+  border-radius: var(--radius-card); background: #000; box-shadow: var(--shadow-card);
+}
+@media (min-width: 900px) { .reel-feature { grid-template-columns: 360px minmax(0, 1fr); gap: clamp(40px, 6vw, 96px); } }
+
+
+.map-actions { margin-top: 20px; }
+@media (min-width: 720px) { .map-actions .btn { flex: 0 0 auto; } }

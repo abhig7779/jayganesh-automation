@@ -187,3 +187,63 @@
 @media (min-width: 1024px) {
   .form-layout { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
 }
+
+/* ---------- Product category pages (lib/products.ts, ProductCategoryPage.tsx) ---------- */
+/* Quoted Google review; card surface comes from .grid > *. */
+.pc-review { margin: 0; padding: clamp(22px, 3vw, 32px); display: grid; gap: 14px; align-content: start; }
+.pc-review-stars { color: var(--brand-yellow); letter-spacing: .12em; font-size: 18px; line-height: 1; }
+.pc-review blockquote { margin: 0; display: grid; gap: .8em; color: var(--ink); font-size: 16.5px; line-height: 1.6; }
+.pc-review figcaption { color: var(--ink-muted); font-size: 14.5px; }
+.pc-review figcaption strong { color: var(--ink); font-weight: 600; }
+[data-theme="light"] .pc-review-stars { color: #b89a00; }
+.pc-reviews--one { max-width: 860px; }
+.pc-note { color: var(--ink-muted); font-size: 15px; max-width: 52ch; }
+
+/* ---------- Brand logos (app/components/BrandLogos.tsx, lib/brands.ts) ----------
+ * Official logos only (sources in lib/brands.ts). Greyscale + dimmed by default,
+ * full colour on hover. Never recoloured beyond that: dark-ink logos get a light
+ * pill in the dark theme, white-ink logos a dark pill in the light theme, Blaupunkt
+ * swaps to its own white file, and the single-colour white Autoform mark is
+ * inverted to black in the light theme. */
+.brand-logos { display: grid; gap: 8px; }
+.brand-logos__list { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; list-style: none; margin: 0; padding: 0; }
+.brand-logos__legal { margin: 0; color: var(--ink-muted); font-size: 12px; line-height: 1.4; opacity: .85; }
+
+.brand-logo {
+  display: inline-flex; align-items: center; gap: 8px; justify-self: start; width: fit-content;
+  padding: 6px 12px; border-radius: 999px; background: transparent;
+  --logo-h: 30px; --logo-w: 150px;
+}
+.brand-logo--lg { --logo-h: 44px; --logo-w: 240px; padding: 0; }
+.brand-logo__img {
+  display: block; width: auto; height: auto; max-height: var(--logo-h); max-width: var(--logo-w);
+  filter: grayscale(1); opacity: .62; transition: filter .25s ease, opacity .25s ease;
+}
+.brand-logo:hover .brand-logo__img, .brand-logo--color .brand-logo__img { filter: none; opacity: 1; }
+.brand-logo__name { font-weight: 700; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink); opacity: .7; transition: opacity .25s ease; }
+.brand-logo:hover .brand-logo__name { opacity: 1; }
+
+/* Theme-specific files (dark theme is the default). */
+.brand-logo__img--light { display: none; }
+[data-theme="light"] .brand-logo__img--light { display: block; }
+[data-theme="light"] .brand-logo__img--dark { display: none; }
+
+/* Dark ink on transparent: light pill in the dark theme. */
+.brand-logo--dark { background: #f4f5f6; }
+.brand-logo--dark .brand-logo__name { color: #121317; }
+[data-theme="light"] .brand-logo--dark { background: transparent; }
+[data-theme="light"] .brand-logo--dark .brand-logo__name { color: var(--ink); }
+
+/* White ink with colour (Garware): dark pill in the light theme. */
+[data-theme="light"] .brand-logo--light { background: #121317; }
+
+/* Single-colour white mark (Autoform): inverted to black in the light theme. */
+[data-theme="light"] .brand-logo--white-mono .brand-logo__img { filter: invert(1) grayscale(1); }
+[data-theme="light"] .brand-logo--white-mono:hover .brand-logo__img,
+[data-theme="light"] .brand-logo--white-mono.brand-logo--color .brand-logo__img { filter: invert(1); }
+
+/* Autoform page: "Authorised dealer · Pune" lockup under the hero. */
+.dealer-lockup { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; }
+.dealer-lockup__text { margin: 0; padding-left: 22px; border-left: 3px solid var(--brand-yellow); color: var(--ink-muted); font-size: clamp(16px, 1.6vw, 19px); }
+.dealer-lockup__text strong { color: var(--ink); font-weight: 700; }
+.callout .brand-logo { padding: 0; --logo-h: 26px; }

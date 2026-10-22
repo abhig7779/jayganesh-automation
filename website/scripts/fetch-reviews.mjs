@@ -15,7 +15,8 @@ import path from "node:path";
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DATA_FILE = path.resolve(here, "../lib/reviews.json");
 const SEARCH_QUERY = "Jay Ganesh Car Accessories Loni Kalbhor Pune";
-const MAX_REVIEWS = 30;
+// Keep the full imported history; the daily refresh only adds new ones.
+const MAX_REVIEWS = 400;
 const TIMEOUT_MS = 20_000;
 
 const log = (...a) => console.log("[fetch-reviews]", ...a);
@@ -102,6 +103,8 @@ function mapGoogleReview(g) {
     text,
     when: g.relativePublishTimeDescription ?? "",
     publishTime: g.publishTime ?? null,
+    // Reviewer's Google profile picture, shown on their own review card.
+    ...(g?.authorAttribution?.photoUri ? { photo: g.authorAttribution.photoUri } : {}),
   };
 }
 

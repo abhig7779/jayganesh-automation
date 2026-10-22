@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { categoryLabel, reelEmbedUrl, reels, reelUrl, type Reel, type ReelCategory } from "@/lib/reels";
 import { site } from "@/lib/site";
+import { track } from "./Analytics";
 import { webpSrcSet } from "@/lib/media";
 
 type Filter = "all" | ReelCategory;
@@ -280,6 +281,7 @@ export default function ReelsShowcase() {
 
   const open = (i: number, target: HTMLElement) => {
     triggerRef.current = target;
+    track("reel_play", { reel: (target.textContent || "").trim().slice(0, 80) });
     setOpenIndex(i);
   };
 

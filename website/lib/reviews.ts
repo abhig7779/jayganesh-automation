@@ -17,6 +17,10 @@ export type Review = {
    * and saved so the label keeps ageing correctly between refreshes.
    */
   approxTime?: string;
+  /** Google's review-topic chips this review appeared under (from the one-time import). */
+  topics?: string[];
+  /** Reviewer's Google profile picture (shown on their own review card). */
+  photo?: string;
 };
 
 export type ReviewsData = {
@@ -120,3 +124,53 @@ export const visibleReviews: VisibleReview[] = reviewsData.reviews
   .map((r, i) => ({ r, i, t: estimatedTime(r) }))
   .sort((a, b) => b.t - a.t || a.i - b.i)
   .map(({ r, t }) => ({ ...r, text: r.text.trim(), shortName: shortName(r.name), relative: relativeLabel(r, t) }));
+
+/* ---------- Topics: which reviews belong on which page ---------- */
+
+export type Topic =
+  | "seat-covers" | "autoform" | "lighting" | "ambient" | "audio" | "camera"
+  | "dashcam" | "ppf" | "coating" | "detailing" | "pricing";
+
+// Google's own topic chips, mapped to ours.
+const googleTopic: Record<string, Topic[]> = {
+  "seat cover": ["seat-covers"],
+  "custom seat cover shop": ["seat-covers"],
+  "autoform seat cover": ["autoform", "seat-covers"],
+  "projector light": ["lighting"],
+  "led lights": ["lighting"],
+  "car lighting work": ["lighting"],
+  "brake light": ["lighting"],
+  "car audio system": ["audio"],
+  "dash cam": ["dashcam"],
+  "fair pricing": ["pricing"],
+};
+
+// Words in the review itself, so new reviews from the daily refresh get tagged too.
+const keywordTopic: [Topic, RegExp][] = [
+  ["seat-covers", /seat\s*-?\s*covers?/i],
+  ["autoform", /auto\s*form/i],
+  ["lighting", /head\s*-?\s*lights?|projector|\bled\b|\bhid\b|fog\s*lamp|brake\s*light|\blights?\b/i],
+  ["ambient", /ambient/i],
+  ["audio", /audio|speaker|stereo|music|android|blaupunkt|amplifier|sub\s*woofer|sound\s*system/i],
+  ["camera", /360/i],
+  ["dashcam", /dash\s*-?\s*cam/i],
+  ["ppf", /\bppf\b|paint\s+protection/i],
+  ["coating", /ceramic|graphene|borophene|coating/i],
+  ["detailing", /detailing|polish|foam\s*wash|interior\s+clean/i],
+  ["pricing", /fair\s+pric|reasonabl|value\s+for\s+money|worth/i],
+];
+
+export function topicsOf(r: Review): Set<Topic> {
+  const t = new Set<Topic>();
+  for (const g of r.topics ?? []) for (const x of googleTopic[g] ?? []) t.add(x);
+  for (const [topic, re] of keywordTopic) if (re.test(r.text)) t.add(topic);
+  return t;
+}
+
+/** Newest-first reviews matching any of the topics. */
+export function reviewsFor(topics: Topic[]): VisibleReview[] {
+  return visibleReviews.filter((r) => {
+    const t = topicsOf(r);
+    return topics.some((x) => t.has(x));
+  });
+}

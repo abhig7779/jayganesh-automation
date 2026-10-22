@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
-import { CtaBand, Faq, JsonLd, PageHero, Photo, Price, SectionHead, Visit, WhatsAppButton, CallButton } from "../components/ui";
+import Link from "next/link";
+import "../styles/local.css";
+import ReviewsCarousel from "../components/ReviewsCarousel";
+import { CtaBand, Faq, JsonLd, PageHero, Photo, Price, SectionHead, Visit, WhatsAppButton, CallButton, IconArrow } from "../components/ui";
 import Reveal from "../components/Reveal";
 import { popularCars } from "@/lib/catalog";
-import { whatsapp } from "@/lib/site";
+import { site, whatsapp } from "@/lib/site";
 import { breadcrumbLd, faqLd, graph, pageMetadata, serviceLd, webPageLd } from "@/lib/seo";
+import { BrandLogo } from "../components/BrandLogos";
+import { getBrandBySlug } from "@/lib/brands";
+
+const autoform = getBrandBySlug("autoform");
 
 const path = "/seat-covers/";
 const title = "Car Seat Covers in Pune, Made to Fit | Jay Ganesh";
@@ -19,6 +26,7 @@ const faqs = [
   { q: "Will the covers fit my seats with airbags?", a: "Covers for cars with seat airbags need the right stitching on the sides. Tell us your variant and we'll pick covers that suit it." },
   { q: "Can I see the material before ordering?", a: "Yes. Visit the shop to see and feel the materials and colours, or ask us for photos on WhatsApp." },
   { q: "Do you make seat covers for 7-seaters like the Innova and Ertiga?", a: "Yes. We fit covers for 7- and 8-seaters, including the third row. Send your model, year and variant on WhatsApp and we'll share options." },
+  { q: "Do you sell Autoform seat covers?", a: "Yes. We're an authorised Autoform seat cover dealer in Pune. Autoform makes covers for specific car models; send us your model on WhatsApp and we'll check what's available and share prices." },
   { q: "Where can I buy car seat covers in Pune?", a: "At our shop at Kawadipat Toll Naka on the Pune–Solapur road, Loni Kalbhor, open 7 days, 10 am to 8 pm. You can see the materials in person, and most sets are fitted the same day." },
 ];
 
@@ -53,6 +61,20 @@ export default function SeatCovers() {
         </div>
       </PageHero>
 
+      <section className="band band--tight">
+        <Reveal className="wrap">
+          <div className="callout">
+            <div className="stack">
+              {autoform && <BrandLogo brand={autoform} color />}
+              <p className="label label--yellow eyebrow">Authorised Autoform dealer</p>
+              <h2>Want Autoform seat covers?</h2>
+              <p>We&apos;re an authorised dealer of Autoform seat covers in Pune. Autoform makes covers for specific car models, and our team fits them at the shop.</p>
+            </div>
+            <Link className="btn btn--ghost" href="/autoform-seat-covers-pune/">Autoform seat covers <IconArrow /></Link>
+          </div>
+        </Reveal>
+      </section>
+
       <section className="band band--panel">
         <div className="wrap">
           <Reveal><SectionHead eyebrow="Popular with our customers" title="Seat covers by car" lead="Tap your model to ask for options and prices on WhatsApp." /></Reveal>
@@ -82,6 +104,13 @@ export default function SeatCovers() {
             <Photo label="Third row in a 7-seater" m="dashClean" />
             <Photo label="Stitching close-up" />
           </Reveal>
+        </div>
+      </section>
+
+      <section className="band band--panel">
+        <div className="wrap">
+          <Reveal><SectionHead eyebrow={`Google reviews · ${site.rating}★`} title="What customers say about our seat covers" /></Reveal>
+          <ReviewsCarousel topics={["seat-covers", "autoform"]} />
         </div>
       </section>
 

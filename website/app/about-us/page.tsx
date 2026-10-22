@@ -34,6 +34,7 @@ const faqs = [
   { q: "Do you have a separate detailing studio?", a: "Yes. The PPF, ceramic coating and detailing work happens in our studio at Kawadipat Toll Naka, next to the accessories shop." },
   { q: "Do I need an appointment?", a: "You can walk in for accessories. For PPF, coatings and detailing, message us on WhatsApp first so we can keep a slot for your car." },
   { q: "Can you tell me the price before I come?", a: "Yes. Send your car model and what you're looking for on WhatsApp and we'll reply with options and prices." },
+  { q: "Is Jai Ganesh Car Accessories in Loni Kalbhor the same shop?", a: `Yes. People spell our name both ways, Jay Ganesh and Jai Ganesh, but there is one shop: ${site.name} at Kawadipat Toll Naka on the Pune–Solapur road, Loni Kalbhor. There are other shops with similar names in Hadapsar and elsewhere in Pune; they are separate businesses and not connected to us. To be sure you've reached us, call or WhatsApp ${site.phoneDisplay}.` },
   { q: "Which areas do your customers come from?", a: `Mostly eastern Pune: ${areas.join(", ")}, and travellers on the Pune–Solapur highway.` },
 ];
 
