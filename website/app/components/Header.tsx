@@ -18,10 +18,18 @@ export default function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [dock, setDock] = useState(false);
 
   // Transparent over the top of the page; a dark glass bar once scrolled.
+  // The phone contact dock only slides in after the hero, so the first screen
+  // has a single WhatsApp call to action.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 24);
+      const on = window.scrollY > window.innerHeight * 0.6;
+      setDock(on);
+      document.documentElement.dataset.dock = on ? "on" : "off";
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -139,7 +147,7 @@ export default function Header() {
           <div className="header-actions">
             <ThemeToggle />
             <a className="btn btn--ghost btn--sm btn--call" href={site.phoneHref}><IconPhone />Call</a>
-            <WhatsAppButton size="sm">WhatsApp</WhatsAppButton>
+            <WhatsAppButton size="sm" className="btn--wa-head">WhatsApp</WhatsAppButton>
             <button
               className="menu-toggle"
               type="button"
@@ -199,7 +207,7 @@ export default function Header() {
         </nav>
       )}
 
-      <div className="action-bar" aria-label="Contact the shop">
+      <div className={["action-bar", dock && "is-visible"].filter(Boolean).join(" ")} aria-label="Contact the shop">
         <a href={whatsapp()} target="_blank" rel="noopener noreferrer" data-track="whatsapp"><IconWhatsApp />WhatsApp</a>
         <a href={site.phoneHref} data-track="call"><IconPhone />Call</a>
         <a href={site.mapsHref} target="_blank" rel="noopener noreferrer" data-track="directions"><IconPin />Map</a>

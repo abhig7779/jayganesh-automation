@@ -121,6 +121,12 @@
   text-decoration: none;
 }
 .action-bar svg { width: 17px; height: 17px; }
+/* Hidden over the hero; slides up once the visitor scrolls past it. */
+.action-bar { transform: translateY(calc(100% + 24px)); opacity: 0; pointer-events: none; transition: transform .35s var(--ease), opacity .25s; }
+.action-bar.is-visible { transform: none; opacity: 1; pointer-events: auto; }
+@media (prefers-reduced-motion: reduce) { .action-bar { transition: none; } }
+/* Phones: the header WhatsApp button would repeat the hero CTA and the dock. */
+@media (max-width: 1023px) { .header-actions .btn--wa-head { display: none; } }
 
 @media (min-width: 640px) and (max-width: 1023px), (min-width: 1280px) {
   .brand-name { display: block; position: static; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; white-space: normal; }

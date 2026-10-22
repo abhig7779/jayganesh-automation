@@ -51,14 +51,16 @@ export function WhatsAppButton({
   variant = "primary",
   size,
   block,
+  className,
 }: {
   message?: string;
   children?: React.ReactNode;
   variant?: "primary" | "ghost";
   size?: "sm";
   block?: boolean;
+  className?: string;
 }) {
-  const cls = ["btn", `btn--${variant}`, size && `btn--${size}`, block && "btn--block"].filter(Boolean).join(" ");
+  const cls = ["btn", `btn--${variant}`, size && `btn--${size}`, block && "btn--block", className].filter(Boolean).join(" ");
   return (
     <a className={cls} href={whatsapp(message)} target="_blank" rel="noopener noreferrer" data-track="whatsapp">
       <IconWhatsApp />
