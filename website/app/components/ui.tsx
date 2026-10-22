@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { site, whatsapp } from "@/lib/site";
 import { formatPrice, prices, type PriceKey } from "@/lib/prices";
-import { imageUrl, media, srcSet, type Media, type MediaKey } from "@/lib/media";
+import { imageUrl, media, srcSet, webpSrcSet, type Media, type MediaKey } from "@/lib/media";
 
 /* ---------- Icons (inline, so nothing extra loads) ---------- */
 
@@ -112,20 +112,25 @@ export function Photo({
 }) {
   const item: Media | undefined = m ? media[m] : undefined;
   const url = src ?? item?.src;
+  // Local photos have WebP copies; Unsplash stand-ins already get auto=format.
+  const webp = url ? webpSrcSet(url) : undefined;
   return (
     <figure className={["photo", className].filter(Boolean).join(" ")} style={{ ["--ratio" as string]: ratio }}>
       {url ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={imageUrl(url, 1200)}
-          srcSet={srcSet(url)}
-          sizes={sizes}
-          alt={alt ?? item?.alt ?? label}
-          loading={eager ? "eager" : "lazy"}
-          fetchPriority={eager ? "high" : undefined}
-          decoding="async"
-          style={item?.position ? { objectPosition: item.position } : undefined}
-        />
+        <picture>
+          {webp && <source type="image/webp" srcSet={webp} sizes={sizes} />}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imageUrl(url, 800)}
+            srcSet={srcSet(url)}
+            sizes={sizes}
+            alt={alt ?? item?.alt ?? label}
+            loading={eager ? "eager" : "lazy"}
+            fetchPriority={eager ? "high" : undefined}
+            decoding={eager ? undefined : "async"}
+            style={item?.position ? { objectPosition: item.position } : undefined}
+          />
+        </picture>
       ) : (
         <figcaption><b>Photo</b> · {label}</figcaption>
       )}

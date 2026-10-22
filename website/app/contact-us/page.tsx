@@ -3,13 +3,14 @@ import { CtaBand, Faq, IconPhone, IconPin, IconWhatsApp, JsonLd, PageHero, Secti
 import Reveal from "../components/Reveal";
 import LeadForm from "../components/LeadForm";
 import { site, whatsapp } from "@/lib/site";
+import { breadcrumbLd, businessRef, faqLd, graph, pageMetadata, webPageLd } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: { absolute: "Contact Jay Ganesh Car Accessories | Call, WhatsApp or Visit, Loni Kalbhor, Pune" },
-  description:
-    "Contact Jay Ganesh Car Accessories for car accessories, PPF, ceramic coating and detailing in Pune. Call or WhatsApp +91 99813 97676, or visit us at Kawadipat Toll Naka, Loni Kalbhor. Open 7 days.",
-  alternates: { canonical: "/contact-us/" },
-};
+const path = "/contact-us/";
+const title = "Contact Jay Ganesh Car Accessories, Loni Kalbhor";
+const description =
+  "Call or WhatsApp +91 99813 97676 for car accessories, PPF, ceramic coating and detailing, or visit Kawadipat Toll Naka, Loni Kalbhor, Pune. Open 7 days.";
+
+export const metadata: Metadata = pageMetadata({ title, description, path });
 
 const faqs = [
   { q: "How fast do you reply?", a: `We reply to WhatsApp messages and form enquiries during shop hours (${site.hoursShort.toLowerCase()}). Messages sent late at night are answered the next morning.` },
@@ -17,40 +18,11 @@ const faqs = [
   { q: "Do you give a price before I come?", a: "Yes. Tell us the car model, year and what you're looking for, and we'll reply with options and prices. For paint work we may ask for a photo of the car first." },
 ];
 
-const jsonLd = [
-  {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: `${site.url}/` },
-      { "@type": "ListItem", position: 2, name: "Contact us", item: `${site.url}/contact-us/` },
-    ],
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "ContactPage",
-    name: `Contact ${site.name}`,
-    url: `${site.url}/contact-us/`,
-    mainEntity: {
-      "@type": "AutoPartsStore",
-      name: site.name,
-      telephone: site.phoneE164,
-      address: {
-        "@type": "PostalAddress",
-        streetAddress: "Kawadipat, Toll Naka, Pune–Solapur Road",
-        addressLocality: site.locality,
-        addressRegion: site.region,
-        addressCountry: "IN",
-      },
-      contactPoint: {
-        "@type": "ContactPoint",
-        telephone: site.phoneE164,
-        contactType: "customer service",
-        areaServed: "IN",
-      },
-    },
-  },
-];
+const jsonLd = graph(
+  { ...webPageLd({ type: "ContactPage", name: `Contact ${site.name}`, description, path }), mainEntity: businessRef },
+  faqLd(faqs, path),
+  breadcrumbLd([{ name: "Contact us", path }]),
+);
 
 function IconInstagram() {
   return (

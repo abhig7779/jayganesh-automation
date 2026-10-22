@@ -4,12 +4,12 @@ import type { Service } from "../services";
 export const ceramic: Service = {
   slug: "ceramic-coating-pune",
   menuLabel: "Ceramic coating",
-  title: "Ceramic Coating in Pune: Gloss That Lasts",
+  title: "Ceramic Coating in Pune, Loni Kalbhor",
   description:
-    "Ceramic coating at our Loni Kalbhor studio: deep gloss, water beading and easier washing. Paint prepared and corrected first. WhatsApp your car model for a price.",
+    "Ceramic coating at our Loni Kalbhor studio, Pune: deep gloss, water beading and easier washing, on paint prepared first. WhatsApp your car model.",
   eyebrow: "Detailing studio · Ceramic coating",
   h1: "Ceramic coating in Pune, done on prepared paint",
-  lead: "A hard, glossy layer that bonds to your paint. Water beads off, dust washes away easily, and the colour looks deeper for years, not weeks.",
+  lead: "Ceramic coating is a hard, clear layer that bonds to your car's paint for deep gloss, water beading and much easier washing. It suits new and used cars parked in Pune's sun and dust. We prepare and polish the paint first, then coat it at our studio in Loni Kalbhor.",
   whatsappMessage: "Hi Jay Ganesh, I want a ceramic coating price for my car. Car model: ",
   whatItIs: [
     "Ceramic coating is a liquid that hardens into a thin, clear layer on your paint. It protects against sun, bird droppings and road grime, and makes washing much quicker.",
@@ -52,6 +52,9 @@ export const ceramic: Service = {
     { q: "Does ceramic coating stop scratches?", a: "It resists very light marks, but it does not stop stone chips or deep scratches. For that, choose PPF." },
     { q: "When can I wash the car?", a: "Wait 7 days. After that, hand wash with a pH-neutral shampoo and a clean microfibre mitt." },
     { q: "Can you coat over PPF?", a: "Yes. Many owners fit PPF first and then coat the film for extra gloss and easier washing." },
+    { q: "How long does a ceramic coating take?", a: "Plan for the car to stay with us for about two days: washing, decontamination, polishing, coating and curing. Paint that needs more correction can take longer, so send your car model and a photo on WhatsApp for an exact time." },
+    { q: "Is ceramic coating worth it in Pune?", a: "It is worth it if you want the car to stay glossy and wash clean easily, especially if it's parked outdoors in sun and dust. It won't stop stone chips, so if you drive on the highway often, pair it with PPF." },
+    { q: "Is ceramic coating the same as a Teflon coating or wax?", a: "No. Teflon treatments and wax sit on top of the paint and wear off with washing. A ceramic coating bonds to the paint and lasts much longer with proper care." },
   ],
   photos: ["beadingDark", "polish", "beadingClose"],
   photoSlots: [

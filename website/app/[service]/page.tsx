@@ -7,6 +7,7 @@ import { getService, services } from "@/lib/services";
 import { studioLinks } from "@/lib/catalog";
 import { facts } from "@/lib/prices";
 import { site } from "@/lib/site";
+import { breadcrumbLd, faqLd, graph, pageMetadata, serviceLd, webPageLd } from "@/lib/seo";
 
 export const dynamicParams = false;
 
@@ -17,13 +18,14 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ service: string }> }): Promise<Metadata> {
   const s = getService((await params).service);
   if (!s) return {};
-  return { title: { absolute: `${s.title} | ${site.shortName}` }, description: s.description, alternates: { canonical: `/${s.slug}/` } };
+  return pageMetadata({ title: `${s.title} | ${site.shortName}`, description: s.description, path: `/${s.slug}/` });
 }
 
 export default async function ServicePage({ params }: { params: Promise<{ service: string }> }) {
   const s = getService((await params).service);
   if (!s) notFound();
 
+  const path = `/${s.slug}/`;
   const warranty =
     s.slug === "ppf-pune" && facts.ppfFilmBrand
       ? `${facts.ppfFilmBrand} film${facts.ppfWarrantyYears ? `, with a ${facts.ppfWarrantyYears}-year warranty card` : ""}.`
@@ -32,18 +34,12 @@ export default async function ServicePage({ params }: { params: Promise<{ servic
   return (
     <>
       <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@graph": [
-            { "@type": "Service", name: s.h1, serviceType: s.menuLabel, description: s.description, areaServed: "Pune", provider: { "@type": "AutoRepair", name: site.name, telephone: site.phoneE164 } },
-            { "@type": "FAQPage", mainEntity: s.faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
-            { "@type": "BreadcrumbList", itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Home", item: site.url + "/" },
-              { "@type": "ListItem", position: 2, name: "Detailing studio", item: site.url + "/detailing-studio/" },
-              { "@type": "ListItem", position: 3, name: s.menuLabel, item: `${site.url}/${s.slug}/` },
-            ] },
-          ],
-        }}
+        data={graph(
+          serviceLd({ name: s.h1, serviceType: s.menuLabel === "PPF" ? "Paint protection film (PPF)" : s.menuLabel, description: s.lead, path }),
+          webPageLd({ name: `${s.title} | ${site.shortName}`, description: s.description, path }),
+          faqLd(s.faqs, path),
+          breadcrumbLd([{ name: "Detailing studio", path: "/detailing-studio/" }, { name: s.menuLabel, path }]),
+        )}
       />
 
       <PageHero
@@ -106,7 +102,7 @@ export default async function ServicePage({ params }: { params: Promise<{ servic
         <section className="band">
           <Reveal className="wrap">
             <SectionHead eyebrow="Compared" title="PPF, ceramic or wax?" />
-            <div className="table-wrap">
+            <div className="table-wrap" tabIndex={0} role="region" aria-label="PPF, ceramic or wax compared">{/* focusable so keyboard users can scroll it */}
               <table className="compare">
                 <thead><tr><th scope="col"><span className="sr-only">Feature</span></th>{s.compare.columns.map((c) => <th key={c} scope="col">{c}</th>)}</tr></thead>
                 <tbody>

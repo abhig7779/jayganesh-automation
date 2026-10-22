@@ -3,12 +3,14 @@ import { CtaBand, Faq, JsonLd, PageHero, Photo, Price, SectionHead, Visit, Whats
 import Reveal from "../components/Reveal";
 import { popularCars } from "@/lib/catalog";
 import { whatsapp } from "@/lib/site";
+import { breadcrumbLd, faqLd, graph, pageMetadata, serviceLd, webPageLd } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: { absolute: "Car Seat Covers in Pune, Made for Your Car Model | Jay Ganesh" },
-  description: "Custom car seat covers made for your model and fitted at our Loni Kalbhor shop. Innova, Scorpio, Fortuner, Creta, Swift and more. WhatsApp your car model.",
-  alternates: { canonical: "/seat-covers/" },
-};
+const path = "/seat-covers/";
+const title = "Car Seat Covers in Pune, Made to Fit | Jay Ganesh";
+const description = "Custom car seat covers made for your model and fitted at our Loni Kalbhor shop, Pune. Innova, Scorpio, Creta, Swift and more. WhatsApp your model.";
+const lead = "Custom car seat covers are cut and fitted for your car's exact seats, including headrests and armrests. They're for owners who want a neat, made-to-fit look on any model, from hatchbacks to 7-seaters. Choose the material at our shop in Loni Kalbhor, Pune; most sets are fitted the same day.";
+
+export const metadata: Metadata = pageMetadata({ title, description, path });
 
 // TODO(shop): confirm materials, colours and what's included in a set.
 const faqs = [
@@ -16,6 +18,8 @@ const faqs = [
   { q: "How long does fitting take?", a: "Most sets are fitted the same day at our shop. For 7- and 8-seaters, keep a few hours." },
   { q: "Will the covers fit my seats with airbags?", a: "Covers for cars with seat airbags need the right stitching on the sides. Tell us your variant and we'll pick covers that suit it." },
   { q: "Can I see the material before ordering?", a: "Yes. Visit the shop to see and feel the materials and colours, or ask us for photos on WhatsApp." },
+  { q: "Do you make seat covers for 7-seaters like the Innova and Ertiga?", a: "Yes. We fit covers for 7- and 8-seaters, including the third row. Send your model, year and variant on WhatsApp and we'll share options." },
+  { q: "Where can I buy car seat covers in Pune?", a: "At our shop at Kawadipat Toll Naka on the Pune–Solapur road, Loni Kalbhor, open 7 days, 10 am to 8 pm. You can see the materials in person, and most sets are fitted the same day." },
 ];
 
 const steps = [
@@ -27,12 +31,19 @@ const steps = [
 export default function SeatCovers() {
   return (
     <>
-      <JsonLd data={{ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) }} />
+      <JsonLd
+        data={graph(
+          serviceLd({ name: "Custom car seat covers, fitted", serviceType: "Car seat covers", description: lead, path }),
+          webPageLd({ name: title, description, path }),
+          faqLd(faqs, path),
+          breadcrumbLd([{ name: "Accessories", path: "/accessories/" }, { name: "Seat covers", path }]),
+        )}
+      />
       <PageHero
         crumbs={[{ label: "Accessories", href: "/accessories/" }, { label: "Seat covers" }]}
         eyebrow="Accessories · Interior"
         title="Car seat covers, made for your model"
-        lead="Seat covers chosen for your car's exact seats, fitted at our shop. One of the most-asked-for jobs at Jay Ganesh."
+        lead={lead}
         media={<Photo label="Fitted seat covers in an MUV, second row" m="interior" ratio="4 / 5" eager sizes="(min-width: 1024px) 45vw, 100vw" />}
       >
         <Price k="seatCoverFrom" />

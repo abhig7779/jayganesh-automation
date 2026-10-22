@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { categoryLabel, reelEmbedUrl, reels, reelUrl, type Reel, type ReelCategory } from "@/lib/reels";
 import { site } from "@/lib/site";
+import { webpSrcSet } from "@/lib/media";
 
 type Filter = "all" | ReelCategory;
 
@@ -330,10 +331,13 @@ export default function ReelsShowcase() {
       <ul ref={railRef} className="rl-rail" aria-label="Instagram reels">
         {list.map((r, i) => (
           <li key={r.id} className="rl-rail__item">
-            <button type="button" className="rl-card" onClick={(e) => open(i, e.currentTarget)} aria-label={`Play reel: ${r.title}`}>
+            <button type="button" className="rl-card" onClick={(e) => open(i, e.currentTarget)}>
               {r.poster ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img className="rl-card__poster" src={r.poster} alt="" loading="lazy" decoding="async" />
+                <picture>
+                  <source type="image/webp" srcSet={webpSrcSet(r.poster)} sizes="(max-width: 720px) 72vw, (max-width: 1100px) 220px, 240px" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img className="rl-card__poster" src={r.poster} alt="" width={405} height={720} loading="lazy" decoding="async" />
+                </picture>
               ) : null}
               <span className="rl-card__bg" aria-hidden="true" />
               <span className="rl-card__top">

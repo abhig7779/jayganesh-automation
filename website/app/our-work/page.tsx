@@ -1,19 +1,22 @@
 import type { Metadata } from "next";
+import { breadcrumbLd, graph, pageMetadata, webPageLd } from "@/lib/seo";
 import Link from "next/link";
-import { CtaBand, PageHero, Photo, SectionHead } from "../components/ui";
+import { JsonLd, CtaBand, PageHero, Photo, SectionHead } from "../components/ui";
 import Reveal from "../components/Reveal";
 import { jobs } from "@/lib/work";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: { absolute: "Our Work: PPF, Ceramic, Seat Covers and More | Jay Ganesh" },
-  description: "Real jobs from our Loni Kalbhor shop and studio: PPF, ceramic coating, seat covers, detailing and accessory fittings.",
-  alternates: { canonical: "/our-work/" },
-};
+const path = "/our-work/";
+const title = "Our Work: PPF, Ceramic & Seat Covers, Pune | Jay Ganesh";
+const description =
+  "Real jobs from our Loni Kalbhor shop and studio, Pune: PPF, ceramic coating, seat covers, detailing and accessory fittings on customers' cars.";
+
+export const metadata: Metadata = pageMetadata({ title, description, path });
 
 export default function OurWork() {
   return (
     <>
+      <JsonLd data={graph(webPageLd({ type: "CollectionPage", name: title, description, path }), breadcrumbLd([{ name: "Our work", path }]))} />
       <PageHero
         crumbs={[{ label: "Our work" }]}
         eyebrow="From the shop and studio"

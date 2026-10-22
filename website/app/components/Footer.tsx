@@ -33,7 +33,7 @@ export default function Footer() {
       <div className="wrap">
         <div className="footer-grid">
           <div className="footer-brand">
-            <Image src="/logo.png" alt={site.name} width={64} height={44} />
+            <Image src="/logo-176.webp" alt={site.name} width={64} height={44} />
             <p>Car accessories and a PPF &amp; detailing studio on the Pune–Solapur road, Loni Kalbhor.</p>
             <div className="footer-social">
               <a href={site.instagramHref} target="_blank" rel="noopener noreferrer" aria-label="Instagram"><IconInstagram /></a>
@@ -44,18 +44,18 @@ export default function Footer() {
 
           <div className="footer-cols">
             <div>
-              <h4 className="label">Detailing studio</h4>
+              <h2 className="label">Detailing studio</h2>
               <ul>{studioLinks.map((l) => <li key={l.href}><Link href={l.href}>{l.label}</Link></li>)}</ul>
             </div>
             <div>
-              <h4 className="label">Accessories</h4>
+              <h2 className="label">Accessories</h2>
               <ul>
                 {categories.slice(0, 6).map((c) => <li key={c.key}><Link href={c.href ?? `/accessories/#${c.key}`}>{c.name}</Link></li>)}
                 <li><Link href="/accessories/">All accessories</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="label">Shop</h4>
+              <h2 className="label">Shop</h2>
               <ul>
                 <li><Link href="/our-work/">Our work</Link></li>
                 <li><Link href="/offers/">Offers</Link></li>
@@ -64,11 +64,11 @@ export default function Footer() {
               </ul>
             </div>
             <div>
-              <h4 className="label">Company</h4>
+              <h2 className="label">Company</h2>
               <ul>{companyLinks.map((l) => <li key={l.href}><Link href={l.href}>{l.label}</Link></li>)}</ul>
             </div>
             <div className="footer-visit">
-              <h4 className="label">Visit</h4>
+              <h2 className="label">Visit</h2>
               <address>
                 <a href={site.mapsHref} target="_blank" rel="noopener noreferrer">{site.address}</a>
                 <span>{site.hours}</span>

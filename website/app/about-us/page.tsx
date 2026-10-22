@@ -3,13 +3,14 @@ import Link from "next/link";
 import { CallButton, CtaBand, Faq, IconArrow, JsonLd, PageHero, Photo, SectionHead, Trust, Visit, WhatsAppButton } from "../components/ui";
 import Reveal from "../components/Reveal";
 import { site } from "@/lib/site";
+import { breadcrumbLd, faqLd, graph, pageMetadata, webPageLd } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: { absolute: "About Jay Ganesh Car Accessories | Car Accessories & PPF Studio, Loni Kalbhor, Pune" },
-  description:
-    "Jay Ganesh Car Accessories is the car accessories shop on the Pune–Solapur road at Loni Kalbhor, now with a PPF, ceramic coating and detailing studio. Rated 4.9 on Google, open 7 days.",
-  alternates: { canonical: "/about-us/" },
-};
+const path = "/about-us/";
+const title = "About Jay Ganesh Car Accessories, Loni Kalbhor, Pune";
+const description =
+  `The car accessories shop on the Pune–Solapur road at Loni Kalbhor, with a PPF, ceramic and detailing studio. Rated ${site.rating} on Google, open 7 days.`;
+
+export const metadata: Metadata = pageMetadata({ title, description, path });
 
 const whatWeDo = [
   { href: "/accessories/", label: "Accessories", title: "Accessories, fitted for your car", text: "Seat covers, lights, Android stereos, speakers, 360° cameras and dashcams, chosen for your model and fitted at the shop." },
@@ -36,42 +37,11 @@ const faqs = [
   { q: "Which areas do your customers come from?", a: `Mostly eastern Pune: ${areas.join(", ")}, and travellers on the Pune–Solapur highway.` },
 ];
 
-const jsonLd = [
-  {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: `${site.url}/` },
-      { "@type": "ListItem", position: 2, name: "About us", item: `${site.url}/about-us/` },
-    ],
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "AboutPage",
-    name: `About ${site.name}`,
-    url: `${site.url}/about-us/`,
-    about: { "@id": `${site.url}/#business` },
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "AutoPartsStore",
-    "@id": `${site.url}/#business`,
-    name: site.name,
-    url: site.url,
-    image: `${site.url}/logo.png`,
-    telephone: site.phoneE164,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: "Kawadipat, Toll Naka, Pune–Solapur Road",
-      addressLocality: site.locality,
-      addressRegion: site.region,
-      addressCountry: "IN",
-    },
-    areaServed: areas.map((a) => ({ "@type": "Place", name: `${a}, Pune` })),
-    aggregateRating: { "@type": "AggregateRating", ratingValue: site.rating, reviewCount: String(site.reviews).replace(/[^\d]/g, ""), bestRating: "5" },
-    sameAs: [site.instagramHref, site.youtubeHref, site.facebookHref],
-  },
-];
+const jsonLd = graph(
+  webPageLd({ type: "AboutPage", name: `About ${site.name}`, description, path }),
+  faqLd(faqs, path),
+  breadcrumbLd([{ name: "About us", path }]),
+);
 
 export default function AboutUs() {
   return (

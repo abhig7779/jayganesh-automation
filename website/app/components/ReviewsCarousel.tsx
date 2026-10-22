@@ -4,7 +4,7 @@ import "../styles/reviews.css";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { site } from "@/lib/site";
 import { visibleReviews, type VisibleReview } from "@/lib/reviews";
-import { GoogleG, Stars } from "./GoogleRating";
+import { GoogleG, GoogleGSymbol, GoogleGUse, Stars } from "./GoogleRating";
 
 const INTERVAL_MS = 3000;
 const RESUME_AFTER_TOUCH_MS = 4000;
@@ -55,7 +55,7 @@ function ReviewCard({
         <header className="rv-card__head">
           <Stars count={review.stars} size={17} />
           <span className="rv-sr">{review.stars} out of 5 stars</span>
-          <GoogleG size={20} className="rv-card__g" />
+          <GoogleGUse size={20} className="rv-card__g" />
         </header>
         <p id={textId} ref={textRef} className={`rv-card__text${expanded ? " is-expanded" : ""}`}>
           {review.text}
@@ -248,6 +248,7 @@ export default function ReviewsCarousel() {
       onTouchEnd={onTouchEnd}
       onTouchCancel={onTouchEnd}
     >
+      <GoogleGSymbol />
       <ul
         ref={trackRef}
         className="rv-track"

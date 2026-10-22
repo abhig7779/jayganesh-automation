@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
-import { PageHero, Photo, SectionHead, WhatsAppButton, IconArrow, IconPhone, IconPin } from "../components/ui";
+import { breadcrumbLd, graph, pageMetadata, webPageLd } from "@/lib/seo";
+import { JsonLd, PageHero, Photo, SectionHead, WhatsAppButton, IconArrow, IconPhone, IconPin } from "../components/ui";
 import Reveal from "../components/Reveal";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: { absolute: "Visit Us: Kawadipat Toll Naka, Loni Kalbhor | Jay Ganesh Car Accessories" },
-  description: "Find Jay Ganesh Car Accessories at Kawadipat Toll Naka on the Pune–Solapur road, Loni Kalbhor. Open every day, 10 am to 8 pm. Call or WhatsApp +91 99813 97676.",
-  alternates: { canonical: "/visit-us/" },
-};
+const path = "/visit-us/";
+const title = "Visit Us: Kawadipat Toll Naka, Loni Kalbhor | Jay Ganesh";
+const description =
+  "Find Jay Ganesh Car Accessories at Kawadipat Toll Naka, Pune–Solapur Road, Loni Kalbhor. Open every day, 10 am to 8 pm. Call or WhatsApp +91 99813 97676.";
+
+export const metadata: Metadata = pageMetadata({ title, description, path });
 
 const from = [
   { area: "Hadapsar", how: "Take the Pune–Solapur road east past Manjri; the shop is at Kawadipat Toll Naka." },
@@ -18,6 +20,7 @@ const from = [
 export default function VisitUs() {
   return (
     <>
+      <JsonLd data={graph(webPageLd({ name: title, description, path }), breadcrumbLd([{ name: "Visit us", path }]))} />
       <PageHero
         crumbs={[{ label: "Visit us" }]}
         eyebrow="Loni Kalbhor"

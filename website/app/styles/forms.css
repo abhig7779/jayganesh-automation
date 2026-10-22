@@ -6,7 +6,8 @@
   display: grid; gap: 28px; min-width: 0;
 }
 .lead-form-head { display: grid; gap: 8px; }
-.lead-form-head h3 { font-size: clamp(22px, 2.6vw, 28px); letter-spacing: -0.03em; }
+/* h2 (the form follows the page h1 or a section h2), sized like a card title. */
+.lead-form-head h2 { font-size: clamp(22px, 2.6vw, 28px); letter-spacing: -0.03em; line-height: 1.2; }
 .lead-form-head p { color: var(--ink-muted); }
 
 .lead-grid { display: grid; gap: 20px 18px; grid-template-columns: minmax(0, 1fr); }
@@ -87,7 +88,7 @@
 
 /* Success panel */
 .lead-success { justify-items: start; gap: 14px; outline: none; padding-block: clamp(32px, 5vw, 56px); }
-.lead-success h3 { font-size: clamp(26px, 3.2vw, 34px); letter-spacing: -0.035em; }
+.lead-success h2 { font-size: clamp(26px, 3.2vw, 34px); letter-spacing: -0.035em; line-height: 1.2; }
 .lead-success p { color: var(--ink-muted); max-width: 44ch; }
 .lead-success .btn { margin-top: 8px; }
 .lead-success-mark {

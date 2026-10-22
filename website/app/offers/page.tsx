@@ -1,19 +1,22 @@
 import type { Metadata } from "next";
-import { CtaBand, PageHero, Price, SectionHead, Visit, WhatsAppButton } from "../components/ui";
+import { breadcrumbLd, graph, pageMetadata, webPageLd } from "@/lib/seo";
+import { JsonLd, CtaBand, PageHero, Price, SectionHead, Visit, WhatsAppButton } from "../components/ui";
 import Reveal from "../components/Reveal";
 import { offers, offerSeason } from "@/lib/offers";
 import { facts } from "@/lib/prices";
 
-export const metadata: Metadata = {
-  title: { absolute: `Offers: ${offerSeason} | Jay Ganesh Car Accessories` },
-  description: "Current offers on foam wash, PPF, new-car protection and accessories combos at Jay Ganesh, Loni Kalbhor. Book on WhatsApp.",
-  alternates: { canonical: "/offers/" },
-};
+const path = "/offers/";
+const title = `Offers: ${offerSeason}, Loni Kalbhor | Jay Ganesh`;
+const description =
+  "Current offers on foam wash, full-body PPF, new-car protection and accessories at Jay Ganesh, Loni Kalbhor, Pune. Book your slot on WhatsApp.";
+
+export const metadata: Metadata = pageMetadata({ title, description, path });
 
 export default function Offers() {
   const active = offers.filter((o) => o.active);
   return (
     <>
+      <JsonLd data={graph(webPageLd({ name: title, description, path }), breadcrumbLd([{ name: "Offers", path }]))} />
       <PageHero
         crumbs={[{ label: "Offers" }]}
         eyebrow={offerSeason}
@@ -30,7 +33,7 @@ export default function Offers() {
               {active.map((o) => (
                 <article key={o.title} className="offer">
                   <span className="label label--yellow offer-until">{o.until}</span>
-                  <h3>{o.title}</h3>
+                  <h2>{o.title}</h2>
                   <p style={{ color: "var(--ink-muted)" }}>
                     {o.detail}
                     {o.title.startsWith("Full-body PPF") && facts.ppfLaunchBonus ? ` Launch bonus: ${facts.ppfLaunchBonus}.` : ""}

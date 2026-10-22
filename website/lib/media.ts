@@ -1,3 +1,5 @@
+import localSizes from "./image-sizes.json";
+
 // Photos used on the site.
 //
 // STAND-INS: every `stock: true` image is a free Unsplash photo (Unsplash
@@ -43,15 +45,34 @@ export const media = {
 
 export type MediaKey = keyof typeof media;
 
-/** A sized, compressed URL for a photo. Local files are returned as they are. */
+// Real pixel sizes of the local photos and the WebP widths made for them by
+// scripts/optimize-images.py (re-run it after adding or replacing a photo).
+// Note the "-800.jpg" copies of portrait renders are 640 wide, not 800.
+type LocalImage = { w: number; h: number; jpg800: number | null; webp: number[] };
+const localImages = localSizes as Record<string, LocalImage>;
+
+const isUnsplash = (src: string) => src.startsWith("https://images.unsplash.com/");
+
+/** A sized, compressed URL for a photo: Unsplash resizes on the fly; local files use the nearest JPEG. */
 export function imageUrl(src: string, width: number) {
-  if (!src.startsWith("https://images.unsplash.com/")) return src;
-  return `${src}?w=${width}&q=72&auto=format&fit=crop`;
+  if (isUnsplash(src)) return `${src}?w=${width}&q=72&auto=format&fit=crop`;
+  const info = localImages[src];
+  if (info?.jpg800 && width <= 800) return src.replace(/\.jpg$/, "-800.jpg");
+  return src;
 }
 
-export function srcSet(src: string, widths = [480, 800, 1200, 1800]) {
-  // Studio renders ship as name.jpg (1600 wide) plus name-800.jpg.
-  if (src.startsWith("/images/gen/")) return `${src.replace(/\.jpg$/, "-800.jpg")} 800w, ${src} 1600w`;
-  if (!src.startsWith("https://images.unsplash.com/")) return undefined;
+/** JPEG (local) or auto-format (Unsplash) srcset with accurate width descriptors. */
+export function srcSet(src: string, widths = [480, 640, 800, 1200, 1600]) {
+  const info = localImages[src];
+  if (info) return info.jpg800 ? `${src.replace(/\.jpg$/, "-800.jpg")} ${info.jpg800}w, ${src} ${info.w}w` : undefined;
+  if (!isUnsplash(src)) return undefined;
   return widths.map((w) => `${imageUrl(src, w)} ${w}w`).join(", ");
+}
+
+/** WebP srcset for a local photo (studio renders, reel posters), optionally capped at `maxWidth`. */
+export function webpSrcSet(src: string, maxWidth = Infinity) {
+  const info = localImages[src];
+  if (!info) return undefined;
+  const widths = info.webp.filter((w) => w <= maxWidth);
+  return (widths.length ? widths : info.webp.slice(0, 1)).map((w) => `${src.replace(/\.jpg$/, `-${w}.webp`)} ${w}w`).join(", ");
 }

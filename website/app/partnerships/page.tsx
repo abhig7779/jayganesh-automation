@@ -3,13 +3,14 @@ import { CtaBand, Faq, JsonLd, PageHero, SectionHead, WhatsAppButton, CallButton
 import Reveal from "../components/Reveal";
 import LeadForm from "../components/LeadForm";
 import { site } from "@/lib/site";
+import { breadcrumbLd, faqLd, graph, pageMetadata, webPageLd } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: { absolute: "Partner with Jay Ganesh | PPF, Ceramic & Accessories for Dealerships and Fleets, Pune" },
-  description:
-    "Partner with Jay Ganesh Car Accessories, Loni Kalbhor: PPF, ceramic coating and accessories for car dealerships, fleets and corporate cars, insurers, workshops and creators in Pune.",
-  alternates: { canonical: "/partnerships/" },
-};
+const path = "/partnerships/";
+const title = "Partnerships: Dealerships & Fleets, Pune | Jay Ganesh";
+const description =
+  "PPF, ceramic coating and accessories for car dealerships, fleets, insurers, workshops and creators in Pune, from our Loni Kalbhor studio.";
+
+export const metadata: Metadata = pageMetadata({ title, description, path });
 
 const whoFor = [
   { label: "Dealerships", t: "Car dealerships and showrooms", d: "PPF, ceramic coating and accessories fitted before new-car delivery, so your buyer drives away with everything done." },
@@ -37,24 +38,11 @@ const faqs = [
   { q: "How is pricing agreed?", a: "It depends on the cars, the services and the volume. We'll discuss it with you directly after the first call." },
 ];
 
-const jsonLd = [
-  {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: `${site.url}/` },
-      { "@type": "ListItem", position: 2, name: "Partnerships", item: `${site.url}/partnerships/` },
-    ],
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    name: `Partner with ${site.name}`,
-    url: `${site.url}/partnerships/`,
-    description: "Partnerships for car dealerships, fleets, insurers, workshops and creators.",
-    about: { "@type": "AutoPartsStore", name: site.name, url: site.url, telephone: site.phoneE164 },
-  },
-];
+const jsonLd = graph(
+  webPageLd({ name: `Partner with ${site.name}`, description, path }),
+  faqLd(faqs, path),
+  breadcrumbLd([{ name: "Partnerships", path }]),
+);
 
 export default function Partnerships() {
   return (

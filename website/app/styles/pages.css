@@ -61,7 +61,7 @@
 
 /* ---------- Offers ---------- */
 .offer { padding: clamp(26px, 3vw, 36px); display: grid; gap: 16px; align-content: start; }
-.offer h3 { font-size: clamp(22px, 3vw, 30px); letter-spacing: -0.03em; }
+.offer h2 { font-size: clamp(22px, 3vw, 30px); letter-spacing: -0.03em; line-height: 1.2; }
 .offer-until { display: inline-flex; width: fit-content; }
 .offer .btn { width: fit-content; margin-top: 6px; }
 .offer-banner {

@@ -3,13 +3,14 @@ import { CtaBand, Faq, JsonLd, PageHero, SectionHead, WhatsAppButton } from "../
 import Reveal from "../components/Reveal";
 import LeadForm from "../components/LeadForm";
 import { site } from "@/lib/site";
+import { breadcrumbLd, faqLd, graph, pageMetadata, webPageLd } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: { absolute: "Become a Vendor or Supplier | Car Accessories, PPF & Coatings | Jay Ganesh, Pune" },
-  description:
-    "Supply car accessories, PPF films, coatings, seat covers, lighting or audio to Jay Ganesh Car Accessories, Loni Kalbhor, Pune. Share your products and we'll get back to you.",
-  alternates: { canonical: "/become-a-vendor/" },
-};
+const path = "/become-a-vendor/";
+const title = "Become a Vendor or Supplier, Pune | Jay Ganesh";
+const description =
+  "Supply car accessories, PPF film, coatings, seat covers, lighting or audio to Jay Ganesh Car Accessories, Loni Kalbhor, Pune. Share your products.";
+
+export const metadata: Metadata = pageMetadata({ title, description, path });
 
 const lookFor = [
   { t: "Genuine branded products", d: "Real, traceable products from the brand or its authorised channel. No copies." },
@@ -39,24 +40,11 @@ const faqs = [
   { q: "Should I send samples?", a: "Please don't send anything before we talk. We'll tell you what to send and where after the first call." },
 ];
 
-const jsonLd = [
-  {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: `${site.url}/` },
-      { "@type": "ListItem", position: 2, name: "Become a vendor", item: `${site.url}/become-a-vendor/` },
-    ],
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    name: `Become a vendor for ${site.name}`,
-    url: `${site.url}/become-a-vendor/`,
-    description: "How suppliers of car accessories, films, coatings and electronics can work with Jay Ganesh Car Accessories.",
-    about: { "@type": "AutoPartsStore", name: site.name, url: site.url, telephone: site.phoneE164 },
-  },
-];
+const jsonLd = graph(
+  webPageLd({ name: `Become a vendor for ${site.name}`, description, path }),
+  faqLd(faqs, path),
+  breadcrumbLd([{ name: "Become a vendor", path }]),
+);
 
 export default function BecomeAVendor() {
   return (

@@ -5,8 +5,8 @@
 /* ---------- Stars ---------- */
 .rv-stars { display: inline-flex; align-items: center; gap: 2px; line-height: 0; }
 .rv-stars svg { display: block; fill: var(--brand-yellow); }
-.rv-stars svg.is-off { fill: var(--line); }
-[data-theme="light"] .rv-stars svg.is-on { stroke: #b89a00; stroke-width: 0.8px; stroke-linejoin: round; }
+.rv-stars .is-off { fill: var(--line); }
+[data-theme="light"] .rv-stars path.is-on { stroke: #b89a00; stroke-width: 0.8px; stroke-linejoin: round; }
 
 /* ---------- GoogleRating badge ---------- */
 .rv-badge {
@@ -42,7 +42,7 @@
 .rv-badge--hero .rv-badge__score { font-size: 18px; color: #fff; }
 .rv-badge--hero .rv-badge__count { color: rgba(244, 245, 246, 0.78); font-size: 13px; }
 .rv-badge--hero .rv-badge__body { gap: 1px; }
-.rv-badge--hero .rv-stars svg { fill: var(--brand-yellow); stroke: none; }
+.rv-badge--hero .rv-stars svg, .rv-badge--hero .rv-stars path.is-on { fill: var(--brand-yellow); stroke: none; }
 .rv-badge--hero:hover { border-color: rgba(255, 255, 255, 0.3); transform: translateY(-1px); }
 
 /* compact: tiny one-liner */

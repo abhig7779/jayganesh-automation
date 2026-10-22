@@ -1,0 +1,78 @@
+/* Quick-help chat widget (bottom right). On phones it sits above the action dock. */
+.help-widget {
+  position: fixed; z-index: 60;
+  right: max(14px, env(safe-area-inset-right, 0px));
+  bottom: calc(10px + var(--bar-h, 64px) + 14px + env(safe-area-inset-bottom, 0px));
+}
+@media (min-width: 1024px) {
+  .help-widget { right: max(24px, env(safe-area-inset-right, 0px)); bottom: max(24px, env(safe-area-inset-bottom, 0px)); }
+}
+
+.help-fab {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 52px; min-width: 52px; padding: 0 18px 0 14px; border: 0; border-radius: 999px; cursor: pointer;
+  background: var(--brand-yellow); color: var(--on-yellow);
+  font-family: var(--font-display); font-weight: 600; font-size: 15px;
+  box-shadow: 0 10px 30px rgba(255,229,0,.25), 0 4px 12px rgba(0,0,0,.3);
+  transition: transform .2s var(--ease), box-shadow .2s;
+}
+.help-fab[aria-expanded="true"] { padding: 0; width: 52px; justify-content: center; }
+.help-fab:hover { transform: translateY(-2px); }
+.help-fab:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.help-fab svg { width: 24px; height: 24px; flex: none; }
+@media (min-width: 1024px) { .help-fab { height: 60px; min-width: 60px; } .help-fab[aria-expanded="true"] { width: 60px; } }
+
+.help-card {
+  position: absolute; right: 0; bottom: 66px;
+  width: min(360px, calc(100vw - 28px));
+  max-height: min(560px, calc(100svh - 190px));
+  display: flex; flex-direction: column;
+  border-radius: 18px; overflow: hidden;
+  background: var(--card, var(--surface-100)); border: 1px solid var(--line); box-shadow: var(--shadow-lg);
+  animation: help-in .22s var(--ease);
+}
+@media (min-width: 1024px) { .help-card { bottom: 76px; max-height: min(600px, calc(100svh - 130px)); } }
+@keyframes help-in { from { opacity: 0; transform: translateY(8px) scale(.98); } }
+
+.help-head { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: #0f1013; color: #f4f5f6; border-bottom: 2px solid var(--brand-yellow); }
+.help-head strong { display: block; font-family: var(--font-display); font-size: 15px; line-height: 1.2; }
+.help-head span { font-size: 12.5px; color: rgba(244,245,246,.72); }
+.help-dot { width: 10px; height: 10px; border-radius: 50%; background: #25d366; box-shadow: 0 0 0 4px rgba(37,211,102,.18); flex: none; }
+.help-close { margin-left: auto; width: 32px; height: 32px; border: 0; border-radius: 50%; background: rgba(255,255,255,.12); color: #fff; font-size: 20px; line-height: 1; cursor: pointer; }
+
+.help-log { flex: 1 1 auto; overflow-y: auto; padding: 16px; display: grid; gap: 10px; align-content: start; background: var(--surface-200); overscroll-behavior: contain; }
+.help-msg { max-width: 88%; display: grid; gap: 8px; }
+.help-msg p { margin: 0; padding: 10px 12px; font-size: 14.5px; line-height: 1.45; border-radius: 4px 14px 14px 14px; background: var(--card, var(--surface-100)); color: var(--ink); box-shadow: 0 1px 1px rgba(0,0,0,.12); }
+.help-msg--me { justify-self: end; }
+.help-msg--me p { border-radius: 14px 4px 14px 14px; background: var(--brand-yellow); color: var(--on-yellow); }
+.help-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.help-wa, .help-link {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; border-radius: 999px;
+  font-size: 13px; font-weight: 600; text-decoration: none;
+}
+.help-wa { background: #25d366; color: #0b2b16; }
+.help-wa svg { width: 15px; height: 15px; }
+.help-link { border: 1px solid var(--line-strong); color: var(--ink); }
+.help-link:hover { border-color: var(--ink); }
+
+.help-chips { display: flex; gap: 6px; padding: 10px 12px; overflow-x: auto; scrollbar-width: none; border-top: 1px solid var(--line); background: var(--card, var(--surface-100)); }
+.help-chips::-webkit-scrollbar { display: none; }
+.help-chips:empty { display: none; }
+.help-chip {
+  flex: none; min-height: 36px; padding: 0 12px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  border: 1px solid var(--line-strong); background: transparent; color: var(--ink); font: inherit; font-size: 13px; font-weight: 600;
+}
+.help-chip:hover, .help-chip:focus-visible { border-color: var(--brand-yellow); background: rgba(255,229,0,.08); }
+
+.help-form { display: flex; gap: 8px; padding: 10px 12px 12px; background: var(--card, var(--surface-100)); }
+.help-form input {
+  flex: 1; min-width: 0; height: 44px; padding: 0 14px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface-000); color: var(--ink); font: inherit; font-size: 16px;
+}
+.help-form input:focus { outline: none; border-color: var(--ink-muted); }
+.help-form button { flex: none; width: 44px; height: 44px; border: 0; border-radius: 50%; display: grid; place-items: center; background: #25d366; color: #fff; cursor: pointer; }
+.help-form button:disabled { opacity: .45; cursor: default; }
+.help-form button svg { width: 20px; height: 20px; }
+
+[data-theme="light"] .help-chip:hover { background: rgba(255,229,0,.25); }
+@media (prefers-reduced-motion: reduce) { .help-card { animation: none; } .help-fab { transition: none; } }

@@ -36,7 +36,9 @@
 
 .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; margin-right: auto; min-width: 0; }
 .brand img { height: 36px; width: auto; flex: none; }
-.brand-name { display: none; line-height: 1.1; }
+/* Visually hidden (not display: none) on small screens, so the home link
+   always has a name for screen readers. */
+.brand-name { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; line-height: 1.1; }
 .brand-name strong { display: block; font-family: var(--font-display); font-weight: 600; font-size: 15px; letter-spacing: -0.02em; }
 .brand-name .label { font-size: 10px; letter-spacing: .18em; }
 [data-theme="light"] .brand img, [data-theme="light"] .footer-brand img {
@@ -121,7 +123,7 @@
 .action-bar svg { width: 17px; height: 17px; }
 
 @media (min-width: 640px) and (max-width: 1023px), (min-width: 1280px) {
-  .brand-name { display: block; }
+  .brand-name { display: block; position: static; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; white-space: normal; }
 }
 
 @media (min-width: 1024px) {
@@ -189,7 +191,7 @@
 .footer-brand { display: grid; gap: 18px; max-width: 340px; align-content: start; }
 .footer-brand img { height: 44px; width: auto; }
 .footer-brand p { color: var(--ink-muted); }
-.footer h4 { margin: 0 0 16px; }
+.footer-cols h2 { margin: 0 0 16px; }
 .footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .footer a { text-decoration: none; color: var(--ink-muted); transition: color .2s; }
 .footer a:hover { color: var(--ink); }
@@ -243,10 +245,10 @@
 .theme-toggle svg { width: 17px; height: 17px; }
 
 /* ---------- WhatsApp: official green ---------- */
-.action-bar a:first-child { background: var(--whatsapp-green); color: #fff; }
+.action-bar a:first-child { background: var(--whatsapp-green); color: var(--on-whatsapp); }
 .wa-widget { display: none; }
 @media (min-width: 1024px) {
-  .wa-widget { display: block; position: fixed; right: max(24px, env(safe-area-inset-right, 0px)); bottom: max(24px, env(safe-area-inset-bottom, 0px)); z-index: 60; }
+  .wa-widget { display: block; position: fixed; left: max(24px, env(safe-area-inset-left, 0px)); bottom: max(24px, env(safe-area-inset-bottom, 0px)); z-index: 60; }
 }
 .wa-fab {
   width: 60px; height: 60px; border-radius: 50%; border: 0; cursor: pointer;
@@ -258,7 +260,7 @@
 .wa-fab:hover { transform: translateY(-2px) scale(1.04); }
 .wa-fab svg { width: 30px; height: 30px; }
 .wa-card {
-  position: absolute; right: 0; bottom: 76px; width: 340px;
+  position: absolute; left: 0; bottom: 76px; width: 340px;
   border-radius: 18px; overflow: hidden;
   background: var(--surface-100); border: 1px solid var(--line); box-shadow: var(--shadow-lg);
   animation: wa-in .22s var(--ease);
@@ -284,7 +286,7 @@
 .wa-start {
   display: flex; align-items: center; justify-content: center; gap: 10px; margin: 14px 16px 16px;
   min-height: 48px; border-radius: var(--radius-pill);
-  background: var(--whatsapp-green); color: #fff; font-family: var(--font-display); font-weight: 600; text-decoration: none;
+  background: var(--whatsapp-green); color: var(--on-whatsapp); font-family: var(--font-display); font-weight: 600; text-decoration: none;
 }
 .wa-start:hover { filter: brightness(1.05); }
 .wa-start svg { width: 20px; height: 20px; }

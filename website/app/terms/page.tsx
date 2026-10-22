@@ -1,15 +1,20 @@
 import type { Metadata } from "next";
+import { breadcrumbLd, graph, pageMetadata, webPageLd } from "@/lib/seo";
+import { JsonLd } from "../components/ui";
 import LegalShell, { ContactBox } from "../components/LegalShell";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Terms & conditions",
-  description: `Terms for products, fitting and services at ${site.name}.`,
-};
+const path = "/terms/";
+const title = "Terms & Conditions | Jay Ganesh Car Accessories";
+const description =
+  `Terms for products, fitting, studio services, offers and bookings at ${site.name}, Loni Kalbhor, Pune.`;
+
+export const metadata: Metadata = pageMetadata({ title, description, path });
 
 export default function Terms() {
   return (
     <LegalShell title="Terms & conditions" current="terms">
+      <JsonLd data={graph(webPageLd({ name: title, description, path }), breadcrumbLd([{ name: "Terms & conditions", path }]))} />
       <p>
         These terms apply when you buy products from {site.name}, have work done on your vehicle at our shop, or use this
         website and our social media channels. By booking or buying from us, you agree to them.

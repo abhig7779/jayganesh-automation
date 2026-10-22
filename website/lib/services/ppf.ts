@@ -4,12 +4,12 @@ import type { Service } from "../services";
 export const ppf: Service = {
   slug: "ppf-pune",
   menuLabel: "PPF",
-  title: "PPF in Pune: Paint Protection Film for Your Car",
+  title: "PPF in Pune: Paint Protection Film",
   description:
-    "Clear, self-healing paint protection film fitted at our Loni Kalbhor studio. Front kits and full body for new and used cars. WhatsApp your car model for a price.",
+    "Clear, self-healing paint protection film for new and used cars, fitted at our Loni Kalbhor studio. Front kits and full body. WhatsApp your model.",
   eyebrow: "Detailing studio · Paint protection film",
   h1: "PPF in Pune, fitted at our own studio",
-  lead: "A clear film over your paint that takes the stone chips, scratches and bird droppings instead of your car. Fitted panel by panel in our studio on the Pune–Solapur road.",
+  lead: "PPF (paint protection film) is a clear, self-healing film that protects your car's paint from stone chips, scratches and bird droppings. We fit it panel by panel on new and used cars at our studio at Kawadipat Toll Naka, on the Pune–Solapur road in Loni Kalbhor, Pune.",
   whatsappMessage: "Hi Jay Ganesh, I want a PPF price for my car. Car model: ",
   whatItIs: [
     "Paint protection film (PPF) is a clear polyurethane film that sits on top of your car's paint. Most stone chips, light scratches and swirl marks land on the film, not the paint underneath.",
@@ -69,6 +69,9 @@ export const ppf: Service = {
     { q: "Can I wash the car after PPF?", a: "Wait 7 days, then hand wash with a pH-neutral shampoo. Avoid automatic brush washes." },
     { q: "Should I do PPF or ceramic coating?", a: "PPF protects against chips and scratches. Ceramic adds gloss and makes washing easier. Many owners do PPF on the front or full body, then ceramic on top." },
     { q: "Do you give a warranty?", a: "Yes, PPF comes with a warranty card. Ask us on WhatsApp for the film brand and warranty period for your package." },
+    { q: "Is PPF worth it for a new car in Pune?", a: "For most new cars, yes, especially if you drive on highways like the Pune–Solapur road. PPF takes the stone chips and scratches that would otherwise mark new paint for good, and it can be removed later without harming the factory finish. If the car mostly stays in the city, a front kit is a sensible start." },
+    { q: "Can PPF be fitted on a used car?", a: "Yes. We inspect the paint first and polish where needed, so existing swirl marks are not sealed under the film. Deep scratches and chips should be repaired before the film goes on; we'll point them out at inspection." },
+    { q: "Where can I get PPF done near Hadapsar, Kharadi or Wagholi?", a: "At our studio at Kawadipat Toll Naka on the Pune–Solapur road, Loni Kalbhor. Customers come from Hadapsar, Manjri, Kharadi, Wagholi, Fursungi and Uruli Kanchan. WhatsApp +91 99813 97676 with your car model to book a slot." },
   ],
   photos: ["ppfApply", "ppfEdge", "polishBlue", "newCar"],
   photoSlots: [

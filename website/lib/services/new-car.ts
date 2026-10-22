@@ -4,12 +4,12 @@ import type { Service } from "../services";
 export const newCar: Service = {
   slug: "new-car-protection",
   menuLabel: "New-car protection",
-  title: "New Car PPF and Accessories Package in Pune",
+  title: "New Car PPF & Accessories in Pune",
   description:
-    "Buying a new car? Book PPF, ceramic, seat covers and accessories before delivery and get it all fitted at our Loni Kalbhor shop. WhatsApp your car model.",
+    "Taking delivery of a new car in Pune? Book PPF, ceramic, seat covers and a dashcam before delivery, fitted in one visit at Loni Kalbhor.",
   eyebrow: "Detailing studio · New cars",
   h1: "Protect your new car from the first day",
-  lead: "Book before delivery. We plan the PPF or ceramic, seat covers, mats and dashcam for your exact model, so the car is done properly before the first highway drive.",
+  lead: "New-car protection is one package of PPF or ceramic coating, seat covers, mats and a dashcam, planned for your exact model before delivery. It's for anyone taking delivery of a new car in Pune, with everything fitted in one visit at our shop in Loni Kalbhor, on the Pune–Solapur road.",
   whatsappMessage: "Hi Jay Ganesh, I'm taking delivery of a new car and want a protection package. Car model and delivery date: ",
   whatItIs: [
     "A new car's paint is at its best on delivery day, and the first few weeks of driving do the most damage: stone chips, wash swirls and parking scratches.",
@@ -50,6 +50,8 @@ export const newCar: Service = {
     { q: "Can you fit everything on delivery day?", a: "Accessories usually, yes. Full-body PPF needs 3–4 days in the studio, so plan the car's first days around that." },
     { q: "Does PPF affect the manufacturer's warranty?", a: "No. Film sits on top of the paint and doesn't change anything mechanical or electrical." },
     { q: "Which accessories should a new car get first?", a: "Seat covers and mats protect the interior from day one, and a dashcam is worth having from the first drive. Lights and audio upgrades can come later." },
+    { q: "Should I get PPF before or after taking delivery?", a: "As soon after delivery as you can, ideally before the first long drive. The paint is at its best on day one, and film fitted then seals in a clean, unmarked finish." },
+    { q: "Can I drive straight from the showroom to your shop?", a: "Yes. Many owners bring the car straight from the showroom to our shop at Kawadipat Toll Naka, Loni Kalbhor. Send the delivery date on WhatsApp so we can keep a slot and products ready for your model." },
   ],
   photos: ["newCar", "ppfApply", "studioBay"],
   photoSlots: [

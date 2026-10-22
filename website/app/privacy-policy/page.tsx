@@ -1,15 +1,20 @@
 import type { Metadata } from "next";
+import { breadcrumbLd, graph, pageMetadata, webPageLd } from "@/lib/seo";
+import { JsonLd } from "../components/ui";
 import LegalShell, { ContactBox } from "../components/LegalShell";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Privacy policy",
-  description: `How ${site.name} collects, uses and protects your personal information.`,
-};
+const path = "/privacy-policy/";
+const title = "Privacy Policy | Jay Ganesh Car Accessories";
+const description =
+  `How ${site.name} collects, uses and protects your personal information when you call, WhatsApp, fill a form or visit the shop.`;
+
+export const metadata: Metadata = pageMetadata({ title, description, path });
 
 export default function PrivacyPolicy() {
   return (
     <LegalShell title="Privacy policy" current="privacy">
+      <JsonLd data={graph(webPageLd({ name: title, description, path }), breadcrumbLd([{ name: "Privacy policy", path }]))} />
       <p>
         This policy explains what personal information {site.name} (&ldquo;we&rdquo;, &ldquo;us&rdquo;) collects when
         you visit our shop, use this website, or contact us on WhatsApp, Instagram, Facebook, Messenger, Google or by

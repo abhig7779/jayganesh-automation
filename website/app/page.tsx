@@ -9,10 +9,11 @@ import ReviewsCarousel from "./components/ReviewsCarousel";
 import ReelsShowcase from "./components/ReelsShowcase";
 import GoogleRating from "./components/GoogleRating";
 import Reveal from "./components/Reveal";
-import { CtaBand, Photo, Price, Visit, WhatsAppButton, IconArrow } from "./components/ui";
+import { CtaBand, Faq, JsonLd, Photo, Price, SectionHead, Visit, WhatsAppButton, IconArrow } from "./components/ui";
 import { popularCars } from "@/lib/catalog";
 import { offers, offerSeason } from "@/lib/offers";
 import { site, whatsapp } from "@/lib/site";
+import { breadcrumbLd, faqLd, graph, webPageLd } from "@/lib/seo";
 import type { MediaKey } from "@/lib/media";
 import type { PriceKey } from "@/lib/prices";
 
@@ -20,6 +21,14 @@ const studio: { href: string; name: string; line: string; m: MediaKey; price: Pr
   { href: "/ppf-pune/", name: "Paint protection film", line: "Stops stone chips and scratches. Self-heals light marks.", m: "ppfApply", price: "ppfFrontKit" },
   { href: "/ceramic-coating-pune/", name: "Ceramic coating", line: "Deep gloss, water beading and easier washing for years.", m: "beadingDark", price: "ceramicFrom" },
   { href: "/car-detailing-pune/", name: "Detailing", line: "Exterior decontamination and interior deep cleaning, done by hand.", m: "polish", price: "washFrom" },
+];
+
+const faqs = [
+  { q: "What does Jay Ganesh Car Accessories do?", a: "We sell and fit car accessories (seat covers, lights, Android stereos, speakers, 360° cameras and dashcams) and run a detailing studio for PPF, ceramic coating, car detailing and new-car protection, at Loni Kalbhor, Pune." },
+  { q: "Where is the shop, and when is it open?", a: `At ${site.addressShort}, Pune. We're open every day, 10 am to 8 pm. Call or WhatsApp ${site.phoneDisplay}.` },
+  { q: "Should I choose PPF or ceramic coating?", a: "PPF is a clear film that stops stone chips and scratches. Ceramic coating adds deep gloss and makes washing easier but does not stop chips. Many owners fit PPF first and coat on top." },
+  { q: "How do I get a price?", a: "Send your car model and what you need on WhatsApp. Prices depend on the car and the product, so we reply with options and prices for your model." },
+  { q: "Is Jay Ganesh Car Accessories well reviewed?", a: `We're rated ${site.rating} on Google from ${site.reviews} reviews, and have served ${site.customers} customers from Loni Kalbhor, Hadapsar, Manjri, Uruli Kanchan and across Pune.` },
 ];
 
 function Head({ id, eyebrow, title, lead, children }: { id: string; eyebrow?: string; title: React.ReactNode; lead?: string; children?: React.ReactNode }) {
@@ -40,6 +49,13 @@ export default function Home() {
 
   return (
     <>
+      <JsonLd
+        data={graph(
+          webPageLd({ name: "Car accessories and PPF detailing studio in Loni Kalbhor, Pune", description: `Car accessories shop and PPF, ceramic coating and detailing studio at ${site.addressShort}, Pune.`, path: "/" }),
+          faqLd(faqs, "/"),
+          breadcrumbLd([]),
+        )}
+      />
       <Hero />
 
       {/* Trust strip */}
@@ -182,6 +198,15 @@ export default function Home() {
           </div>
         </section>
       )}
+
+      <section className="h-sec" aria-label="Common questions">
+        <div className="wrap">
+          <Reveal className="split split--start split--sticky">
+            <SectionHead eyebrow="Questions" title="Common questions" />
+            <Faq items={faqs} />
+          </Reveal>
+        </div>
+      </section>
 
       <section className="h-sec h-sec--tight" aria-label="Visit the shop">
         <div className="wrap"><Visit /></div>
