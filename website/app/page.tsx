@@ -100,12 +100,7 @@ export default function Home() {
       <section className="h-sec h-sec--tight" aria-labelledby="dealer-title">
         <div className="wrap">
           <Reveal>
-            <Head id="dealer-title" eyebrow="Authorised dealer" title="Brands we're authorised to sell and fit" lead="Autoform seat covers, plus PPF and headlight brands. Tap a logo for the brand's page in Pune.">
-              <div className="actions">
-                <Link className="h-link" href="/ppf-brands-pune/">PPF brands <IconArrow /></Link>
-                <Link className="h-link" href="/headlight-brands-pune/">Headlight brands <IconArrow /></Link>
-              </div>
-            </Head>
+            <Head id="dealer-title" eyebrow="Authorised dealer" title="Brands we're authorised to sell and fit" lead="Autoform seat covers, plus PPF and headlight brands. Tap a logo for the brand's page in Pune." />
             <DealerLogoRows />
           </Reveal>
         </div>

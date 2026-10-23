@@ -85,3 +85,28 @@
 @media (min-width: 768px) and (max-width: 1023px) {
   .dealer-rows .dealer-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
+
+/* Premium hover: a yellow spotlight on the tile border that follows the
+   cursor (--mx/--my from TileSpotlight), a soft glow and a slight lift. */
+.dealer-strip a { position: relative; isolation: isolate; }
+.dealer-strip a::before {
+  content: ""; position: absolute; inset: -1px; z-index: -1; border-radius: inherit; padding: 1px;
+  background: radial-gradient(160px circle at var(--mx, 50%) var(--my, 50%), rgba(255,229,0,.95), rgba(255,229,0,.25) 40%, transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0; transition: opacity .3s;
+}
+.dealer-strip a::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(255,229,0,.10), transparent 65%);
+  opacity: 0; transition: opacity .3s;
+}
+@media (hover: hover) {
+  .dealer-strip a:hover { box-shadow: 0 14px 34px -18px rgba(255,229,0,.45), 0 0 0 1px rgba(255,229,0,.12); }
+  .dealer-strip a:hover::before, .dealer-strip a:hover::after { opacity: 1; }
+  .dealer-strip a:hover .brand-logo__img { transform: scale(1.04); }
+  .dealer-strip .brand-logo__img { transition: opacity .25s, transform .3s var(--ease, ease); }
+}
+.dealer-strip a:focus-visible { outline: 2px solid var(--brand-yellow); outline-offset: 3px; }
+[data-theme="light"] .dealer-strip a:hover { box-shadow: 0 14px 34px -18px rgba(18,19,23,.35); }
+@media (prefers-reduced-motion: reduce) { .dealer-strip a, .dealer-strip a:hover { transform: none; } }

@@ -7,6 +7,7 @@ import { PageHero } from "./PageHero";
 import Reveal from "./Reveal";
 import ReviewsCarousel from "./ReviewsCarousel";
 import { BrandLogo } from "./BrandLogos";
+import TileSpotlight from "./TileSpotlight";
 import { getBrandBySlug } from "@/lib/brands";
 import {
   dealerBrandPath,
@@ -302,6 +303,7 @@ export function DealerLogoRows() {
 
   return (
     <div className="dealer-rows">
+      <TileSpotlight selector=".dealer-strip a" />
       {rows.map((r) => (
         <div key={r.key} className="dealer-row">
           <div className="dealer-row__head">
