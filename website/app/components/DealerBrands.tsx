@@ -304,7 +304,10 @@ export function DealerLogoRows() {
     <div className="dealer-rows">
       {rows.map((r) => (
         <div key={r.key} className="dealer-row">
-          <p className="label dealer-row__label">{r.label}</p>
+          <div className="dealer-row__head">
+            <p className="label dealer-row__label">{r.label}</p>
+            {r.hub && <Link className="text-link dealer-row__hub" href={r.hub.href}>{r.hub.label} <IconArrow /></Link>}
+          </div>
           <ul className="dealer-strip">
             {r.items.map((i) => (
               <li key={i.href}>
@@ -312,7 +315,6 @@ export function DealerLogoRows() {
               </li>
             ))}
           </ul>
-          {r.hub && <Link className="text-link dealer-row__hub" href={r.hub.href}>{r.hub.label} <IconArrow /></Link>}
         </div>
       ))}
       <p className="dealer-legal">Brand names and logos belong to their owners.</p>

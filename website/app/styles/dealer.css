@@ -15,10 +15,38 @@
 .dealer-card__note { color: var(--ink-muted); font-size: 15px; line-height: 1.5; }
 .dealer-card .text-link { margin-top: 4px; font-size: 14.5px; }
 
-/* Compact logo strip (/car-lights/). */
-.dealer-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; list-style: none; margin: 0; padding: 0; }
-.dealer-strip a { display: inline-flex; border-radius: 999px; text-decoration: none; transition: transform .2s var(--ease); }
-.dealer-strip a:hover { transform: translateY(-2px); }
+/* Logo wall (homepage rows, /car-lights/ strip): equal tiles, every logo the
+   same height and drawn as a single-colour mark, so mixed official files
+   (colour, white, dark ink) read as one set. Colour returns on hover. */
+.dealer-strip {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;
+  list-style: none; margin: 0; padding: 0;
+}
+.dealer-strip li { display: flex; }
+.dealer-strip a {
+  flex: 1; display: flex; align-items: center; justify-content: center; height: 76px; padding: 0 18px;
+  border-radius: 14px; background: var(--fill-soft); border: 1px solid var(--soft-line);
+  text-decoration: none; transition: background-color .25s, border-color .25s, transform .2s var(--ease);
+}
+.dealer-strip a:hover { background: var(--fill-soft-hover); border-color: var(--soft-line-strong); transform: translateY(-2px); }
+.dealer-strip .brand-logo { padding: 0; background: none !important; --logo-h: 30px; --logo-w: 120px; justify-self: center; }
+.dealer-strip .brand-logo__img { filter: brightness(0) invert(1) !important; opacity: .78; }
+.dealer-strip a:hover .brand-logo__img { opacity: 1; }
+.dealer-strip .brand-logo__name { color: #fff !important; opacity: .78; font-size: 13px; }
+.dealer-strip .dealer-wordmark {
+  min-height: 0; padding: 0; border: 0; background: none; color: #fff; opacity: .78; font-size: 14px;
+}
+.dealer-strip a:hover .dealer-wordmark, .dealer-strip a:hover .brand-logo__name { opacity: 1; }
+/* Light theme: the same wall in black ink on light tiles. */
+[data-theme="light"] .dealer-strip .brand-logo__img { filter: brightness(0) !important; opacity: .72; }
+[data-theme="light"] .dealer-strip .brand-logo__img--light { display: none; }
+[data-theme="light"] .dealer-strip .brand-logo__img--dark { display: block; }
+[data-theme="light"] .dealer-strip .brand-logo__name,
+[data-theme="light"] .dealer-strip .dealer-wordmark { color: #121317 !important; }
+@media (max-width: 479px) {
+  .dealer-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dealer-strip a { height: 68px; padding: 0 14px; }
+}
 
 /* Text wordmark for brands with no official logo file: a neutral chip that reads on both themes. */
 .dealer-wordmark {
@@ -37,11 +65,23 @@
 
 /* Homepage "Authorised dealer" rows (DealerLogoRows). */
 .dealer-rows { display: grid; gap: 18px; }
-.dealer-row { display: grid; grid-template-columns: 110px 1fr auto; align-items: center; gap: 10px 18px; padding-top: 18px; border-top: 1px solid var(--soft-line); }
+.dealer-row { display: grid; grid-template-columns: 170px minmax(0, 1fr); align-items: start; gap: 10px 18px; padding-top: 18px; border-top: 1px solid var(--soft-line); }
 .dealer-row:first-child { border-top: 0; padding-top: 0; }
+.dealer-row__head { display: grid; gap: 10px; justify-items: start; padding-top: 18px; }
 .dealer-row__label { margin: 0; }
 .dealer-row__hub { font-size: 14.5px; white-space: nowrap; }
 .dealer-rows .dealer-legal { margin-top: 0; }
 @media (max-width: 767px) {
   .dealer-row { grid-template-columns: 1fr; }
+  .dealer-row__head { padding-top: 0; grid-auto-flow: column; justify-content: space-between; align-items: center; width: 100%; }
+}
+
+/* Homepage rows: one row of up to 7 tiles per category on desktop. */
+@media (min-width: 1024px) {
+  .dealer-rows .dealer-strip { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  .dealer-rows .dealer-strip a { padding: 0 14px; }
+  .dealer-rows .dealer-strip .brand-logo { --logo-w: 104px; --logo-h: 28px; }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .dealer-rows .dealer-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
