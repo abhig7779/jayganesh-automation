@@ -352,3 +352,12 @@ body { top: 0 !important; }
 /* Keep the credit clear of the floating Help button (bottom right). */
 .footer-base { padding-bottom: 76px; }
 @media (min-width: 1024px) { .footer-base { padding-bottom: 0; padding-right: 150px; } }
+
+/* Status toast for the Hindi switch (LangSwitch.tsx). */
+#jg-translate-status {
+  position: fixed; z-index: 70; left: 50%; top: calc(var(--header-h) + 12px); transform: translate(-50%, -8px);
+  padding: 10px 16px; border-radius: 999px; background: #121317; color: #f4f5f6; border: 1px solid rgba(255,229,0,.4);
+  font-size: 14px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s;
+}
+#jg-translate-status.is-on { opacity: 1; transform: translate(-50%, 0); }

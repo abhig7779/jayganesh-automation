@@ -119,7 +119,8 @@ const fonts = [
 const reviews = JSON.parse(await readFile(path.join(root, "lib/reviews.json"), "utf8"));
 const rating = Number(reviews.rating).toFixed(1);
 const count = Math.round(reviews.count);
-const countLabel = count > 0 ? ` (${count.toLocaleString("en-IN")} reviews)` : "";
+// Same rounded-down "700+" figure the site shows.
+const countLabel = count > 0 ? ` (${(Math.floor(count / 50) * 50).toLocaleString("en-IN")}+ reviews)` : "";
 
 // Logo: 690×480 transparent PNG, drawn 120 px high. Rasterised at 2× and let
 // resvg downsample, so edges stay crisp.

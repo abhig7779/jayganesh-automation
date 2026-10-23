@@ -207,3 +207,10 @@ p { margin: 0; }
 }
 
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* Hindi (Google Translate sets lang="hi"): Devanagari needs room above and
+   below for its vowel marks, and letter-spacing breaks its joined letters. */
+html[lang="hi"] body { font-family: var(--font-hind), var(--font-hanken), sans-serif; }
+html[lang="hi"] body * { letter-spacing: normal !important; }
+html[lang="hi"] :is(h1, h2, h3, h4, .h1, .h2) { font-family: var(--font-hind), var(--font-sora), sans-serif; line-height: 1.3 !important; }
+html[lang="hi"] :is(p, li, .lead, .label) { line-height: 1.6; }

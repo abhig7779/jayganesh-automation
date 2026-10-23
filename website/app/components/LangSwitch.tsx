@@ -73,7 +73,43 @@ function patchDomForTranslate() {
   };
 }
 
-function loadTranslate() {
+// A small status toast while Google loads and translates (2–3 s), so a tap
+// never looks like it did nothing. Google adds "translated-ltr" to <html>
+// when it's done; if the script is blocked (ad blockers), say so.
+function showStatus(text: string, ms: number) {
+  let t = document.getElementById("jg-translate-status");
+  if (!t) {
+    t = document.createElement("div");
+    t.id = "jg-translate-status";
+    t.className = "notranslate";
+    t.setAttribute("translate", "no");
+    t.setAttribute("role", "status");
+    document.body.appendChild(t);
+  }
+  t.textContent = text;
+  t.classList.add("is-on");
+  window.clearTimeout(Number(t.dataset.timer || 0));
+  t.dataset.timer = String(window.setTimeout(() => t?.classList.remove("is-on"), ms));
+}
+
+function watchTranslated() {
+  const html = document.documentElement;
+  const done = () => html.classList.contains("translated-ltr");
+  if (done()) return;
+  const mo = new MutationObserver(() => {
+    if (!done()) return;
+    mo.disconnect();
+    document.getElementById("jg-translate-status")?.classList.remove("is-on");
+  });
+  mo.observe(html, { attributes: true, attributeFilter: ["class"] });
+  window.setTimeout(() => mo.disconnect(), 15000);
+}
+
+function loadTranslate(announce = false) {
+  if (announce) {
+    showStatus("हिंदी में बदल रहे हैं…", 12000);
+    watchTranslated();
+  }
   if (document.getElementById(SCRIPT_ID)) return;
   patchDomForTranslate();
   document.documentElement.lang = "hi";
@@ -99,6 +135,7 @@ function loadTranslate() {
   s.id = SCRIPT_ID;
   s.src = "https://translate.google.com/translate_a/element.js?cb=jgTranslateInit";
   s.async = true;
+  s.onerror = () => showStatus("Hindi translation was blocked by your browser or an ad blocker.", 6000);
   document.body.appendChild(s);
 }
 
@@ -126,7 +163,7 @@ function useLang() {
     }
     track("language_switch", { to: "hi" });
     setCookie("/en/hi");
-    loadTranslate();
+    loadTranslate(true);
     window.dispatchEvent(new Event(CHANGE));
   };
 

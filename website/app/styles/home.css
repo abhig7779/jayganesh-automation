@@ -590,3 +590,19 @@ html:not([data-dock="on"]) body:has(.hero-v) .header:not(.is-open) {
   --fill-soft: rgba(255,255,255,.08); --fill-soft-hover: rgba(255,255,255,.14);
   color: #f4f5f6;
 }
+
+/* Homepage hero: the Google rating is a quiet trust line under the two
+   buttons (no pill, one line), so it doesn't read as a third button. */
+@media (min-width: 768px) {
+  .hero-v .hero-v-foot > .rv-badge--hero {
+    padding: 0; gap: 10px; background: none; border: 0; box-shadow: none;
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+  }
+  .hero-v .hero-v-foot > .rv-badge--hero .rv-badge__g { width: 26px; height: 26px; padding: 4px; }
+  .hero-v .hero-v-foot > .rv-badge--hero .rv-badge__body { flex-direction: row; align-items: center; gap: 10px; }
+  .hero-v .hero-v-foot > .rv-badge--hero .rv-badge__score { font-size: 16px; }
+  .hero-v .hero-v-foot > .rv-badge--hero .rv-badge__count { font-size: 14px; }
+  .hero-v .hero-v-foot > .rv-badge--hero .rv-badge__count::before { content: "·"; margin-right: 10px; opacity: .6; }
+  .hero-v .hero-v-foot > .rv-badge--hero:hover .rv-badge__count { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+  .hero-v-foot { gap: 18px; }
+}
