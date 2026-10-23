@@ -93,6 +93,97 @@
 @media (min-width: 720px) and (min-height: 640px) { .hero-x-cue { display: block; } }
 @media (prefers-reduced-motion: reduce) { .hero-x-kb, .hero-x-cue-line { animation: none !important; } }
 
+/* ---------- Hero: scroll-scrubbed studio reveal (HeroReveal.tsx) ----------
+   A ~300vh section with a sticky 100svh stage; the scroll drives the film.
+   Static (no pin, END poster) for reduced motion, without JS (rules mirrored
+   in HeroReveal's <noscript>), and on phones until a portrait film exists
+   (.hero-v--mv marks that it does). The 767/768px breakpoint must match Hero.tsx. */
+.hero-v { display: block; overflow: visible; min-height: 0; height: 300vh; --p: 0; }
+.hero-v-stage {
+  position: sticky; top: 0; height: 100svh; overflow: hidden; isolation: isolate;
+  display: flex; align-items: center;
+}
+.hero-v .hero-x-bg { object-position: 85% 50%; }
+/* Desktop: a slight zoom; the left (empty) side takes the crop so the car on
+   the right stays whole from 1280 to 1920 wide. */
+@media (min-width: 768px) { .hero-v .hero-x-bg { transform: scale(1.07); transform-origin: 45% 50%; } }
+.hero-v-video { opacity: 0; transition: opacity .7s var(--ease, ease); }
+.hero-v.is-ready .hero-v-video { opacity: 1; }
+.hero-v.is-failed .hero-v-video { display: none; }
+.hero-v-endfade { opacity: var(--p); }
+.hero-v .hero-x-shade {
+  background:
+    linear-gradient(90deg, rgba(6,7,9,.95) 0%, rgba(6,7,9,.82) 28%, rgba(6,7,9,.35) 50%, rgba(6,7,9,0) 70%),
+    linear-gradient(0deg, rgba(6,7,9,.7) 0%, rgba(6,7,9,0) 30%),
+    linear-gradient(180deg, rgba(6,7,9,.55) 0%, rgba(6,7,9,0) 20%);
+}
+.hero-v .hero-x-inner { width: 100%; padding-block: calc(var(--header-h) + 24px) 64px; }
+.hero-v .hero-x-copy { gap: 20px; max-width: 520px; }
+.hero-v h1 { font-size: clamp(44px, min(5.6vw, 8.8svh), 72px); max-width: none; }
+.hero-v h1, .hero-v .hero-x-line { text-shadow: 0 2px 24px rgba(0,0,0,.45); }
+.hero-v .hero-x-line { max-width: 46ch; }
+.hero-v-head { display: grid; gap: 16px; }
+.hero-v .hero-x-kicker { display: flex; align-items: center; gap: 12px; color: var(--yellow-text); }
+.hero-v .hero-x-kicker::before { content: ""; flex: none; width: 28px; height: 1px; background: currentColor; opacity: .7; }
+.hero-v-foot { display: grid; gap: 22px; }
+.hero-v-foot > .rv-badge { justify-self: start; width: max-content; max-width: 100%; }
+.hero-v-chap {
+  display: grid; margin: 0;
+  font-family: var(--font-display); font-size: 16px; font-weight: 500; line-height: 1.4;
+  letter-spacing: -0.01em; color: var(--yellow-text);
+}
+.hero-v-chap > span {
+  grid-area: 1 / 1; opacity: 0; transform: translateY(10px);
+  transition: opacity .4s var(--ease, ease), transform .4s var(--ease, ease);
+}
+.hero-v[data-chapter="0"] .hero-v-chap > :nth-child(1),
+.hero-v[data-chapter="1"] .hero-v-chap > :nth-child(2),
+.hero-v[data-chapter="2"] .hero-v-chap > :nth-child(3) { opacity: 1; transform: none; }
+.hero-v[data-chapter="1"] .hero-v-chap > :nth-child(1),
+.hero-v[data-chapter="2"] .hero-v-chap > :nth-child(-n+2) { transform: translateY(-10px); }
+/* Thin yellow progress line down the left edge. */
+.hero-v-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: rgba(255,255,255,.08); }
+.hero-v-bar > span { display: block; height: 100%; background: #ffe500; transform-origin: top; transform: scaleY(var(--p)); }
+.hero-v-cue-wrap { position: absolute; left: 0; right: 0; bottom: 0; opacity: calc(1 - var(--p) * 6); }
+
+/* Phones (portrait film): pinned under the header, text at the top, actions
+   and rating at the bottom over a dark gradient. */
+@media (max-width: 767px) {
+  .hero-v-stage { top: var(--header-h); height: calc(100svh - var(--header-h)); align-items: stretch; }
+  .hero-v .hero-x-bg { object-position: 50% 60%; }
+  .hero-v .hero-x-inner { display: flex; flex-direction: column; padding-block: 24px 20px; }
+  .hero-v .hero-x-copy { flex: 1; display: flex; flex-direction: column; gap: 14px; }
+  .hero-v h1 { font-size: clamp(34px, 9.8vw, 40px); line-height: 1; }
+  .hero-v .hero-x-kicker { font-size: 11px; letter-spacing: .2em; }
+  .hero-v-head { gap: 12px; }
+  .hero-v .hero-x-line { font-size: 15.5px; line-height: 1.5; }
+  .hero-v-chap { font-size: 15px; }
+  .hero-v-foot { margin-top: auto; gap: 14px; }
+  .hero-v .hero-x-actions { margin-top: 0; gap: 10px; }
+  .hero-v .hero-x-shade {
+    background:
+      linear-gradient(180deg, rgba(6,7,9,.92) 0%, rgba(6,7,9,.7) 26%, rgba(6,7,9,0) 46%),
+      linear-gradient(0deg, rgba(6,7,9,.96) 0%, rgba(6,7,9,.75) 22%, rgba(6,7,9,0) 42%);
+  }
+}
+
+/* Static hero: no pinning, END poster, last chapter. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-v { height: auto; }
+  .hero-v-stage { position: relative; top: 0; height: auto; min-height: max(560px, calc(100svh - var(--header-h))); }
+  .hero-v-bar { display: none; }
+  .hero-v .hero-v-chap > * { opacity: 0; transition: none; }
+  .hero-v .hero-v-chap > :last-child { opacity: 1; transform: none; }
+}
+@media (max-width: 767px) {
+  .hero-v:not(.hero-v--mv) { height: auto; }
+  .hero-v:not(.hero-v--mv) .hero-v-stage { position: relative; top: 0; height: auto; min-height: calc(100svh - var(--header-h)); }
+  .hero-v:not(.hero-v--mv) .hero-x-bg { object-position: 72% 50%; }
+  .hero-v:not(.hero-v--mv) .hero-v-bar { display: none; }
+  .hero-v:not(.hero-v--mv) .hero-v-chap > * { opacity: 0; transition: none; }
+  .hero-v:not(.hero-v--mv) .hero-v-chap > :last-child { opacity: 1; transform: none; }
+}
+
 /* ---------- Trust strip ---------- */
 .trust-x { border-bottom: 1px solid var(--line); }
 .trust-x ul {

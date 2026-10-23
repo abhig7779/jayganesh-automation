@@ -26,7 +26,12 @@ export default function Header() {
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 24);
-      const on = window.scrollY > window.innerHeight * 0.6;
+      // The home hero is a tall pinned section: wait until its end is near.
+      const hero = document.querySelector<HTMLElement>(".hero-v");
+      const at = hero && hero.offsetHeight > window.innerHeight * 1.5
+        ? hero.offsetTop + hero.offsetHeight - window.innerHeight * 0.9
+        : window.innerHeight * 0.6;
+      const on = window.scrollY > at;
       setDock(on);
       document.documentElement.dataset.dock = on ? "on" : "off";
     };

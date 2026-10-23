@@ -233,7 +233,7 @@ async function pageSpec(file) {
 
   const title = text(html.match(/<title[^>]*>(.*?)<\/title>/s)?.[1] ?? "").replace(/\s*\|\s*Jay Ganesh.*$/i, "");
   let headline = text(html.match(/<h1[^>]*>(.*?)<\/h1>/s)?.[1] ?? "");
-  // The homepage H1 is a slogan ("Protection, perfected."); its title says what the shop is.
+  // The homepage card uses the page title (it says what the shop is), not the hero H1.
   if (!headline || headline.length > 80 || target === "/og/home.jpg") headline = title;
 
   // "Garware PPF in Pune – authorised dealer": the yellow badge says the second half.

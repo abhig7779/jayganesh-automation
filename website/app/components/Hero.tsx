@@ -1,87 +1,86 @@
+import fs from "node:fs";
+import path from "node:path";
 import Link from "next/link";
 import { preload } from "react-dom";
 import GoogleRating from "./GoogleRating";
+import HeroReveal, { type HeroFilm } from "./HeroReveal";
 import { WhatsAppButton, IconArrow } from "./ui";
-import { imageUrl, media, srcSet, webpSrcSet, type MediaKey } from "@/lib/media";
 
-// Home hero: full-bleed studio shot (or film, once it exists), with the
-// headline, one line and two actions at the bottom left.
-// Change these three constants to change the hero.
-export const heroHeadline = "Protection, perfected.";
-const heroLine = "PPF, ceramic coating and detailing in our new studio, by the team eastern Pune already trusts.";
-// Set to "/video/hero.mp4" once the studio film is in /public/video/.
-const heroVideo: string | null = null;
-// Dark, low-key shot: the left side is near black, so the text sits on it.
-const heroImage: MediaKey = "studioHero";
-// Portrait version for phones, so the car isn't cropped on a tall screen.
-const heroImageMobile: MediaKey = "studioHeroMobile";
+// Home hero: a scroll-scrubbed film of the studio reveal. The section pins
+// while you scroll and the scroll drives the film's playback time (see
+// HeroReveal.tsx). Static END poster for reduced motion and without JS.
+// Change these constants to change the hero.
+export const heroHeadline = "Premium PPF & car accessories in Pune";
+/** Brand tagline (not shown in the hero any more; kept for reuse). */
+export const heroTagline = "Protection, perfected.";
+const heroKicker = "Loni Kalbhor · Pune · Authorised dealer";
+const heroLine = "PPF, ceramic coating, detailing and accessories, fitted by the Jay Ganesh team at our Loni Kalbhor studio.";
+const heroAlt = "A black SUV revealed under the LED light tunnel of the Jay Ganesh detailing studio, headlights on";
 
-// Phones get the portrait shot, desktops the wide one. Keep the breakpoint in
-// one place: the <source> media queries and the preloads must agree.
-const mobileQuery = "(max-width: 767px)";
-const desktopQuery = "(min-width: 768px)";
+// Text chapters on the left, one per third of the scroll.
+const chapters = ["Unveiled in our own studio", "Protected with PPF & ceramic coating", "Lit up, polished, ready to drive"];
+
+// Files in /public/video/: {name}.mp4 plus {name}-start/-end posters (.webp + .jpg).
+const desktopName = "hero-reveal-desktop"; // 16:9, car on the right
+const mobileName = "hero-reveal-mobile"; // 9:16, car in the lower half
+
+// Keep the breakpoint in one place: the <source> media queries, the preloads,
+// the CSS (home.css) and HeroReveal must agree.
+const phone = "(max-width: 767px)";
+const desk = "(min-width: 768px)";
+const motion = "(prefers-reduced-motion: no-preference)";
+const still = "(prefers-reduced-motion: reduce)";
+
+const exists = (publicPath: string) => fs.existsSync(path.join(process.cwd(), "public", publicPath));
+
+function film(name: string): HeroFilm | null {
+  const base = `/video/${name}`;
+  if (!exists(`${base}.mp4`) || !exists(`${base}-start.jpg`) || !exists(`${base}-end.jpg`)) return null;
+  const webp = (p: string) => (exists(p.replace(/\.jpg$/, ".webp")) ? p.replace(/\.jpg$/, ".webp") : undefined);
+  return {
+    src: `${base}.mp4`,
+    start: { jpg: `${base}-start.jpg`, webp: webp(`${base}-start.jpg`) },
+    end: { jpg: `${base}-end.jpg`, webp: webp(`${base}-end.jpg`) },
+  };
+}
 
 export default function Hero() {
-  const img = media[heroImage];
-  const mobile = media[heroImageMobile];
-  const poster = imageUrl(img.src, 1600);
-  // The hero photo is the LCP element: WebP, at most 800px wide on phones.
-  const mobileWebp = webpSrcSet(mobile.src, 800);
-  const desktopWebp = webpSrcSet(img.src);
+  // Decided at build time: phones get the portrait film once its files exist,
+  // else a static, non-pinned hero with the desktop END poster.
+  const desktop = film(desktopName)!;
+  const mobile = film(mobileName);
 
-  // Ask for the right hero file from <head>, before the body is parsed. Same
-  // srcset/sizes/media as the <picture> below, so it is never fetched twice.
-  // href is only a fallback for browsers without imagesrcset: the largest candidate.
-  const largest = (set: string) => set.split(",").pop()!.trim().split(" ")[0];
-  if (!heroVideo) {
-    if (mobileWebp) preload(largest(mobileWebp), { as: "image", type: "image/webp", imageSrcSet: mobileWebp, imageSizes: "100vw", media: mobileQuery, fetchPriority: "high" });
-    if (desktopWebp) preload(largest(desktopWebp), { as: "image", type: "image/webp", imageSrcSet: desktopWebp, imageSizes: "100vw", media: desktopQuery, fetchPriority: "high" });
+  // The poster <img> is the LCP element. Ask for the one this screen will
+  // show from <head>, with the same media queries as the <picture> sources.
+  const pre = (poster: HeroFilm["start"], media: string) =>
+    preload(poster.webp ?? poster.jpg, { as: "image", type: poster.webp ? "image/webp" : undefined, media, fetchPriority: "high" });
+  pre(desktop.start, `${desk} and ${motion}`);
+  if (mobile) {
+    pre(mobile.start, `${phone} and ${motion}`);
+    pre(mobile.end, `${phone} and ${still}`);
+    pre(desktop.end, `${desk} and ${still}`);
+  } else {
+    pre(desktop.end, `${phone}, ${still}`);
   }
 
   return (
-    <section className="hero-x" aria-labelledby="hero-title">
-      <div className="hero-x-media" aria-hidden={heroVideo ? true : undefined}>
-        {heroVideo ? (
-          <video className="hero-x-bg" src={heroVideo} poster={poster} autoPlay muted loop playsInline preload="metadata" />
-        ) : (
-          <picture>
-            {mobileWebp && <source media={mobileQuery} type="image/webp" srcSet={mobileWebp} sizes="100vw" />}
-            <source media={mobileQuery} srcSet={imageUrl(mobile.src, 800)} />
-            {desktopWebp && <source type="image/webp" srcSet={desktopWebp} sizes="100vw" />}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              className="hero-x-bg hero-x-kb"
-              src={poster}
-              srcSet={srcSet(img.src)}
-              sizes="100vw"
-              alt={img.alt}
-              width={1600}
-              height={900}
-              loading="eager"
-              fetchPriority="high"
-            />
-          </picture>
-        )}
-        <span className="hero-x-shade" aria-hidden />
-      </div>
-
-      <div className="wrap hero-x-inner">
-        <div className="hero-x-copy">
-          <p className="hero-x-kicker">Loni Kalbhor · Pune</p>
-          <h1 id="hero-title">{heroHeadline}</h1>
-          <p className="hero-x-line">{heroLine}</p>
-          <div className="hero-x-actions">
-            <WhatsAppButton message="Hi Jay Ganesh, I'd like a quote for my car.">Get a quote on WhatsApp</WhatsAppButton>
-            <Link className="btn btn--ghost" href="/our-work/">See our work <IconArrow /></Link>
-          </div>
-          <GoogleRating variant="hero" />
+    <HeroReveal
+      desktop={desktop}
+      mobile={mobile}
+      alt={heroAlt}
+      kicker={heroKicker}
+      title={<h1 id="hero-title">{heroHeadline}</h1>}
+      chapters={chapters}
+      queries={{ phone, still }}
+    >
+      <p className="hero-x-line">{heroLine}</p>
+      <div className="hero-v-foot">
+        <div className="hero-x-actions">
+          <WhatsAppButton message="Hi Jay Ganesh, I'd like a quote for my car.">Get a quote on WhatsApp</WhatsAppButton>
+          <Link className="btn btn--ghost" href="/our-work/">See our work <IconArrow /></Link>
         </div>
+        <GoogleRating variant="hero" />
       </div>
-
-      <a className="hero-x-cue" href="#studio">
-        <span className="sr-only">Scroll to the studio services</span>
-        <span className="hero-x-cue-line" aria-hidden />
-      </a>
-    </section>
+    </HeroReveal>
   );
 }
