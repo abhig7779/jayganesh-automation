@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { CtaBand, Faq, IconPhone, IconPin, IconWhatsApp, JsonLd, PageHero, SectionHead } from "../components/ui";
+import { CtaBand, Faq, IconPhone, IconPin, IconWhatsApp, JsonLd, SectionHead } from "../components/ui";
+import { PageHero } from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import LeadForm from "../components/LeadForm";
 import { site, whatsapp } from "@/lib/site";
@@ -47,6 +48,7 @@ export default function ContactUs() {
     <>
       <JsonLd data={jsonLd} />
       <PageHero
+        image="accessories"
         crumbs={[{ label: "Contact us" }]}
         eyebrow="Call · WhatsApp · Visit"
         title="Contact Jay Ganesh Car Accessories"

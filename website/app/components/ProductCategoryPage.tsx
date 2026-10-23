@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CtaBand, Faq, IconArrow, JsonLd, PageHero, Photo, SectionHead, Visit, WhatsAppButton, CallButton } from "./ui";
+import { CtaBand, Faq, IconArrow, JsonLd, Photo, SectionHead, Visit, WhatsAppButton, CallButton } from "./ui";
+import { PageHero } from "./PageHero";
+import { isHeroImageKey, type HeroImageKey } from "@/lib/heroes";
 import Reveal from "./Reveal";
 import { popularCars } from "@/lib/catalog";
 import { getHub, getProductCategory, howItWorks, hubs, productCategories, type HubSlug } from "@/lib/products";
 import type { Topic } from "@/lib/reviews";
 import ReviewsCarousel from "./ReviewsCarousel";
 import BrandLogos from "./BrandLogos";
+import { DealerBrandsSection } from "./DealerBrands";
 import { getBrand, type Brand } from "@/lib/brands";
 
 // Which Google reviews each category page shows.
@@ -24,6 +27,9 @@ import { breadcrumbLd, faqLd, graph, pageMetadata, serviceLd, webPageLd } from "
 // Shared template for the accessory product-category pages (headlights,
 // ambient lighting, Android stereo, 360° camera, dashcams) and their hubs
 // (/car-lights/, /audio-screens/). Content lives in lib/products.ts.
+
+// Category and hub slugs double as hero photo keys (lib/heroes.ts).
+const heroKeyFor = (slug: string): HeroImageKey => (isHeroImageKey(slug) ? slug : "accessories");
 
 const accessories = { label: "Accessories", href: "/accessories/" };
 
@@ -70,7 +76,7 @@ export default function ProductCategoryPage({ slug }: { slug: string }) {
         eyebrow={c.eyebrow}
         title={c.h1}
         lead={c.lead}
-        media={<Photo label={c.photoLabel} m={c.photo} ratio="4 / 5" eager sizes="(min-width: 1024px) 45vw, 100vw" />}
+        image={heroKeyFor(c.slug)}
       >
         <p className="label">Price on WhatsApp · fitted at our shop</p>
         <div className="actions">
@@ -78,6 +84,8 @@ export default function ProductCategoryPage({ slug }: { slug: string }) {
           <CallButton />
         </div>
       </PageHero>
+
+      {c.slug === "headlights" && <DealerBrandsSection category="headlights" />}
 
       <section className="band band--panel">
         <Reveal className="wrap split split--start">
@@ -178,13 +186,15 @@ export function HubPage({ slug }: { slug: HubSlug }) {
         eyebrow={h.eyebrow}
         title={h.h1}
         lead={h.lead}
-        media={<Photo label={h.menuLabel} m={h.photo} ratio="4 / 5" eager sizes="(min-width: 1024px) 45vw, 100vw" />}
+        image={heroKeyFor(h.slug)}
       >
         <div className="actions">
           <WhatsAppButton message={message}>WhatsApp your car model</WhatsAppButton>
           <CallButton />
         </div>
       </PageHero>
+
+      {h.slug === "car-lights" && <DealerBrandsSection category="headlights" compact />}
 
       <section className="band band--panel">
         <div className="wrap">

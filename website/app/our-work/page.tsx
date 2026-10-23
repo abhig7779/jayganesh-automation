@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { breadcrumbLd, graph, pageMetadata, webPageLd } from "@/lib/seo";
 import Link from "next/link";
-import { JsonLd, CtaBand, PageHero, Photo, SectionHead } from "../components/ui";
+import { JsonLd, CtaBand, Photo, SectionHead } from "../components/ui";
+import { PageHero } from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import { jobs } from "@/lib/work";
 import { site } from "@/lib/site";
@@ -22,7 +23,7 @@ export default function OurWork() {
         eyebrow="From the shop and studio"
         title="Our work"
         lead="Every job here was done for a customer at our shop. More go up on Instagram every week."
-        media={<Photo label="Paint correction on a bonnet" m="polish" ratio="4 / 5" eager sizes="(min-width: 1024px) 45vw, 100vw" />}
+        image="detailing-studio"
       >
         <div className="actions">
           <a className="btn btn--ghost" href={site.instagramHref} target="_blank" rel="noopener noreferrer">Follow on Instagram</a>

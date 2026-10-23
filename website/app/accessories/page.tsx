@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CtaBand, Faq, JsonLd, PageHero, Photo, Price, SectionHead, Visit, WhatsAppButton, CallButton, IconArrow } from "../components/ui";
+import { CtaBand, Faq, JsonLd, Photo, Price, SectionHead, Visit, WhatsAppButton, CallButton, IconArrow } from "../components/ui";
+import { PageHero } from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import { categories } from "@/lib/catalog";
 import { breadcrumbLd, faqLd, graph, pageMetadata, serviceLd, webPageLd } from "@/lib/seo";
@@ -37,7 +38,7 @@ export default function Accessories() {
         eyebrow="Fitted at our shop"
         title="Car accessories & car decor in Pune"
         lead={lead}
-        media={<Photo label="The accessories shop floor" m="interior" ratio="4 / 5" eager sizes="(min-width: 1024px) 45vw, 100vw" />}
+        image="accessories"
       >
         <div className="actions">
           <WhatsAppButton message="Hi Jay Ganesh, I'm looking for accessories. Car model: ">WhatsApp your car model</WhatsAppButton>

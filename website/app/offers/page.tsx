@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { breadcrumbLd, graph, pageMetadata, webPageLd } from "@/lib/seo";
-import { JsonLd, CtaBand, PageHero, Price, SectionHead, Visit, WhatsAppButton } from "../components/ui";
+import { JsonLd, CtaBand, Price, SectionHead, Visit, WhatsAppButton } from "../components/ui";
+import { PageHero } from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import { offers, offerSeason } from "@/lib/offers";
 import { facts } from "@/lib/prices";
@@ -18,6 +19,7 @@ export default function Offers() {
     <>
       <JsonLd data={graph(webPageLd({ name: title, description, path }), breadcrumbLd([{ name: "Offers", path }]))} />
       <PageHero
+        image="detailing-studio"
         crumbs={[{ label: "Offers" }]}
         eyebrow={offerSeason}
         title="Offers this season"

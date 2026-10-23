@@ -17,6 +17,7 @@ import { site } from "@/lib/site";
 import { reviewsData } from "@/lib/reviews";
 import { services } from "@/lib/services";
 import { categories } from "@/lib/catalog";
+import { dealerBrandNames, dealerBrandPath, dealerBrands, dealerCategories, dealerProductName } from "@/lib/dealer-brands";
 import { BUSINESS_ID, WEBSITE_ID, areaServedLd, graph, ogImage } from "@/lib/seo";
 
 // Headings: Sora, a precise, slightly technical sans set in sentence case.
@@ -70,7 +71,12 @@ const business = {
   // Other ways people spell and search for the shop (Google search data, Oct 2026).
   alternateName: [site.shortName, "Jai Ganesh Car Accessories", "Jayganesh Car Accessories", "Jay Ganesh Car Decor"],
   description:
-    "Car accessories and car decor shop with a PPF, ceramic coating and detailing studio at Kawadipat Toll Naka on the Pune–Solapur Road, Loni Kalbhor, Pune. Authorised dealer of Autoform seat covers.",
+    `Car accessories and car decor shop with a PPF, ceramic coating and detailing studio at Kawadipat Toll Naka on the Pune–Solapur Road, Loni Kalbhor, Pune. Authorised dealer of Autoform seat covers, of ${dealerBrandNames("ppf").join(", ")} paint protection film, and of ${dealerBrandNames("headlights").join(", ")} headlights.`,
+  // Brands the shop is an authorised dealer for (lib/dealer-brands.ts), plus Autoform.
+  brand: [
+    { "@type": "Brand", name: "Autoform" },
+    ...[...new Map(dealerBrands.map((b) => [b.name, b])).values()].map((b) => ({ "@type": "Brand", name: b.name, ...(b.url ? { url: b.url } : {}) })),
+  ],
   slogan: site.tagline,
   url: `${site.url}/`,
   logo: `${site.url}/logo.png`,
@@ -139,6 +145,23 @@ const business = {
           },
         ],
       },
+      ...(["ppf", "headlights"] as const).map((cat) => ({
+        "@type": "OfferCatalog",
+        name: `Authorised dealer: ${dealerCategories[cat].hubLabel.toLowerCase()}`,
+        url: `${site.url}${dealerCategories[cat].hubPath}`,
+        itemListElement: dealerBrands
+          .filter((b) => b.category === cat)
+          .map((b) => ({
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              "@id": `${site.url}${dealerBrandPath(b)}#service`,
+              name: dealerProductName(b),
+              url: `${site.url}${dealerBrandPath(b)}`,
+              brand: { "@type": "Brand", name: b.name },
+            },
+          })),
+      })),
     ],
   },
 };

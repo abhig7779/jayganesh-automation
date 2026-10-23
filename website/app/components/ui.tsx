@@ -153,40 +153,7 @@ export function SectionHead({ eyebrow, title, lead, as = "h2" }: { eyebrow?: str
   );
 }
 
-/* ---------- Page hero (inner pages) ---------- */
-
-export function PageHero({
-  crumbs,
-  eyebrow,
-  title,
-  lead,
-  children,
-  media,
-}: {
-  crumbs: { label: string; href?: string }[];
-  eyebrow?: string;
-  title: string;
-  lead?: React.ReactNode;
-  /** Extra hero content under the lead: notes, price, actions. */
-  children?: React.ReactNode;
-  /** A photo or card shown beside the copy on wide screens. */
-  media?: React.ReactNode;
-}) {
-  return (
-    <section className={media ? "page-hero" : "page-hero page-hero--solo"}>
-      <div className="wrap">
-        <div className="page-hero-copy">
-          <Crumbs items={crumbs} />
-          {eyebrow && <p className="label label--yellow eyebrow">{eyebrow}</p>}
-          <h1>{title}</h1>
-          {lead && (typeof lead === "string" ? <p className="lead">{lead}</p> : lead)}
-          {children}
-        </div>
-        {media && <div className="page-hero-media">{media}</div>}
-      </div>
-    </section>
-  );
-}
+/* Page hero (inner pages): see PageHero.tsx (a server component). */
 
 /* ---------- FAQ ---------- */
 

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "../styles/local.css";
 import ReviewsCarousel from "../components/ReviewsCarousel";
-import { CtaBand, Faq, JsonLd, PageHero, Photo, Price, SectionHead, Visit, WhatsAppButton, CallButton, IconArrow } from "../components/ui";
+import { CtaBand, Faq, JsonLd, Photo, Price, SectionHead, Visit, WhatsAppButton, CallButton, IconArrow } from "../components/ui";
+import { PageHero } from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import { popularCars } from "@/lib/catalog";
 import { site, whatsapp } from "@/lib/site";
@@ -52,7 +53,7 @@ export default function SeatCovers() {
         eyebrow="Accessories · Interior"
         title="Car seat covers, made for your model"
         lead={lead}
-        media={<Photo label="Fitted seat covers in an MUV, second row" m="interior" ratio="4 / 5" eager sizes="(min-width: 1024px) 45vw, 100vw" />}
+        image="seat-covers"
       >
         <Price k="seatCoverFrom" />
         <div className="actions">

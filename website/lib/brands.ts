@@ -1,12 +1,13 @@
 // Brand logos shown on the site (app/components/BrandLogos.tsx).
 //
 // Every file in public/brands/ was taken from the brand's own website (see
-// `source`), never from Wikipedia, logo aggregators or image search. Brands the
-// shop has fitted but with no official logo file found (DHC, Alphatron,
-// Innavi, Morel) are not listed here, so they keep their text chip.
+// `source`), never from Wikipedia, logo aggregators or image search. Brands
+// with no official logo file found (Alphatron, Innavi, Morel, Night Scene,
+// Maxxlink, Moco) are not listed here, so they keep their text chip.
 //
-// Autoform is the only brand the shop is an authorised dealer for. Every other
-// brand here is "brands we've fitted include …" only (see lib/products.ts).
+// Authorised-dealer brands (owner-confirmed, Oct 2026): Autoform seat covers,
+// plus the PPF and headlight brands in lib/dealer-brands.ts. Blaupunkt, 70mai
+// and the rest are "brands we've fitted include …" only (see lib/products.ts).
 
 export type Brand = {
   slug: string;
@@ -104,6 +105,72 @@ export const brands: Brand[] = [
     url: "https://www.motoranger.in/",
     source: "https://www.motoranger.in/images/logotransparent.png",
     note: "Header emblem; the site sets the MOTORANGER wordmark as text beside it. Transparent padding trimmed.",
+  },
+  {
+    slug: "3m",
+    name: "3M",
+    logo: "/brands/3m.svg",
+    width: 98,
+    height: 52,
+    ink: "color",
+    url: "https://www.3mindia.in/",
+    source: "https://www.3mindia.in/3m_theme_assets/themes/3MTheme/assets/images/unicorn/Logo.svg",
+    note: "Header logo of 3mindia.in. Only the red 3M mark is kept; the black tagline beside it is cropped so it reads on both themes.",
+  },
+  {
+    slug: "llumar",
+    name: "LLumar",
+    logo: "/brands/llumar.png",
+    width: 217,
+    height: 40,
+    ink: "dark",
+    url: "https://llumar.com/en/",
+    source: "https://llumar.com/content/experience-fragments/eastman-llumar/en/site/header/master/_jcr_content/root/header/headcontainer/navcontainer/image.coreimg.png/1773332155607/llumarlogo-primary-fullcolor-rgb.png",
+    note: "Header logo of llumar.com (Eastman). Red mark with dark-grey wordmark.",
+  },
+  {
+    slug: "ultraguard",
+    name: "Ultraguard",
+    logo: "/brands/ultraguard.png",
+    width: 310,
+    height: 81,
+    ink: "light",
+    url: "https://www.ultraguardindia.com/",
+    source: "https://www.ultraguardindia.com/assets/images/Ultraguard-PPF.webp",
+    note: "Header logo of ultraguardindia.com (WebP converted to PNG, transparent padding trimmed). White wordmark with red accents.",
+  },
+  {
+    slug: "dhc",
+    name: "DHC",
+    logo: "/brands/dhc.png",
+    width: 400,
+    height: 91,
+    ink: "dark",
+    url: "https://dhcautosolutions.com/",
+    source: "https://dhcautosolutions.com/assets/images/DHC.jpg",
+    note: "Header logo of dhcautosolutions.com (DHC Autosolutions). JPEG on white: the white background was made transparent and the file downscaled from 826px.",
+  },
+  {
+    slug: "lumax",
+    name: "Lumax",
+    logo: "/brands/lumax.png",
+    width: 290,
+    height: 58,
+    ink: "dark",
+    url: "https://lumaxestore.com/",
+    source: "https://lumaxestore.com/cdn/shop/files/lumax_logo_copy.png?v=1754552821",
+    note: "Header logo of lumaxestore.com, the Lumax store linked from the Lumax DK Jain Group site lumaxworld.in. Transparent padding trimmed.",
+  },
+  {
+    slug: "mytvs",
+    name: "myTVS",
+    logo: "/brands/mytvs.png",
+    width: 242,
+    height: 91,
+    ink: "dark",
+    url: "https://mytvs.com/",
+    source: "https://mytvs.com/cdn/shop/files/Tvs_logo.png?v=1757505724",
+    note: "Header logo of mytvs.com (\"myTVS Parts & Accessories\"). Transparent padding trimmed.",
   },
 ];
 

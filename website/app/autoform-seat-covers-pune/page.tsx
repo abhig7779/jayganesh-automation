@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "../styles/local.css";
-import { CallButton, CtaBand, Faq, IconArrow, JsonLd, PageHero, Photo, SectionHead, Visit, WhatsAppButton } from "../components/ui";
+import { CallButton, CtaBand, Faq, IconArrow, JsonLd, SectionHead, Visit, WhatsAppButton } from "../components/ui";
+import { PageHero } from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import { popularCars } from "@/lib/catalog";
 import { reels, reelUrl } from "@/lib/reels";
@@ -82,7 +83,7 @@ export default function AutoformSeatCovers() {
         eyebrow="Authorised Autoform dealer · Pune"
         title="Autoform seat covers in Pune — authorised dealer"
         lead={lead}
-        media={<Photo label="Autoform seat covers in a Ford Endeavour" src="/reels/DelJXxghV1r.jpg" alt="Autoform seat covers fitted in a customer's Ford Endeavour at our shop" ratio="4 / 5" eager sizes="(min-width: 1024px) 45vw, 100vw" />}
+        image="autoform"
       >
         <div className="actions">
           <WhatsAppButton message={askMessage()}>Ask for Autoform options</WhatsAppButton>

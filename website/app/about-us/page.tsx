@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CallButton, CtaBand, Faq, IconArrow, JsonLd, PageHero, Photo, SectionHead, Trust, Visit, WhatsAppButton } from "../components/ui";
+import { CallButton, CtaBand, Faq, IconArrow, JsonLd, Photo, SectionHead, Trust, Visit, WhatsAppButton } from "../components/ui";
+import { PageHero } from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import { site } from "@/lib/site";
 import { breadcrumbLd, faqLd, graph, pageMetadata, webPageLd } from "@/lib/seo";
@@ -53,7 +54,7 @@ export default function AboutUs() {
         eyebrow="About Jay Ganesh"
         title="The car accessories shop eastern Pune trusts"
         lead="A shop on the Pune–Solapur highway at Loni Kalbhor, known for fitting the right parts to the right car. Now with its own PPF and detailing studio."
-        media={<Photo label="The detailing studio" m="studioHero" ratio="4 / 5" eager sizes="(min-width: 1024px) 45vw, 100vw" />}
+        image="detailing-studio"
       >
         <div className="actions">
           <WhatsAppButton message="Hi Jay Ganesh, I'd like to know more. Car model: ">WhatsApp us</WhatsAppButton>

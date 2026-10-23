@@ -1,5 +1,5 @@
 import { site } from "@/lib/site";
-import { PageHero } from "./ui";
+import { PageHero } from "./PageHero";
 
 export default function LegalShell({
   title,

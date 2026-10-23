@@ -3,6 +3,7 @@ import { reviewsData } from "@/lib/reviews";
 import { services } from "@/lib/services";
 import { categories } from "@/lib/catalog";
 import { serviceAreas } from "@/lib/seo";
+import { dealerBrandNames, dealerBrandPath, dealerBrandsIn, dealerCategories, dealerProductName } from "@/lib/dealer-brands";
 
 // /llms.txt (https://llmstxt.org): a plain summary of the business for AI
 // assistants. Built at build time from the same data as the site, so the Google
@@ -13,7 +14,7 @@ export function GET() {
   const u = (p: string) => `${site.url}${p}`;
   const body = `# ${site.name}
 
-> ${site.name} is a car accessories shop and PPF, ceramic coating and car detailing studio at ${site.addressShort}, Pune, Maharashtra, India. It is an authorised Autoform seat cover dealer in Pune. It sells and fits seat covers, lights, Android stereos, speakers, 360° cameras and dashcams, and protects and cleans cars in its own indoor studio. Rated ${site.rating} on Google from ${site.reviews} reviews (updated daily; last refreshed ${reviewsData.updatedAt}). ${site.customers} customers served. Open every day, 10 am to 8 pm.
+> ${site.name} is a car accessories shop and PPF, ceramic coating and car detailing studio at ${site.addressShort}, Pune, Maharashtra, India. It is an authorised dealer in Pune for Autoform seat covers, for ${dealerBrandNames("ppf").join(", ")} paint protection film (PPF), and for ${dealerBrandNames("headlights").join(", ")} headlights. It sells and fits seat covers, lights, Android stereos, speakers, 360° cameras and dashcams, and protects and cleans cars in its own indoor studio. Rated ${site.rating} on Google from ${site.reviews} reviews (updated daily; last refreshed ${reviewsData.updatedAt}). ${site.customers} customers served. Open every day, 10 am to 8 pm.
 
 Prices depend on the car model and are quoted on WhatsApp; the shop does not publish fixed prices online.
 
@@ -39,6 +40,13 @@ ${services.map((s) => `- [${s.menuLabel}](${u(`/${s.slug}/`)}): ${s.description}
 
 - [All accessories](${u("/accessories/")}): accessories chosen for your car model and fitted at the shop
 ${categories.map((c) => `- [${c.name}](${u(c.href ?? `/accessories/#${c.key}`)}): ${c.blurb}`).join("\n")}
+
+## Authorised-dealer brands
+
+- [PPF brands (authorised dealer)](${u(dealerCategories.ppf.hubPath)})
+${dealerBrandsIn("ppf").map((b) => `- [${dealerProductName(b)} in Pune](${u(dealerBrandPath(b))}): ${b.note}`).join("\n")}
+- [Headlight brands (authorised dealer)](${u(dealerCategories.headlights.hubPath)})
+${dealerBrandsIn("headlights").map((b) => `- [${dealerProductName(b)} in Pune](${u(dealerBrandPath(b))}): ${b.note}`).join("\n")}
 
 ## Key pages
 

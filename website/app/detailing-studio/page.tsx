@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CtaBand, Faq, JsonLd, PageHero, Photo, Price, SectionHead, Visit, WhatsAppButton, CallButton, IconArrow } from "../components/ui";
+import { CtaBand, Faq, JsonLd, Photo, Price, SectionHead, Visit, WhatsAppButton, CallButton, IconArrow } from "../components/ui";
+import { PageHero } from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import { services } from "@/lib/services";
 import { breadcrumbLd, faqLd, graph, pageMetadata, serviceLd, webPageLd } from "@/lib/seo";
@@ -35,7 +36,7 @@ export default function StudioHub() {
         eyebrow="New at Jay Ganesh"
         title="The detailing studio"
         lead={lead}
-        media={<Photo label="The studio bay with the ceiling lights on" m="hero" ratio="4 / 5" eager sizes="(min-width: 1024px) 45vw, 100vw" />}
+        image="detailing-studio"
       >
         <div className="actions">
           <WhatsAppButton message="Hi Jay Ganesh, I'd like to book a free paint inspection. Car model: ">Book a free paint inspection</WhatsAppButton>

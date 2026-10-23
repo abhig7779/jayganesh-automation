@@ -410,10 +410,9 @@
 /* ---------- Shared rules that used to live here (used by inner pages) ---------- */
 .cars a { gap: 2px; }
 .door .photo::before { display: none; }
-.page-hero .photo, .cat .photo, .job .photo, .card .photo { border-radius: 16px; }
+.cat .photo, .job .photo, .card .photo { border-radius: 16px; }
 .cat .photo, .card .photo { border-radius: 0; }
 .photo:has(img)::before, .photo:has(img)::after { display: none; }
-.page-hero .photo { border: 0; }
 
 /* ---------- Light theme ---------- */
 [data-theme="light"] .brand img,

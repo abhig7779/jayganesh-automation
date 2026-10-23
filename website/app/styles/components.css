@@ -245,31 +245,116 @@
 .crumbs a:hover { color: var(--ink); }
 .crumbs [aria-current] { color: var(--ink); }
 
-/* ---------- Page hero (inner pages) ---------- */
-.page-hero {
-  position: relative; overflow: hidden; isolation: isolate;
-  padding-block: clamp(28px, 5vw, 64px) clamp(56px, 8vw, 112px);
+/* ---------- Page hero (inner pages) ----------
+   The home hero's language, a little shorter: full-bleed art-directed photo,
+   dark gradients (heavier at the left on desktop, at the bottom on phones),
+   copy at the bottom left. Always dark, in both themes, so it sets its own
+   tokens. `.ph--plain` (legal pages) keeps the type but drops the photo and
+   follows the theme. */
+.ph { position: relative; }
+.ph--photo {
+  isolation: isolate; overflow: hidden;
+  display: flex; align-items: flex-end;
+  min-height: max(560px, 68svh);
+  background: #08090b;
+  color: #f4f5f6;
+  color-scheme: dark;
+  --ink: #f4f5f6;
+  --ink-muted: rgba(244,245,246,.74);
+  --line: rgba(255,255,255,.14);
+  --line-strong: rgba(255,255,255,.42);
+  --soft-line: rgba(255,255,255,.12);
+  --soft-line-strong: rgba(255,255,255,.3);
+  --fill-soft: rgba(255,255,255,.06);
+  --fill-soft-hover: rgba(255,255,255,.12);
+  --glass: rgba(14,15,18,.6);
+  --yellow-text: #ffe500;
+  --focus: #ffe500;
 }
-.page-hero::before {
-  /* soft overhead light, very low key */
-  content: ""; position: absolute; inset: -20% -10% auto; height: 120%; z-index: -1;
-  background: radial-gradient(55% 55% at 72% 18%, var(--fill-soft-hover), transparent 70%);
-  pointer-events: none;
+.ph > .wrap { position: relative; }
+.ph-media { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
+.ph-media picture { display: contents; }
+.ph-bg {
+  position: absolute; inset: 0; width: 100%; height: 100%; max-width: none;
+  object-fit: cover; object-position: 65% 50%;
 }
-.page-hero .wrap { display: grid; gap: clamp(36px, 5vw, 72px); grid-template-columns: minmax(0, 1fr); }
-.page-hero .wrap > * { min-width: 0; }
-.page-hero-copy { display: grid; gap: 24px; align-content: start; grid-template-columns: minmax(0, 1fr); }
-.page-hero-copy > nav { margin-bottom: clamp(8px, 2vw, 24px); }
-.page-hero h1 { font-size: clamp(40px, 7.6vw, 84px); line-height: .98; letter-spacing: -0.045em; max-width: 14ch; }
-.page-hero .lead { max-width: 44ch; }
-.page-hero .actions { margin-top: 8px; }
-.page-hero-media .photo, .page-hero-media .map-card { box-shadow: var(--shadow-lg); }
-.page-hero--solo h1 { max-width: 18ch; }
-@media (max-width: 1023px) { .page-hero-media .photo { --ratio: 4 / 3 !important; } }
+@media (prefers-reduced-motion: no-preference) {
+  .ph-bg { animation: ph-zoom 32s var(--ease, ease-in-out) both alternate infinite; transform-origin: 65% 50%; will-change: transform; }
+  @keyframes ph-zoom { from { transform: scale(1.001); } to { transform: scale(1.07); } }
+}
+@media (prefers-reduced-motion: reduce) { .ph-bg { animation: none !important; } }
+.ph-shade {
+  position: absolute; inset: 0;
+  background:
+    /* Left: a calm dark field for the copy. The right ~45% stays almost clear. */
+    linear-gradient(90deg, rgba(6,7,9,.9) 0%, rgba(6,7,9,.74) 26%, rgba(6,7,9,.3) 44%, rgba(6,7,9,.06) 55%, rgba(6,7,9,0) 62%),
+    linear-gradient(0deg, rgba(6,7,9,.72) 0%, rgba(6,7,9,.22) 22%, rgba(6,7,9,0) 40%),
+    linear-gradient(180deg, rgba(6,7,9,.4) 0%, rgba(6,7,9,0) 16%);
+}
+.ph-inner { padding-block: clamp(96px, 14vh, 140px) clamp(48px, 8vh, 84px); }
+.ph-copy { display: grid; gap: 18px; max-width: 760px; min-width: 0; grid-template-columns: minmax(0, 1fr); }
+.ph-copy > * { min-width: 0; }
+.ph-copy > nav { margin-bottom: 6px; }
+.ph .crumbs { font-size: 13px; color: rgba(244,245,246,.62); gap: 4px 10px; }
+.ph .crumbs a:hover, .ph .crumbs [aria-current] { color: rgba(244,245,246,.92); }
+.ph .crumbs li + li::before { background: rgba(255,255,255,.34); }
+.ph-eyebrow { color: var(--yellow-text); letter-spacing: .2em; font-size: 11.5px; }
+.ph-eyebrow::before { width: 28px; opacity: .85; }
+.ph-title {
+  font-size: clamp(40px, 5.6vw, 76px); line-height: 1; letter-spacing: -0.045em;
+  font-weight: 600; max-width: 16ch; color: #fff; text-wrap: balance;
+  text-shadow: 0 2px 30px rgba(0,0,0,.35);
+}
+.ph-lead { font-size: clamp(16.5px, 1.45vw, 19px); line-height: 1.6; color: rgba(244,245,246,.82); max-width: 60ch; text-wrap: pretty; }
+.ph-lead--long { font-size: clamp(16px, 1.25vw, 17.5px); }
+.ph-lead .lead { color: #fff; max-width: 40ch; }
+.ph-copy > .label:not(.ph-eyebrow) { color: rgba(244,245,246,.7); }
+.ph-copy .actions { margin-top: 6px; }
+.ph-copy .btn--ghost { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.ph-copy .btn--ghost:hover { border-color: #fff; background: rgba(255,255,255,.12); }
+.ph-copy .price-ask { background: rgba(255,255,255,.1); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.ph-copy .price-value { color: #fff; }
+.ph-rating { margin-top: 22px; }
+.ph-rating .rv-badge { width: max-content; max-width: 100%; }
+[data-theme="light"] .ph .btn--primary { box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 6px 18px -10px rgba(255,229,0,.5); }
+
+/* Desktop: the rating sits at the bottom right, level with the actions. */
 @media (min-width: 1024px) {
-  .page-hero .wrap { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: center; }
-  .page-hero-copy > nav { margin-bottom: 32px; }
+  .ph-rating { position: absolute; right: var(--gutter-r); bottom: clamp(48px, 8vh, 84px); margin: 0; }
 }
+/* Phones: portrait photo shown clearly in the top part; the copy starts about
+   a third of the way down and the shade only gathers behind it. */
+@media (max-width: 767px) {
+  .ph--photo { min-height: min(100svh, 920px); align-items: flex-start; }
+  .ph-bg { object-position: 50% 30%; transform-origin: 50% 30%; }
+  .ph--wide-mobile .ph-bg { object-position: 62% 50%; transform-origin: 62% 50%; }
+  .ph-shade {
+    background: linear-gradient(180deg, rgba(6,7,9,0) 0%, rgba(6,7,9,0) 27%, rgba(6,7,9,.55) 35%, rgba(6,7,9,.88) 44%, rgba(6,7,9,.95) 56%, rgba(6,7,9,.97) 100%);
+  }
+  .ph-inner { padding-block: max(96px, 34svh) 28px; }
+  .ph-copy { gap: 14px; }
+  .ph-copy > nav { margin-bottom: 2px; }
+  .ph .crumbs { font-size: 12px; text-shadow: 0 1px 8px rgba(0,0,0,.6); }
+  .ph-eyebrow { text-shadow: 0 1px 8px rgba(0,0,0,.6); }
+  .ph-title { font-size: clamp(34px, 9.6vw, 44px); line-height: 1.02; }
+  .ph-lead { font-size: 16px; line-height: 1.55; }
+  /* Three lines keep the actions on the first screen. The full text stays in
+     the page for search and screen readers. */
+  p.ph-lead { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
+  .ph-rating { margin-top: 18px; }
+  .ph-rating .rv-badge--hero { padding: 7px 14px 7px 8px; }
+  .ph-rating .rv-badge--hero .rv-badge__g { width: 28px; height: 28px; padding: 5px; }
+  .ph-rating .rv-badge--hero .rv-badge__score { font-size: 16px; }
+}
+
+/* Legal pages: same type, no photo, follows the theme. */
+.ph--plain .ph-inner { padding-block: clamp(40px, 6vw, 72px) clamp(40px, 5vw, 64px); }
+.ph--plain .crumbs { color: var(--ink-muted); }
+.ph--plain .crumbs a:hover, .ph--plain .crumbs [aria-current] { color: var(--ink); }
+.ph--plain .crumbs li + li::before { background: var(--soft-line-strong); }
+.ph--plain .ph-title { color: var(--ink); text-shadow: none; font-size: clamp(36px, 4.6vw, 60px); }
+.ph--plain .ph-lead { color: var(--ink-muted); }
+.ph--plain .ph-copy > .label:not(.ph-eyebrow) { color: var(--ink-muted); }
 
 /* ---------- Visit strip ---------- */
 .visit {

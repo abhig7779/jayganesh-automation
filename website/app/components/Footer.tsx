@@ -62,6 +62,8 @@ export default function Footer() {
                 <li><Link href="/visit-us/">Visit us</Link></li>
                 <li><Link href="/car-accessories-hadapsar/">Near Hadapsar</Link></li>
                 <li><Link href="/car-accessories-kharadi/">Near Kharadi</Link></li>
+                <li><Link href="/ppf-brands-pune/">PPF brands</Link></li>
+                <li><Link href="/headlight-brands-pune/">Headlight brands</Link></li>
                 <li><a href={site.reviewsHref} target="_blank" rel="noopener noreferrer">Google reviews</a></li>
               </ul>
             </div>

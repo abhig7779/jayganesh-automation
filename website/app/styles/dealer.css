@@ -1,0 +1,36 @@
+/* Authorised-dealer brand grids and pages (app/components/DealerBrands.tsx). */
+
+.dealer-grid {
+  display: grid; gap: 14px; list-style: none; margin: 0; padding: 0;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+}
+.dealer-grid > li { display: flex; }
+.dealer-card {
+  display: grid; align-content: start; gap: 10px; width: 100%;
+  padding: 20px; color: inherit;
+  background: var(--card); border-radius: var(--radius-card); box-shadow: var(--shadow-card);
+}
+.dealer-card__mark { display: flex; align-items: center; min-height: 52px; }
+.dealer-card strong { font-size: 17px; letter-spacing: -0.01em; }
+.dealer-card__note { color: var(--ink-muted); font-size: 15px; line-height: 1.5; }
+.dealer-card .text-link { margin-top: 4px; font-size: 14.5px; }
+
+/* Compact logo strip (/car-lights/). */
+.dealer-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; list-style: none; margin: 0; padding: 0; }
+.dealer-strip a { display: inline-flex; border-radius: 999px; text-decoration: none; transition: transform .2s var(--ease); }
+.dealer-strip a:hover { transform: translateY(-2px); }
+
+/* Text wordmark for brands with no official logo file: a neutral chip that reads on both themes. */
+.dealer-wordmark {
+  display: inline-flex; align-items: center; min-height: 42px; padding: 0 16px;
+  border-radius: 999px; background: #f4f5f6; color: #121317;
+  border: 1px solid rgba(18, 19, 23, .1);
+  font-family: var(--font-sora), system-ui, sans-serif; font-weight: 700; font-size: 15px;
+  letter-spacing: .06em; text-transform: uppercase; white-space: nowrap;
+}
+
+.dealer-about { color: var(--ink-muted); font-size: 15px; line-height: 1.6; max-width: 60ch; margin: 0; }
+.dealer-about a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+
+.dealer-legal { margin: 18px 0 0; color: var(--ink-muted); font-size: 13px; }
+.dealer-legal a { color: var(--ink); text-underline-offset: 3px; }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { breadcrumbLd, graph, pageMetadata, webPageLd } from "@/lib/seo";
-import { JsonLd, PageHero, Photo, SectionHead, WhatsAppButton, IconArrow, IconPhone, IconPin } from "../components/ui";
+import { JsonLd, Photo, SectionHead, WhatsAppButton, IconArrow, IconPhone, IconPin } from "../components/ui";
+import { PageHero } from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import { site } from "@/lib/site";
 
@@ -22,6 +23,7 @@ export default function VisitUs() {
     <>
       <JsonLd data={graph(webPageLd({ name: title, description, path }), breadcrumbLd([{ name: "Visit us", path }]))} />
       <PageHero
+        image="detailing-studio"
         crumbs={[{ label: "Visit us" }]}
         eyebrow="Loni Kalbhor"
         title="Visit the shop"
@@ -30,13 +32,6 @@ export default function VisitUs() {
             <span className="lead" style={{ color: "var(--ink)" }}>{site.address}</span>
             <span className="label">{site.hours}</span>
           </address>
-        }
-        media={
-          <a className="map-card" href={site.mapsHref} target="_blank" rel="noopener noreferrer" aria-label="Open the shop's location in Google Maps">
-            <span className="map-pin" aria-hidden />
-            <span className="label">Kawadipat Toll Naka · Pune–Solapur Road</span>
-            <span className="text-link">Open in Google Maps <IconArrow /></span>
-          </a>
         }
       >
         <div className="actions">
@@ -47,7 +42,14 @@ export default function VisitUs() {
 
       <section className="band band--panel">
         <Reveal className="wrap split split--start">
-          <SectionHead eyebrow="Getting here" title="On the Pune–Solapur road" lead="We're right at Kawadipat Toll Naka in Loni Kalbhor." />
+          <div className="stack-lg">
+            <SectionHead eyebrow="Getting here" title="On the Pune–Solapur road" lead="We're right at Kawadipat Toll Naka in Loni Kalbhor." />
+            <a className="map-card" href={site.mapsHref} target="_blank" rel="noopener noreferrer" aria-label="Open the shop's location in Google Maps">
+              <span className="map-pin" aria-hidden />
+              <span className="label">Kawadipat Toll Naka · Pune–Solapur Road</span>
+              <span className="text-link">Open in Google Maps <IconArrow /></span>
+            </a>
+          </div>
           <dl className="specs">
             {from.map((f) => (
               <div key={f.area}><dt className="label">From {f.area}</dt><dd>{f.how}</dd></div>

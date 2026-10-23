@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { CtaBand, Faq, JsonLd, PageHero, SectionHead, WhatsAppButton } from "../components/ui";
+import { CtaBand, Faq, JsonLd, SectionHead, WhatsAppButton } from "../components/ui";
+import { PageHero } from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import LeadForm from "../components/LeadForm";
 import { site } from "@/lib/site";
@@ -51,6 +52,7 @@ export default function BecomeAVendor() {
     <>
       <JsonLd data={jsonLd} />
       <PageHero
+        image="accessories"
         crumbs={[{ label: "Become a vendor" }]}
         eyebrow="For suppliers"
         title="Become a vendor or supplier"

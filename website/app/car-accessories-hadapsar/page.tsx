@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "../styles/local.css";
-import { CallButton, CtaBand, Faq, IconArrow, IconPin, JsonLd, PageHero, Photo, SectionHead, Visit, WhatsAppButton } from "../components/ui";
+import { CallButton, CtaBand, Faq, IconArrow, IconPin, JsonLd, SectionHead, Visit, WhatsAppButton } from "../components/ui";
+import { PageHero } from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import GoogleRating from "../components/GoogleRating";
 import { popularCars } from "@/lib/catalog";
@@ -66,7 +67,7 @@ export default function CarAccessoriesHadapsar() {
         eyebrow="Hadapsar · Pune–Solapur Road"
         title="Car accessories near Hadapsar"
         lead={lead}
-        media={<Photo label="The detailing studio at Kawadipat Toll Naka" m="studioHero" ratio="4 / 5" eager sizes="(min-width: 1024px) 45vw, 100vw" />}
+        image="detailing-studio"
       >
         <div className="actions">
           <WhatsAppButton message={ask()}>WhatsApp your car model</WhatsAppButton>

@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CtaBand, Faq, JsonLd, PageHero, Photo, Price, SectionHead, Visit, WhatsAppButton, CallButton } from "../components/ui";
+import { CtaBand, Faq, JsonLd, Photo, Price, SectionHead, Visit, WhatsAppButton, CallButton } from "../components/ui";
+import { PageHero } from "../components/PageHero";
+import { serviceHero } from "@/lib/heroes";
 import Reveal from "../components/Reveal";
+import { DealerBrandsSection } from "../components/DealerBrands";
 import { getService, services } from "@/lib/services";
 import { studioLinks } from "@/lib/catalog";
 import { facts } from "@/lib/prices";
@@ -47,7 +50,7 @@ export default async function ServicePage({ params }: { params: Promise<{ servic
         eyebrow={s.eyebrow}
         title={s.h1}
         lead={s.lead}
-        media={<Photo label={s.photoSlots[0]} m={s.photos[0]} ratio="4 / 5" eager sizes="(min-width: 1024px) 45vw, 100vw" />}
+        image={serviceHero[s.slug] ?? "detailing-studio"}
       >
         {warranty && <p className="label">{warranty}</p>}
         <div className="actions">
@@ -55,6 +58,8 @@ export default async function ServicePage({ params }: { params: Promise<{ servic
           <CallButton />
         </div>
       </PageHero>
+
+      {s.slug === "ppf-pune" && <DealerBrandsSection category="ppf" />}
 
       <section className="band band--panel">
         <Reveal className="wrap split split--start">

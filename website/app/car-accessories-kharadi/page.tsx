@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "../styles/local.css";
-import { CallButton, CtaBand, Faq, IconArrow, IconPin, JsonLd, PageHero, Photo, SectionHead, Visit, WhatsAppButton } from "../components/ui";
+import { CallButton, CtaBand, Faq, IconArrow, IconPin, JsonLd, SectionHead, Visit, WhatsAppButton } from "../components/ui";
+import { PageHero } from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import GoogleRating from "../components/GoogleRating";
 import ReviewsCarousel from "../components/ReviewsCarousel";
@@ -64,7 +65,7 @@ export default function CarAccessoriesKharadi() {
         eyebrow="Kharadi · via Manjri"
         title="Car accessories near Kharadi"
         lead={lead}
-        media={<Photo label="Paint protection film being laid on a bonnet" m="ppfApply" ratio="4 / 5" eager sizes="(min-width: 1024px) 45vw, 100vw" />}
+        image="detailing-studio"
       >
         <div className="actions">
           <WhatsAppButton message={ask()}>WhatsApp your car model</WhatsAppButton>

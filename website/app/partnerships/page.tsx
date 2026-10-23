@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { CtaBand, Faq, JsonLd, PageHero, SectionHead, WhatsAppButton, CallButton } from "../components/ui";
+import { CtaBand, Faq, JsonLd, SectionHead, WhatsAppButton, CallButton } from "../components/ui";
+import { PageHero } from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import LeadForm from "../components/LeadForm";
 import { site } from "@/lib/site";
@@ -49,6 +50,7 @@ export default function Partnerships() {
     <>
       <JsonLd data={jsonLd} />
       <PageHero
+        image="accessories"
         crumbs={[{ label: "Partnerships" }]}
         eyebrow="For businesses"
         title="Partner with Jay Ganesh"
