@@ -187,6 +187,8 @@ export const dealerBrands: DealerBrand[] = [
     category: "headlights",
     name: "Maxxlink",
     alsoSearchedAs: ["Maxlink", "Max Link"],
+    logo: "maxxlink",
+    url: "https://www.instagram.com/maxxlink_international/",
     note: "Maxxlink LED headlights and projector lights.",
   },
   {
@@ -213,6 +215,8 @@ export const dealerBrands: DealerBrand[] = [
     category: "headlights",
     name: "Moco",
     alsoSearchedAs: ["MOCO"],
+    logo: "moco",
+    url: "https://moco.co.in/",
     note: "Moco LED headlight bulbs.",
   },
 ];

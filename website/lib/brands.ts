@@ -1,9 +1,9 @@
 // Brand logos shown on the site (app/components/BrandLogos.tsx).
 //
 // Every file in public/brands/ was taken from the brand's own website (see
-// `source`), never from Wikipedia, logo aggregators or image search. Brands
-// with no official logo file found (Alphatron, Innavi, Morel, Night Scene,
-// Maxxlink, Moco) are not listed here, so they keep their text chip.
+// `source`), or its official Instagram, never from Wikipedia, logo aggregators or image search. Brands
+// with no official logo file found (Alphatron, Innavi, Morel, Night Scene)
+// are not listed here, so they keep their text chip.
 //
 // Authorised-dealer brands (owner-confirmed, Oct 2026): Autoform seat covers,
 // plus the PPF and headlight brands in lib/dealer-brands.ts. Blaupunkt, 70mai
@@ -171,6 +171,28 @@ export const brands: Brand[] = [
     url: "https://mytvs.com/",
     source: "https://mytvs.com/cdn/shop/files/Tvs_logo.png?v=1757505724",
     note: "Header logo of mytvs.com (\"myTVS Parts & Accessories\"). Transparent padding trimmed.",
+  },
+  {
+    slug: "maxxlink",
+    name: "Maxxlink",
+    logo: "/brands/maxxlink.png",
+    width: 600,
+    height: 142,
+    ink: "color",
+    url: "https://www.instagram.com/maxxlink_international/",
+    source: "https://www.instagram.com/maxxlink_international/ (profile picture, 919px)",
+    note: "Official logo from the Maxxlink International Corporation Instagram (their website maxxlinkinternational.com is parked). Cropped, dark background keyed out.",
+  },
+  {
+    slug: "moco",
+    name: "Moco",
+    logo: "/brands/moco.png",
+    width: 440,
+    height: 120,
+    ink: "light",
+    url: "https://moco.co.in/",
+    source: "https://moco.co.in/cdn/shop/files/MOCO_LOGO_1_2.png",
+    note: "Header logo of moco.co.in (white and yellow on transparent).",
   },
 ];
 
