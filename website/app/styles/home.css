@@ -99,8 +99,10 @@
    in HeroReveal's <noscript>), and on phones until a portrait film exists
    (.hero-v--mv marks that it does). The 767/768px breakpoint must match Hero.tsx. */
 .hero-v { display: block; overflow: visible; min-height: 0; height: 520vh; --p: 0; }
+/* Pinned right under the sticky header from the first pixel, so nothing
+   slides up before the film starts scrubbing. */
 .hero-v-stage {
-  position: sticky; top: 0; height: 100svh; overflow: hidden; isolation: isolate;
+  position: sticky; top: var(--header-h); height: calc(100svh - var(--header-h)); overflow: hidden; isolation: isolate;
   display: flex; align-items: center;
 }
 .hero-v .hero-x-bg { object-position: 85% 50%; }
