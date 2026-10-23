@@ -185,6 +185,19 @@ export default function HeroReveal({ desktop, mobile, alt, kicker, title, chapte
     setReady(true);
   };
 
+  // Safari (macOS and iOS) won't decode or paint frames for a video that has
+  // never played, and often never fires canplaythrough for it, so the film
+  // would stay hidden behind the poster. Prime it: a muted, inline play that
+  // is paused straight away, then treat the first decoded frame as ready.
+  const onMeta = () => {
+    const v = video.current;
+    if (!v) return;
+    v.muted = true;
+    const p = v.play();
+    if (p && typeof p.then === "function") p.then(() => v.pause()).catch(() => {});
+    else v.pause();
+  };
+
   // The video's poster is the file the <picture> already picked (e.g. the 540px
   // phone poster), so it isn't downloaded a second time at another size.
   const start = (f: HeroFilm) => posterImg.current?.currentSrc || f.start.webp || f.start.jpg;
@@ -249,6 +262,8 @@ export default function HeroReveal({ desktop, mobile, alt, kicker, title, chapte
               disableRemotePlayback
               tabIndex={-1}
               aria-hidden
+              onLoadedMetadata={onMeta}
+              onLoadedData={onReady}
               onCanPlayThrough={onReady}
               onError={() => setFailed(true)}
             />
