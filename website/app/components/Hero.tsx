@@ -15,14 +15,20 @@ export const heroHeadline = "Premium PPF & car accessories in Pune";
 export const heroTagline = "Protection, perfected.";
 const heroKicker = "Loni Kalbhor · Pune · Authorised dealer";
 const heroLine = "PPF, ceramic coating, detailing and accessories, fitted by the Jay Ganesh team at our Loni Kalbhor studio.";
-const heroAlt = "A black SUV revealed under the LED light tunnel of the Jay Ganesh detailing studio, headlights on";
+const heroAlt = "PPF being fitted, scratches self-healing and water beading on a black G-Wagon in the Jay Ganesh studio";
 
-// Text chapters on the left, one per third of the scroll.
-const chapters = ["Unveiled in our own studio", "Protected with PPF & ceramic coating", "Lit up, polished, ready to drive"];
+// Text chapters, one per shot of the film (PPF fitting, self-healing, beading, hero).
+// Their scroll ranges live in HeroReveal (cuts) and must match the film's cuts.
+const chapters = [
+  "Invisible armour: PPF, fitted by hand",
+  "Scratches? The film heals itself",
+  "Water just rolls off with ceramic",
+  "Protected. Ready to drive.",
+];
 
 // Files in /public/video/: {name}.mp4 plus {name}-start/-end posters (.webp + .jpg).
-const desktopName = "hero-reveal-desktop"; // 16:9, car on the right
-const mobileName = "hero-reveal-mobile"; // 9:16, car in the lower half
+const desktopName = "hero-story-desktop"; // 16:9, 22.2 s: four G-Wagon shots
+const mobileName = "hero-story-mobile"; // 9:16 version of the same film
 
 // Keep the breakpoint in one place: the <source> media queries, the preloads,
 // the CSS (home.css) and HeroReveal must agree.

@@ -94,11 +94,11 @@
 @media (prefers-reduced-motion: reduce) { .hero-x-kb, .hero-x-cue-line { animation: none !important; } }
 
 /* ---------- Hero: scroll-scrubbed studio reveal (HeroReveal.tsx) ----------
-   A ~300vh section with a sticky 100svh stage; the scroll drives the film.
+   A ~520vh section with a sticky 100svh stage; the scroll drives the film.
    Static (no pin, END poster) for reduced motion, without JS (rules mirrored
    in HeroReveal's <noscript>), and on phones until a portrait film exists
    (.hero-v--mv marks that it does). The 767/768px breakpoint must match Hero.tsx. */
-.hero-v { display: block; overflow: visible; min-height: 0; height: 300vh; --p: 0; }
+.hero-v { display: block; overflow: visible; min-height: 0; height: 520vh; --p: 0; }
 .hero-v-stage {
   position: sticky; top: 0; height: 100svh; overflow: hidden; isolation: isolate;
   display: flex; align-items: center;
@@ -138,9 +138,13 @@
 }
 .hero-v[data-chapter="0"] .hero-v-chap > :nth-child(1),
 .hero-v[data-chapter="1"] .hero-v-chap > :nth-child(2),
-.hero-v[data-chapter="2"] .hero-v-chap > :nth-child(3) { opacity: 1; transform: none; }
+.hero-v[data-chapter="2"] .hero-v-chap > :nth-child(3),
+.hero-v[data-chapter="3"] .hero-v-chap > :nth-child(4),
+.hero-v[data-chapter="4"] .hero-v-chap > :nth-child(5) { opacity: 1; transform: none; }
 .hero-v[data-chapter="1"] .hero-v-chap > :nth-child(1),
-.hero-v[data-chapter="2"] .hero-v-chap > :nth-child(-n+2) { transform: translateY(-10px); }
+.hero-v[data-chapter="2"] .hero-v-chap > :nth-child(-n+2),
+.hero-v[data-chapter="3"] .hero-v-chap > :nth-child(-n+3),
+.hero-v[data-chapter="4"] .hero-v-chap > :nth-child(-n+4) { transform: translateY(-10px); }
 /* Thin yellow progress line down the left edge. */
 .hero-v-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: rgba(255,255,255,.08); }
 .hero-v-bar > span { display: block; height: 100%; background: #ffe500; transform-origin: top; transform: scaleY(var(--p)); }

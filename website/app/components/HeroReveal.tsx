@@ -32,7 +32,7 @@ function Sources({ poster, media }: { poster: HeroPoster; media?: string }) {
 }
 
 /**
- * Scroll-scrubbed hero. The section is ~300vh tall with a sticky 100svh stage;
+ * Scroll-scrubbed hero. The section is ~520vh tall with a sticky 100svh stage;
  * scroll progress through it (0→1) eases the film's currentTime toward
  * p × duration on requestAnimationFrame. The film never plays.
  *
@@ -40,6 +40,10 @@ function Sources({ poster, media }: { poster: HeroPoster; media?: string }) {
  * fetched (into a blob) after window load + idle. Reduced motion, phones without a
  * portrait film and no-JS get a static, non-pinned hero (see home.css).
  */
+// Scroll progress where each shot of the film starts (cuts at 5.7, 11.1, 16.5 of 22.2 s).
+const cuts = [0.26, 0.5, 0.74];
+const chapterAt = (p: number) => cuts.filter((c) => p >= c).length;
+
 export default function HeroReveal({ desktop, mobile, alt, kicker, title, chapters, queries, children }: Props) {
   const root = useRef<HTMLElement>(null);
   const video = useRef<HTMLVideoElement>(null);
@@ -131,7 +135,7 @@ export default function HeroReveal({ desktop, mobile, alt, kicker, title, chapte
       if (Math.abs(p - shown) < 0.0004) shown = p;
       el.style.setProperty("--p", shown.toFixed(4));
 
-      const c = p < 0.34 ? 0 : p < 0.67 ? 1 : 2;
+      const c = chapterAt(p);
       if (c !== chapter) el.dataset.chapter = String((chapter = c));
 
       const v = video.current;
