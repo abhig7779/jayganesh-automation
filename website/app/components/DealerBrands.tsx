@@ -142,7 +142,12 @@ function brandCopy(b: DealerBrand) {
 export function dealerBrandMetadata(slug: string): Metadata {
   const b = getDealerBrand(slug);
   if (!b) return {};
-  return pageMetadata({ title: b.title, description: b.description, path: dealerBrandPath(b) });
+  return pageMetadata({
+    title: b.title,
+    description: b.description,
+    path: dealerBrandPath(b),
+    imageAlt: `${dealerProductName(b)} in Pune – authorised dealer, ${site.name}`,
+  });
 }
 
 export function DealerBrandPage({ slug }: { slug: string }) {
@@ -350,7 +355,7 @@ function hubCopy(category: DealerCategory) {
 
 export function dealerHubMetadata(category: DealerCategory): Metadata {
   const c = hubCopy(category);
-  return pageMetadata({ title: c.title, description: c.description, path: c.path });
+  return pageMetadata({ title: c.title, description: c.description, path: c.path, imageAlt: `${c.h1}, ${site.name}` });
 }
 
 export function DealerHubPage({ category }: { category: DealerCategory }) {

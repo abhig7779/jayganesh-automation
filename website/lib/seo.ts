@@ -18,15 +18,29 @@ export const areaServedLd = serviceAreas.map((a) =>
     : { "@type": "Place", name: `${a}, Pune`, containedInPlace: { "@type": "City", name: "Pune" } },
 );
 
-export const ogImage = {
-  url: "/images/gen/hero-desktop.jpg",
-  width: 1600,
-  height: 900,
-  alt: `${site.name}, Kawadipat Toll Naka, Loni Kalbhor, Pune`,
-};
+/**
+ * The page's own share card (Open Graph / Twitter), 1200×630, drawn after the
+ * build by scripts/og-cards.mjs from the built page: its H1, hero photo and,
+ * on brand pages, the brand logo. "/" → /og/home.jpg,
+ * "/car-lights/headlights/" → /og/car-lights/headlights.jpg.
+ */
+export function ogCard(path: string, alt: string) {
+  const slug = path.replace(/^\/+|\/+$/g, "") || "home";
+  return { url: `/og/${slug}.jpg`, width: 1200, height: 630, alt };
+}
+
+/** "Garware PPF Pune – Authorised Dealer | Jay Ganesh" → "Garware PPF Pune – Authorised Dealer". */
+export const shortTitle = (title: string) => title.replace(/\s*\|\s*Jay Ganesh.*$/i, "").trim();
+
+/** Default card alt: the page's short title, then the business and place. */
+export const ogAlt = (title: string) => `${shortTitle(title)} – ${site.name}, Loni Kalbhor, Pune`;
+
+/** Homepage card; also the root default (404 page). */
+export const ogImage = ogCard("/", `${site.name} – car accessories and PPF studio at Loni Kalbhor, Pune`);
 
 /** Full metadata for a page: unique title, description, canonical, Open Graph and Twitter. */
-export function pageMetadata({ title, description, path }: { title: string; description: string; path: string }): Metadata {
+export function pageMetadata({ title, description, path, imageAlt }: { title: string; description: string; path: string; imageAlt?: string }): Metadata {
+  const card = ogCard(path, imageAlt ?? ogAlt(title));
   return {
     title: { absolute: title },
     description,
@@ -38,9 +52,9 @@ export function pageMetadata({ title, description, path }: { title: string; desc
       title,
       description,
       url: path,
-      images: [ogImage],
+      images: [card],
     },
-    twitter: { card: "summary_large_image", title, description, images: [ogImage.url] },
+    twitter: { card: "summary_large_image", title, description, images: [{ url: card.url, alt: card.alt, width: card.width, height: card.height }] },
   };
 }
 

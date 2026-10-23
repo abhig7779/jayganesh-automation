@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     url: "/",
     images: [ogImage],
   },
-  twitter: { card: "summary_large_image", title: homeTitle, description: homeDescription, images: [ogImage.url] },
+  twitter: { card: "summary_large_image", title: homeTitle, description: homeDescription, images: [{ url: ogImage.url, alt: ogImage.alt, width: ogImage.width, height: ogImage.height }] },
   alternates: { canonical: "/" },
 };
 
@@ -80,7 +80,8 @@ const business = {
   slogan: site.tagline,
   url: `${site.url}/`,
   logo: `${site.url}/logo.png`,
-  image: [`${site.url}${ogImage.url}`, `${site.url}/logo.png`],
+  // The studio photo itself (no text over it), then the logo.
+  image: [`${site.url}/images/gen/hero-desktop.jpg`, `${site.url}/logo.png`],
   telephone: site.phoneE164,
   address: {
     "@type": "PostalAddress",
