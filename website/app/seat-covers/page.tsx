@@ -102,7 +102,7 @@ export default function SeatCovers() {
           <Reveal><SectionHead eyebrow="Recent fittings" title="From the shop" /></Reveal>
           <Reveal className="grid grid-3">
             <Photo label="Front seats, quilted pattern" m="interior" />
-            <Photo label="Third row in a 7-seater" m="dashClean" />
+            <Photo label="Third row in a 7-seater" m="workMuvSeats" />
             <Photo label="Stitching close-up" />
           </Reveal>
         </div>

@@ -126,8 +126,8 @@ export const productCategories: ProductCategory[] = [
       { q: "Will the wiring be visible?", a: "We route the wiring behind the trims so it stays out of sight, and test everything with you before you drive out." },
       { q: "How much does ambient lighting cost?", a: "It depends on the car and how much of the cabin you want lit. WhatsApp your car model and we'll reply with options and prices." },
     ],
-    photo: "interior",
-    photoLabel: "Car interior with dashboard and seats",
+    photo: "ambient",
+    photoLabel: "Ambient lighting in a car cabin",
   },
   {
     slug: "android-stereo",
@@ -156,8 +156,8 @@ export const productCategories: ProductCategory[] = [
       { q: "Which stereo brands do you fit?", a: "Brands we've fitted include Blaupunkt and Innavi Android players, and Morel speakers. What's in stock changes, so WhatsApp your car model for current options." },
       { q: "How much does an Android stereo cost?", a: "It depends on the screen, the brand and the frame your car needs. WhatsApp your car model, year and variant and we'll reply with options and prices." },
     ],
-    photo: "dashClean",
-    photoLabel: "Car dashboard and centre console",
+    photo: "stereo",
+    photoLabel: "Android stereo in a car dashboard",
   },
   {
     slug: "360-camera",
@@ -185,8 +185,8 @@ export const productCategories: ProductCategory[] = [
       { q: "Where are the cameras placed?", a: "Usually at the front, the rear and under each side mirror, so together they cover all around the car. The exact spots depend on your model." },
       { q: "How much does a 360° camera cost?", a: "It depends on the system and your car. WhatsApp your car model, year and variant and we'll reply with options and prices." },
     ],
-    photo: "newCar",
-    photoLabel: "A new car parked in the studio",
+    photo: "camera360",
+    photoLabel: "360° camera view on a dashboard screen",
   },
   {
     slug: "dashcams",
@@ -213,8 +213,8 @@ export const productCategories: ProductCategory[] = [
       { q: "Will a dashcam fit my car?", a: "Dashcams fit most cars. Placement depends on your windscreen and mirror, so send your model on WhatsApp and we'll suggest the best spot." },
       { q: "How much does a dashcam cost with fitting?", a: "It depends on the dashcam and your car. WhatsApp your car model and we'll reply with options and prices." },
     ],
-    photo: "dashClean",
-    photoLabel: "Car dashboard and windscreen",
+    photo: "dashcam",
+    photoLabel: "Dashcam behind the rear-view mirror",
   },
 ];
 
@@ -241,9 +241,9 @@ export const hubs: Hub[] = [
     eyebrow: "Accessories · Audio & screens",
     h1: "Car audio, screens and cameras",
     lead: "Jay Ganesh Car Accessories fits Android stereos, speakers and 360° cameras, matched to your car's dashboard and wiring. Our team fits and tests everything at Kawadipat Toll Naka, Loni Kalbhor, Pune. Pick a type below, or WhatsApp your car model and we'll reply with the options that suit it.",
-    photo: "dashClean",
+    photo: "stereo",
     children: ["android-stereo", "360-camera"],
-    more: [{ name: "Speakers and subwoofers", blurb: "Clearer sound and deeper bass.", photo: "interior" }],
+    more: [{ name: "Speakers and subwoofers", blurb: "Clearer sound and deeper bass.", photo: "audio" }],
   },
 ];
 

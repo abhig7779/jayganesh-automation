@@ -2,7 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export type HeroPoster = { jpg: string; webp?: string };
+export type HeroPoster = { jpg: string; webp?: string; /** 540px-wide WebP for phones under 2x DPR (phone posters only). */ webpSmall?: string };
+
+/** Phones at 2x DPR and up keep the full 720px poster; the rest get the 540px one.
+ *  (Same strings in Hero.tsx for the preloads: a "use client" module can't export constants to the server.) */
+const hiDpi = "(min-resolution: 2dppx)";
 export type HeroFilm = { src: string; start: HeroPoster; end: HeroPoster };
 
 type Props = {
@@ -25,7 +29,13 @@ const motionQ = "(prefers-reduced-motion: no-preference)";
 function Sources({ poster, media }: { poster: HeroPoster; media?: string }) {
   return (
     <>
-      {poster.webp && <source media={media} type="image/webp" srcSet={poster.webp} />}
+      {poster.webp && poster.webpSmall && media && (
+        <>
+          <source media={`${media} and ${hiDpi}`} type="image/webp" srcSet={poster.webp} />
+          <source media={media} type="image/webp" srcSet={poster.webpSmall} />
+        </>
+      )}
+      {poster.webp && !(poster.webpSmall && media) && <source media={media} type="image/webp" srcSet={poster.webp} />}
       <source media={media} srcSet={poster.jpg} />
     </>
   );
@@ -47,6 +57,7 @@ const chapterAt = (p: number) => cuts.filter((c) => p >= c).length;
 export default function HeroReveal({ desktop, mobile, alt, kicker, title, chapters, queries, children }: Props) {
   const root = useRef<HTMLElement>(null);
   const video = useRef<HTMLVideoElement>(null);
+  const posterImg = useRef<HTMLImageElement>(null);
   const [armed, setArmed] = useState(false);
   const [film, setFilm] = useState<HeroFilm | null>(null);
   const [ready, setReady] = useState(false);
@@ -174,7 +185,9 @@ export default function HeroReveal({ desktop, mobile, alt, kicker, title, chapte
     setReady(true);
   };
 
-  const start = (f: HeroFilm) => f.start.webp ?? f.start.jpg;
+  // The video's poster is the file the <picture> already picked (e.g. the 540px
+  // phone poster), so it isn't downloaded a second time at another size.
+  const start = (f: HeroFilm) => posterImg.current?.currentSrc || f.start.webp || f.start.jpg;
   const phoneMotion = `${queries.phone} and ${motionQ}`;
   const endPicture = (
     `<picture>` +
@@ -210,6 +223,7 @@ export default function HeroReveal({ desktop, mobile, alt, kicker, title, chapte
             <Sources poster={desktop.start} />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
+              ref={posterImg}
               className="hero-x-bg hero-v-poster"
               src={desktop.start.jpg}
               alt={alt}

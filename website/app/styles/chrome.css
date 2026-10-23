@@ -221,18 +221,39 @@
   font-size: 13.5px; color: var(--ink-muted);
 }
 .footer-legal { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.footer-base-left { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; }
 
-.footer-visit { grid-column: 1 / -1; }
+/* Quick actions under the brand blurb. */
+.footer-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.footer .footer-act {
+  display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border-radius: 999px;
+  border: 1px solid var(--soft-line-strong); color: var(--ink); font-size: 14px; font-weight: 600;
+  transition: background-color .2s, border-color .2s;
+}
+.footer .footer-act:hover { background: var(--fill-soft-hover); border-color: var(--line-strong); color: var(--ink); }
+.footer-act svg { width: 16px; height: 16px; flex: none; }
+.footer .footer-act--wa { background: var(--whatsapp-green, #25d366); border-color: transparent; color: #fff; }
+.footer .footer-act--wa:hover { background: var(--whatsapp-green, #25d366); color: #fff; filter: brightness(1.06); }
+.footer-contact { font-size: 14.5px; line-height: 1.5; }
+
+/* "Designed & developed by Marketix Studio" — one logo file per theme. */
+.footer .footer-credit { display: inline-flex; align-items: center; gap: 10px; color: var(--ink-muted); }
+.footer .footer-credit:hover { color: var(--ink); }
+.footer-credit-logo { height: 26px; width: auto; display: block; opacity: .9; transition: opacity .2s; }
+.footer-credit:hover .footer-credit-logo { opacity: 1; }
+.footer-credit-logo--light { display: none; }
+[data-theme="light"] .footer-credit-logo--dark { display: none; }
+[data-theme="light"] .footer-credit-logo--light { display: block; }
+
 @media (min-width: 720px) {
-  .footer-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .footer-visit { grid-column: span 2; }
+  .footer-cols { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 @media (min-width: 1024px) {
-  .footer-cols { grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(0, 1.3fr); gap: 40px 28px; }
-  .footer-visit { grid-column: auto; }
+  .footer-grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 2.4fr); gap: 72px; }
+  .footer-cols { gap: 40px 32px; }
 }
-@media (min-width: 1024px) {
-  .footer-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 2.6fr); gap: 72px; }
+@media (max-width: 719px) {
+  .footer-base { flex-direction: column; align-items: flex-start; }
 }
 
 /* Narrow desktops: tighten the nav so all links fit beside the actions. */
@@ -254,7 +275,7 @@
 .theme-toggle svg { width: 17px; height: 17px; }
 
 /* ---------- WhatsApp: official green ---------- */
-.action-bar a:first-child { background: var(--whatsapp-green); color: var(--on-whatsapp); }
+.action-bar a:first-child { background: var(--whatsapp-green, #25d366); color: var(--on-whatsapp); }
 .wa-widget { display: none; }
 @media (min-width: 1024px) {
   .wa-widget { display: block; position: fixed; left: max(24px, env(safe-area-inset-left, 0px)); bottom: max(24px, env(safe-area-inset-bottom, 0px)); z-index: 60; }
@@ -262,7 +283,7 @@
 .wa-fab {
   width: 60px; height: 60px; border-radius: 50%; border: 0; cursor: pointer;
   display: grid; place-items: center;
-  background: var(--whatsapp-green); color: #fff;
+  background: var(--whatsapp-green, #25d366); color: #fff;
   box-shadow: 0 10px 30px rgba(37,211,102,.35), 0 4px 12px rgba(0,0,0,.25);
   transition: transform .2s var(--ease), box-shadow .2s;
 }
@@ -295,8 +316,11 @@
 .wa-start {
   display: flex; align-items: center; justify-content: center; gap: 10px; margin: 14px 16px 16px;
   min-height: 48px; border-radius: var(--radius-pill);
-  background: var(--whatsapp-green); color: var(--on-whatsapp); font-family: var(--font-display); font-weight: 600; text-decoration: none;
+  background: var(--whatsapp-green, #25d366); color: var(--on-whatsapp); font-family: var(--font-display); font-weight: 600; text-decoration: none;
 }
 .wa-start:hover { filter: brightness(1.05); }
 .wa-start svg { width: 20px; height: 20px; }
 
+/* Keep the credit clear of the floating Help button (bottom right). */
+.footer-base { padding-bottom: 76px; }
+@media (min-width: 1024px) { .footer-base { padding-bottom: 0; padding-right: 150px; } }

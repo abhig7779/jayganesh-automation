@@ -76,6 +76,15 @@ def main() -> None:
         manifest[f"/reels/{src.name}"] = {"w": full_w, "h": full_h, "jpg800": None, "webp": widths}
         print(f"reel  {src.stem}: {widths}")
 
+    # Inner-page hero photos (also used as card photos): their WebP copies are
+    # made elsewhere; just record the real size and the widths that exist.
+    # (The "-1600.webp" desktop copies are 1536 wide, so they are left out.)
+    for src in sorted((PUBLIC / "images" / "hero").glob("*.jpg")):
+        with Image.open(src) as im:
+            full_w, full_h = im.size
+        widths = [w for w in (480, 800, 1024, 1200, 1600) if w <= full_w and (src.parent / f"{src.stem}-{w}.webp").exists()]
+        manifest[f"/images/hero/{src.name}"] = {"w": full_w, "h": full_h, "jpg800": None, "webp": widths}
+
     logo = PUBLIC / "logo.png"
     out = PUBLIC / "logo-176.webp"
     if logo.exists() and (force or not out.exists()):

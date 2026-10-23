@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { imageUrl, media, srcSet } from "@/lib/media";
+import { media, webpSrcSet } from "@/lib/media";
 
 // Drag (or use arrow keys) to compare the same car before and after PPF.
 // While the before/after photos are one stand-in image, the "before" side is
@@ -30,15 +30,10 @@ export default function HeroCompare() {
 
   const img = (key: "compareBefore" | "compareAfter") => (
     // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={imageUrl(media[key].src, 1400)}
-      srcSet={srcSet(media[key].src, [640, 960, 1400, 2000])}
-      sizes="(min-width: 1320px) 1240px, 100vw"
-      alt={media[key].alt}
-      loading="lazy"
-      decoding="async"
-      draggable={false}
-    />
+    <picture>
+      <source type="image/webp" srcSet={webpSrcSet(media[key].src)} sizes="(min-width: 1320px) 1240px, 100vw" />
+      <img src={media[key].src} alt={media[key].alt} loading="lazy" decoding="async" draggable={false} />
+    </picture>
   );
 
   return (

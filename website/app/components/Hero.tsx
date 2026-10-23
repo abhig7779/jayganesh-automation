@@ -36,6 +36,9 @@ const phone = "(max-width: 767px)";
 const desk = "(min-width: 768px)";
 const motion = "(prefers-reduced-motion: no-preference)";
 const still = "(prefers-reduced-motion: reduce)";
+// Phone posters: 720px file at 2x DPR and up, the 540px copy below (same split as HeroReveal's <source>s).
+const hiDpi = "(min-resolution: 2dppx)";
+const loDpi = "(max-resolution: 1.99dppx)";
 
 const exists = (publicPath: string) => fs.existsSync(path.join(process.cwd(), "public", publicPath));
 
@@ -43,10 +46,12 @@ function film(name: string): HeroFilm | null {
   const base = `/video/${name}`;
   if (!exists(`${base}.mp4`) || !exists(`${base}-start.jpg`) || !exists(`${base}-end.jpg`)) return null;
   const webp = (p: string) => (exists(p.replace(/\.jpg$/, ".webp")) ? p.replace(/\.jpg$/, ".webp") : undefined);
+  // Phone posters also have a 540px-wide copy ({name}-start-540.webp, ~27 KB vs ~56 KB).
+  const small = (p: string) => (exists(p.replace(/\.jpg$/, "-540.webp")) ? p.replace(/\.jpg$/, "-540.webp") : undefined);
   return {
     src: `${base}.mp4`,
-    start: { jpg: `${base}-start.jpg`, webp: webp(`${base}-start.jpg`) },
-    end: { jpg: `${base}-end.jpg`, webp: webp(`${base}-end.jpg`) },
+    start: { jpg: `${base}-start.jpg`, webp: webp(`${base}-start.jpg`), webpSmall: small(`${base}-start.jpg`) },
+    end: { jpg: `${base}-end.jpg`, webp: webp(`${base}-end.jpg`), webpSmall: small(`${base}-end.jpg`) },
   };
 }
 
@@ -58,12 +63,19 @@ export default function Hero() {
 
   // The poster <img> is the LCP element. Ask for the one this screen will
   // show from <head>, with the same media queries as the <picture> sources.
-  const pre = (poster: HeroFilm["start"], media: string) =>
+  // Phone posters with a 540px copy: same split by DPR as the <picture> sources.
+  const pre = (poster: HeroFilm["start"], media: string, phonePoster = false) => {
+    if (phonePoster && poster.webp && poster.webpSmall) {
+      preload(poster.webp, { as: "image", type: "image/webp", media: `${media} and ${hiDpi}`, fetchPriority: "high" });
+      preload(poster.webpSmall, { as: "image", type: "image/webp", media: `${media} and ${loDpi}`, fetchPriority: "high" });
+      return;
+    }
     preload(poster.webp ?? poster.jpg, { as: "image", type: poster.webp ? "image/webp" : undefined, media, fetchPriority: "high" });
+  };
   pre(desktop.start, `${desk} and ${motion}`);
   if (mobile) {
-    pre(mobile.start, `${phone} and ${motion}`);
-    pre(mobile.end, `${phone} and ${still}`);
+    pre(mobile.start, `${phone} and ${motion}`, true);
+    pre(mobile.end, `${phone} and ${still}`, true);
     pre(desktop.end, `${desk} and ${still}`);
   } else {
     pre(desktop.end, `${phone}, ${still}`);

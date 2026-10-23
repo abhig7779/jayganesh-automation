@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { CtaBand, Faq, IconPhone, IconPin, IconWhatsApp, JsonLd, SectionHead } from "../components/ui";
+import { CallButton, CtaBand, Faq, IconPhone, IconPin, IconWhatsApp, JsonLd, SectionHead, WhatsAppButton } from "../components/ui";
+import GoogleRating from "../components/GoogleRating";
 import { PageHero } from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import LeadForm from "../components/LeadForm";
@@ -34,6 +35,20 @@ function IconInstagram() {
     </svg>
   );
 }
+function IconYouTube() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2 31 31 0 0 0 .5 12 31 31 0 0 0 1 16.8a3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-4.8 31 31 0 0 0-.5-4.8ZM9.7 15.1V8.9L15.5 12l-5.8 3.1Z" />
+    </svg>
+  );
+}
+function IconFacebook() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M13.5 22v-8.2h2.8l.4-3.2h-3.2V8.5c0-.9.3-1.6 1.6-1.6h1.7V4.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V22h3.4Z" />
+    </svg>
+  );
+}
 function IconClock() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -53,7 +68,13 @@ export default function ContactUs() {
         eyebrow="Call · WhatsApp · Visit"
         title="Contact Jay Ganesh Car Accessories"
         lead="Ask for a price, book a studio slot or check if a part fits your car. WhatsApp is the quickest way to reach us."
-      />
+      >
+        <div className="actions">
+          <WhatsAppButton message="Hi Jay Ganesh, I'd like to know more.">WhatsApp us</WhatsAppButton>
+          <CallButton />
+          <a className="btn btn--ghost" href={site.mapsHref} target="_blank" rel="noopener noreferrer" data-track="directions"><IconPin /> Get directions</a>
+        </div>
+      </PageHero>
 
       <section className="band band--panel contact-band">
         <div className="wrap contact-layout">
@@ -83,6 +104,7 @@ export default function ContactUs() {
                 <div>
                   <p className="label">Address</p>
                   <address>{site.address}</address>
+                  <p className="contact-note">Right at the Kawadipat toll naka on the Pune–Solapur road.</p>
                   <a className="text-link" href={site.mapsHref} target="_blank" rel="noopener noreferrer" data-track="directions">Open in Google Maps</a>
                 </div>
               </li>
@@ -96,11 +118,16 @@ export default function ContactUs() {
               <li>
                 <span className="contact-ico"><IconInstagram /></span>
                 <div>
-                  <p className="label">Instagram</p>
+                  <p className="label">Follow us</p>
                   <a href={site.instagramHref} target="_blank" rel="noopener noreferrer">{site.instagram}</a>
+                  <span className="contact-social">
+                    <a href={site.youtubeHref} target="_blank" rel="noopener noreferrer" aria-label="YouTube"><IconYouTube /> YouTube</a>
+                    <a href={site.facebookHref} target="_blank" rel="noopener noreferrer" aria-label="Facebook"><IconFacebook /> Facebook</a>
+                  </span>
                 </div>
               </li>
             </ul>
+            <div className="contact-rating"><GoogleRating variant="inline" /></div>
           </Reveal>
         </div>
       </section>

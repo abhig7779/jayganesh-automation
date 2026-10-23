@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { categories, companyLinks, studioLinks } from "@/lib/catalog";
-import { site } from "@/lib/site";
+import { site, whatsapp } from "@/lib/site";
+import { IconPhone, IconPin, IconWhatsApp } from "./ui";
 
 function IconInstagram() {
   return (
@@ -27,14 +28,30 @@ function IconFacebook() {
   );
 }
 
+// Website credit in the footer base. Two logo files so it reads on both themes.
+const credit = { name: "Marketix Studio", href: "https://marketixstudio.com" };
+
 export default function Footer() {
   return (
     <footer className="footer">
       <div className="wrap">
         <div className="footer-grid">
           <div className="footer-brand">
-            <Image src="/logo-176.webp" alt={site.name} width={64} height={44} />
+            <Image src="/logo-128.webp" alt={site.name} width={64} height={44} />
             <p>Car accessories and a PPF &amp; detailing studio on the Pune–Solapur road, Loni Kalbhor.</p>
+
+            <div className="footer-actions">
+              <a className="footer-act" href={site.phoneHref} data-track="call"><IconPhone /> Call</a>
+              <a className="footer-act footer-act--wa" href={whatsapp()} target="_blank" rel="noopener noreferrer" data-track="whatsapp"><IconWhatsApp /> WhatsApp</a>
+              <a className="footer-act" href={site.mapsHref} target="_blank" rel="noopener noreferrer" data-track="directions"><IconPin /> Directions</a>
+            </div>
+
+            <address className="footer-contact">
+              <a href={site.mapsHref} target="_blank" rel="noopener noreferrer">{site.address}</a>
+              <span>{site.hours}</span>
+              <a className="footer-phone" href={site.phoneHref}>{site.phoneDisplay}</a>
+            </address>
+
             <div className="footer-social">
               <a href={site.instagramHref} target="_blank" rel="noopener noreferrer" aria-label="Instagram"><IconInstagram /></a>
               <a href={site.youtubeHref} target="_blank" rel="noopener noreferrer" aria-label="YouTube"><IconYouTube /></a>
@@ -60,10 +77,10 @@ export default function Footer() {
                 <li><Link href="/our-work/">Our work</Link></li>
                 <li><Link href="/offers/">Offers</Link></li>
                 <li><Link href="/visit-us/">Visit us</Link></li>
-                <li><Link href="/car-accessories-hadapsar/">Near Hadapsar</Link></li>
-                <li><Link href="/car-accessories-kharadi/">Near Kharadi</Link></li>
                 <li><Link href="/ppf-brands-pune/">PPF brands</Link></li>
                 <li><Link href="/headlight-brands-pune/">Headlight brands</Link></li>
+                <li><Link href="/car-accessories-hadapsar/">Near Hadapsar</Link></li>
+                <li><Link href="/car-accessories-kharadi/">Near Kharadi</Link></li>
                 <li><a href={site.reviewsHref} target="_blank" rel="noopener noreferrer">Google reviews</a></li>
               </ul>
             </div>
@@ -71,23 +88,24 @@ export default function Footer() {
               <h2 className="label">Company</h2>
               <ul>{companyLinks.map((l) => <li key={l.href}><Link href={l.href}>{l.label}</Link></li>)}</ul>
             </div>
-            <div className="footer-visit">
-              <h2 className="label">Visit</h2>
-              <address>
-                <a href={site.mapsHref} target="_blank" rel="noopener noreferrer">{site.address}</a>
-                <span>{site.hours}</span>
-                <a className="footer-phone" href={site.phoneHref}>{site.phoneDisplay}</a>
-              </address>
-            </div>
           </div>
         </div>
 
         <div className="footer-base">
-          <span>© {new Date().getFullYear()} {site.name}</span>
-          <span className="footer-legal">
-            <Link href="/privacy-policy/">Privacy policy</Link>
-            <Link href="/terms/">Terms &amp; conditions</Link>
-          </span>
+          <div className="footer-base-left">
+            <span>© {new Date().getFullYear()} {site.name}</span>
+            <span className="footer-legal">
+              <Link href="/privacy-policy/">Privacy policy</Link>
+              <Link href="/terms/">Terms &amp; conditions</Link>
+            </span>
+          </div>
+          <a className="footer-credit" href={credit.href} target="_blank" rel="noopener">
+            <span>Designed &amp; developed by</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="footer-credit-logo footer-credit-logo--dark" src="/brand/marketix-on-dark.webp" alt={credit.name} width={295} height={64} loading="lazy" decoding="async" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="footer-credit-logo footer-credit-logo--light" src="/brand/marketix-on-light.webp" alt="" width={295} height={64} loading="lazy" decoding="async" aria-hidden="true" />
+          </a>
         </div>
       </div>
     </footer>

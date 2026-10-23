@@ -18,14 +18,14 @@ export type Category = {
 export const categories: Category[] = [
   { key: "seat-covers", group: "Interior", name: "Seat covers", blurb: "Made and fitted for your car model.", href: "/seat-covers/", price: "seatCoverFrom", photo: "interior" },
   { key: "autoform", group: "Interior", name: "Autoform seat covers", blurb: "Authorised dealer. Made for your model.", href: "/autoform-seat-covers-pune/", photo: "interior" },
-  { key: "mats", group: "Interior", name: "Mats and interior", blurb: "Floor mats, steering covers and trims.", photo: "dashClean" },
-  { key: "ambient", group: "Lights", name: "Ambient lighting", blurb: "Soft interior lighting, wired neatly.", href: "/car-lights/ambient-lighting/", photo: "interior" },
+  { key: "mats", group: "Interior", name: "Mats and interior", blurb: "Floor mats, steering covers and trims.", photo: "mats" },
+  { key: "ambient", group: "Lights", name: "Ambient lighting", blurb: "Soft interior lighting, wired neatly.", href: "/car-lights/ambient-lighting/", photo: "ambient" },
   { key: "headlights", group: "Lights", name: "Headlights", blurb: "LED and projector headlight upgrades.", href: "/car-lights/headlights/", photo: "headlight" },
   { key: "fog", group: "Lights", name: "Fog lamps", blurb: "For winter mornings on the highway.", photo: "lightsDark" },
-  { key: "stereo", group: "Tech", name: "Android stereos", blurb: "Touchscreen stereos fitted for your dashboard.", href: "/audio-screens/android-stereo/", photo: "dashClean" },
-  { key: "audio", group: "Tech", name: "Speakers and subwoofers", blurb: "Clearer sound and deeper bass.", photo: "interior" },
-  { key: "camera", group: "Tech", name: "360° cameras", blurb: "See all around the car when parking.", href: "/audio-screens/360-camera/", photo: "newCar" },
-  { key: "dashcam", group: "Tech", name: "Dashcams", blurb: "Installed, wired and tested.", href: "/dashcams/", photo: "dashClean" },
+  { key: "stereo", group: "Tech", name: "Android stereos", blurb: "Touchscreen stereos fitted for your dashboard.", href: "/audio-screens/android-stereo/", photo: "stereo" },
+  { key: "audio", group: "Tech", name: "Speakers and subwoofers", blurb: "Clearer sound and deeper bass.", photo: "audio" },
+  { key: "camera", group: "Tech", name: "360° cameras", blurb: "See all around the car when parking.", href: "/audio-screens/360-camera/", photo: "camera360" },
+  { key: "dashcam", group: "Tech", name: "Dashcams", blurb: "Installed, wired and tested.", href: "/dashcams/", photo: "dashcam" },
   { key: "exterior", group: "Exterior", name: "Exterior accessories", blurb: "Guards, kits and styling parts.", photo: "studioBay" },
 ];
 

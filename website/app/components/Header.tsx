@@ -80,10 +80,11 @@ export default function Header() {
         <div className="wrap">
           {/* No aria-label: the visible name is the link text (WCAG 2.5.3). */}
           <Link className="brand" href="/">
-            {/* 176px WebP, not the 690px logo.png: it is shown 58px wide. A plain
-                <img> so it isn't preloaded ahead of the hero photo. */}
+            {/* Small WebPs, not the 690px logo.png: it is shown ~58px wide (64px
+                file at 1x, 128px at 2x). A plain <img> so it isn't preloaded
+                ahead of the hero photo. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo-176.webp" alt="" width={58} height={40} decoding="async" />
+            <img src="/logo-128.webp" srcSet="/logo-64.webp 1x, /logo-128.webp 2x" alt="" width={58} height={40} decoding="async" />
             <span className="brand-name">
               <strong>Jay Ganesh</strong>
               <span className="label">Detailing &amp; Accessories</span>

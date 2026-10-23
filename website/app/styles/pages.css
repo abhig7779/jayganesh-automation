@@ -170,7 +170,7 @@
   background: var(--fill-soft); border: 1px solid var(--soft-line); color: var(--ink);
 }
 .contact-ico svg { width: 19px; height: 19px; }
-.contact-ico--wa { background: var(--whatsapp-green); border-color: transparent; color: #fff; }
+.contact-ico--wa { background: var(--whatsapp-green, #25d366); border-color: transparent; color: #fff; }
 
 .map-embed {
   position: relative; overflow: hidden; border-radius: var(--radius-card); box-shadow: var(--shadow-card);
@@ -219,6 +219,7 @@
   display: block; width: auto; height: auto; max-height: var(--logo-h); max-width: var(--logo-w);
   filter: grayscale(1); opacity: .62; transition: filter .25s ease, opacity .25s ease;
 }
+.brand-logo picture { display: contents; }
 .brand-logo:hover .brand-logo__img, .brand-logo--color .brand-logo__img { filter: none; opacity: 1; }
 .brand-logo__name { font-weight: 700; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink); opacity: .7; transition: opacity .25s ease; }
 .brand-logo:hover .brand-logo__name { opacity: 1; }
@@ -247,3 +248,11 @@
 .dealer-lockup__text { margin: 0; padding-left: 22px; border-left: 3px solid var(--brand-yellow); color: var(--ink-muted); font-size: clamp(16px, 1.6vw, 19px); }
 .dealer-lockup__text strong { color: var(--ink); font-weight: 700; }
 .callout .brand-logo { padding: 0; --logo-h: 26px; }
+
+/* Contact card extras: landmark, socials, rating. */
+.contact-note { color: var(--ink-muted) !important; font-size: 14px; }
+.contact-social { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 2px; }
+.contact-social a { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--ink-muted) !important; text-decoration: none !important; }
+.contact-social a:hover { color: var(--ink) !important; }
+.contact-social svg { width: 16px; height: 16px; }
+.contact-rating { margin-top: 6px; padding-top: 18px; border-top: 1px solid var(--soft-line); }

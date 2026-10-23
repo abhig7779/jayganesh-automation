@@ -25,7 +25,9 @@ import { BUSINESS_ID, WEBSITE_ID, areaServedLd, graph, ogImage } from "@/lib/seo
 // Hindi text, so Devanagari never falls back to a system font.
 const sora = Sora({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-sora", display: "swap" });
 const hanken = Hanken_Grotesk({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-hanken", display: "swap" });
-const hind = Hind({ subsets: ["devanagari"], weight: ["400", "600"], variable: "--font-hind", display: "swap" });
+// Devanagari only (Marathi text): not preloaded, so phones don't spend bandwidth
+// on it before the hero photo; the browser still fetches it when such text shows.
+const hind = Hind({ subsets: ["devanagari"], weight: ["400", "600"], variable: "--font-hind", display: "swap", preload: false });
 
 const homeTitle = "Car Accessories in Pune & PPF Studio | Jay Ganesh";
 const homeDescription = `Car accessories and car decor: seat covers, lights, stereos, dashcams, plus a PPF and detailing studio at Loni Kalbhor, Pune. Rated ${site.rating} on Google.`;

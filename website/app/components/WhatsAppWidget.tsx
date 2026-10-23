@@ -26,7 +26,7 @@ export default function WhatsAppWidget() {
       {open && (
         <div className="wa-card" role="dialog" aria-label="Chat with Jay Ganesh on WhatsApp">
           <div className="wa-card-head">
-            <span className="wa-avatar"><Image src="/logo-176.webp" alt="" width={40} height={28} /></span>
+            <span className="wa-avatar"><Image src="/logo-64.webp" alt="" width={40} height={28} /></span>
             <div>
               <strong>{site.name}</strong>
               <span>Replies during shop hours · 10 am – 8 pm</span>

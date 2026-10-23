@@ -22,7 +22,10 @@ export function BrandLogo({ brand, size = "md", color = false }: { brand: Brand;
   const cls = ["brand-logo", `brand-logo--${brand.ink}`, `brand-logo--${size}`, color && "brand-logo--color", brand.emblemOnly && "brand-logo--emblem"]
     .filter(Boolean)
     .join(" ");
-  const img = (src: string, variant?: "light" | "dark") => (
+  // PNG logos have a WebP copy in public/brands/ at 2x their largest displayed
+  // size (60px tall, or 88px for the large lockup); SVGs are used as they are.
+  const img = (src: string, variant?: "light" | "dark") => {
+    const tag = (
     <img
       src={src}
       alt={`${brand.name} logo`}
@@ -32,7 +35,15 @@ export function BrandLogo({ brand, size = "md", color = false }: { brand: Brand;
       decoding="async"
       className={variant ? `brand-logo__img brand-logo__img--${variant}` : "brand-logo__img"}
     />
-  );
+    );
+    if (!src.endsWith(".png")) return tag;
+    return (
+      <picture>
+        <source type="image/webp" srcSet={src.replace(/\.png$/, ".webp")} />
+        {tag}
+      </picture>
+    );
+  };
   return (
     <span className={cls}>
       {brand.logoDark ? (

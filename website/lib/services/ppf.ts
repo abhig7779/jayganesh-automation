@@ -73,7 +73,7 @@ export const ppf: Service = {
     { q: "Can PPF be fitted on a used car?", a: "Yes. We inspect the paint first and polish where needed, so existing swirl marks are not sealed under the film. Deep scratches and chips should be repaired before the film goes on; we'll point them out at inspection." },
     { q: "Where can I get PPF done near Hadapsar, Kharadi or Wagholi?", a: "At our studio at Kawadipat Toll Naka on the Pune–Solapur road, Loni Kalbhor. Customers come from Hadapsar, Manjri, Kharadi, Wagholi, Fursungi and Uruli Kanchan. WhatsApp +91 99813 97676 with your car model to book a slot." },
   ],
-  photos: ["ppfApply", "ppfEdge", "polishBlue", "newCar"],
+  photos: ["ppfApply", "ppfEdge", "polish", "newCar"],
   photoSlots: [
     "Technician laying film on a bonnet under studio lights",
     "Close-up of a film edge wrapped around a panel",
