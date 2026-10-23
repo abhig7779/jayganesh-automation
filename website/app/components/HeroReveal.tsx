@@ -249,7 +249,17 @@ export default function HeroReveal({ desktop, mobile, alt, kicker, title, chapte
         <div className="wrap hero-x-inner">
           <div className="hero-x-copy">
             <div className="hero-v-head">
-              <p className="hero-x-kicker">{kicker}</p>
+              <p className="hero-x-kicker">
+                {/* Phones show only the first two parts so the kicker stays on one line. */}
+                <span>
+                  {kicker.split(" · ").map((part, i) => (
+                    <span key={part} className={i > 1 ? "hero-v-kick-extra" : undefined}>
+                      {i > 0 && " · "}
+                      {part}
+                    </span>
+                  ))}
+                </span>
+              </p>
               {title}
               <p className="hero-v-chap" aria-hidden>
                 {chapters.map((c) => (
