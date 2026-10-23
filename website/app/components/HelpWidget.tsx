@@ -103,7 +103,7 @@ export default function HelpWidget() {
             <span className="help-dot" aria-hidden />
             <div>
               <strong>Quick help</strong>
-              <span>Jay Ganesh · {site.hoursShort}</span>
+              <span><span className="notranslate" translate="no">Jay Ganesh</span> · {site.hoursShort}</span>
             </div>
             <button type="button" className="help-close" onClick={() => setOpen(false)} aria-label="Close help">×</button>
           </div>
@@ -111,7 +111,8 @@ export default function HelpWidget() {
           <div className="help-log" ref={log} aria-live="polite">
             {msgs.map((m, i) => (
               <div key={i} className={`help-msg help-msg--${m.from}`}>
-                <p>{m.text}</p>
+                {/* The visitor's own words stay as typed when the page is in Hindi. */}
+                <p className={m.from === "me" ? "notranslate" : undefined} translate={m.from === "me" ? "no" : undefined}>{m.text}</p>
                 {m.answer && (
                   <div className="help-actions">
                     <a className="help-wa" href={whatsapp(m.answer.wa)} target="_blank" rel="noopener noreferrer" data-track="whatsapp">

@@ -12,7 +12,7 @@ import { JsonLd } from "./components/ui";
 import WhatsAppWidget from "./components/WhatsAppWidget";
 import HelpWidget from "./components/HelpWidget";
 import Analytics from "./components/Analytics";
-import { themeScript } from "./components/ThemeToggle";
+import { themeScript } from "./components/theme-script";
 import { site } from "@/lib/site";
 import { reviewsData } from "@/lib/reviews";
 import { services } from "@/lib/services";

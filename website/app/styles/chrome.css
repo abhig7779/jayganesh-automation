@@ -130,6 +130,8 @@
 
 @media (min-width: 640px) and (max-width: 1023px), (min-width: 1280px) {
   .brand-name { display: block; position: static; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; white-space: normal; }
+  /* One line each, so the header stays one clean row with the language and theme buttons. */
+  .brand-name strong, .brand-name .label { white-space: nowrap; }
 }
 
 @media (min-width: 1024px) {
@@ -273,6 +275,32 @@
 }
 .theme-toggle:hover { background: var(--fill-soft); border-color: var(--line-strong); }
 .theme-toggle svg { width: 17px; height: 17px; }
+
+/* ---------- Language switch (LangSwitch.tsx) ----------
+   Same round button as the theme toggle, with a text chip. In the header on
+   desktop; on phones it lives in the mobile menu instead. */
+.lang-toggle span { font-family: var(--font-hind), var(--font-display), sans-serif; font-size: 14px; font-weight: 600; line-height: 1; letter-spacing: 0; }
+.lang-toggle span[lang="en"] { font-family: var(--font-display); font-size: 12.5px; letter-spacing: .04em; }
+@media (max-width: 1023px) { .lang-toggle--head { display: none; } }
+.mobile-menu .mobile-lang {
+  display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 18px 0; border: 0; border-bottom: 1px solid var(--soft-line); background: none; cursor: pointer;
+  color: var(--ink); font: inherit; font-family: var(--font-display); font-weight: 600; font-size: 18px; text-align: left;
+}
+.mobile-lang span[lang="hi"] { font-family: var(--font-hind), var(--font-display), sans-serif; }
+.mobile-lang-chip {
+  display: inline-grid; place-items: center; min-width: 40px; height: 32px; padding-inline: 10px; border-radius: 999px;
+  border: 1px solid var(--soft-line-strong); font-size: 13px; color: var(--ink-muted);
+}
+
+/* ---------- Google Translate (loaded only when Hindi is chosen) ----------
+   Hide Google's banner, tooltip, hover highlight and spinner, and stop it
+   pushing the page down. */
+body > .skiptranslate, iframe.skiptranslate, .goog-te-banner-frame, #goog-gt-tt, .goog-te-balloon-frame,
+.goog-te-gadget, .goog-te-spinner-pos, #jg-translate,
+.VIpgJd-ZVi9od-ORHb-OEVmcd, .VIpgJd-ZVi9od-aZ2wEe-wOHMyf, .VIpgJd-yAWNEb-L7lbkb { display: none !important; }
+body { top: 0 !important; }
+.goog-text-highlight, .VIpgJd-yAWNEb-VIpgJd-fmcmS-sn54Q { background: none !important; box-shadow: none !important; }
 
 /* ---------- WhatsApp: official green ---------- */
 .action-bar a:first-child { background: var(--whatsapp-green, #25d366); color: var(--on-whatsapp); }

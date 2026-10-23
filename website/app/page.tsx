@@ -134,12 +134,15 @@ export default function Home() {
       </section>
 
       {/* How it works */}
-      <section className="h-sec h-sec--panel" aria-labelledby="how-title">
-        <div className="wrap">
-          <Reveal>
-            <Head id="how-title" eyebrow="How it works" title="From inspection to handover" lead="The same careful process for every car that comes into the studio." />
-            <HowItWorks />
-          </Reveal>
+      {/* On desktop the section is tall and .how-stage is pinned while the steps play through (HowItWorks.tsx). */}
+      <section className="h-sec h-sec--panel how-seq" aria-labelledby="how-title">
+        <div className="how-stage">
+          <div className="wrap">
+            <Reveal>
+              <Head id="how-title" eyebrow="How it works" title="From inspection to handover" lead="The same careful process for every car that comes into the studio." />
+              <HowItWorks />
+            </Reveal>
+          </div>
         </div>
       </section>
 

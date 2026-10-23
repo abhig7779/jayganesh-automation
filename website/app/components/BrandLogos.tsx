@@ -45,7 +45,7 @@ export function BrandLogo({ brand, size = "md", color = false }: { brand: Brand;
     );
   };
   return (
-    <span className={cls}>
+    <span className={`${cls} notranslate`} translate="no">
       {brand.logoDark ? (
         <>
           {img(brand.logo, "light")}

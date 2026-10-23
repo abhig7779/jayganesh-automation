@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
 // Four studio steps with simple line icons. Wording stays generic on purpose:
 // no film brands, warranty years or timings until the shop confirms them.
 
@@ -36,21 +40,176 @@ const steps: { key: keyof typeof icon; title: string; line: string }[] = [
   { key: "handover", title: "Handover", line: "We walk round the car with you and explain the aftercare." },
 ];
 
+// Scroll-driven (styles: "How it works" in app/styles/home.css):
+// - Desktop (>= 900px wide, >= 620px tall): the section (.how-seq) is ~200vh and
+//   its stage is sticky. That is pure CSS keyed on html[data-js] (set in <head>
+//   by layout.tsx), so the page height is right from the first paint. Scroll progress through it fills the rail (--fill on the
+//   <ol>) and moves the current step. Clicking a step scrolls to its point.
+// - Phones: no pinning. A step becomes current as it crosses the middle of the
+//   screen (IntersectionObserver), and the rail segment above it fills.
+// - Reduced motion, no JS, or before hydration: the static look, every step
+//   fully active (data-live is never set).
+// Nothing is measured or re-rendered on scroll unless the section is near the
+// viewport, and React only re-renders when the current step changes.
+
+const SEQ_QUERY = "(min-width: 900px) and (min-height: 620px)";
+// Fill runs from 5% to 90% of the pinned travel, so the first and last steps
+// get a moment on screen before and after the rail moves.
+const FILL_START = 0.05;
+const FILL_SPAN = 0.85;
+const last = steps.length - 1;
+
+type Mode = "off" | "seq" | "io";
+
 export default function HowItWorks() {
+  const ref = useRef<HTMLOListElement>(null);
+  const [mode, setMode] = useState<Mode>("off");
+  const [active, setActive] = useState(-1);
+
+  // Pick the mode, and follow viewport / motion-preference changes.
+  useEffect(() => {
+    const seq = matchMedia(SEQ_QUERY);
+    const still = matchMedia("(prefers-reduced-motion: reduce)");
+    const pick = () => setMode(still.matches || typeof IntersectionObserver === "undefined" ? "off" : seq.matches ? "seq" : "io");
+    pick();
+    seq.addEventListener("change", pick);
+    still.addEventListener("change", pick);
+    return () => {
+      seq.removeEventListener("change", pick);
+      still.removeEventListener("change", pick);
+    };
+  }, []);
+
+  // Desktop: one passive scroll listener, rAF-throttled, attached only while the section is near the viewport.
+  useEffect(() => {
+    const ol = ref.current;
+    const section = ol?.closest<HTMLElement>(".how-seq");
+    if (mode !== "seq" || !ol || !section) return;
+    const stage = section.querySelector<HTMLElement>(".how-stage") ?? section;
+    let raf = 0;
+    let lastActive = -2;
+
+    const update = () => {
+      raf = 0;
+      const headerH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 72;
+      const travel = Math.max(1, section.offsetHeight - stage.offsetHeight);
+      const p = Math.min(1, Math.max(0, (headerH - section.getBoundingClientRect().top) / travel));
+      const fill = Math.min(1, Math.max(0, (p - FILL_START) / FILL_SPAN));
+      ol.style.setProperty("--fill", fill.toFixed(4));
+      const a = Math.min(last, Math.floor(fill * last + 0.001));
+      if (a !== lastActive) {
+        lastActive = a;
+        setActive(a);
+      }
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+
+    let listening = false;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting && !listening) {
+          listening = true;
+          window.addEventListener("scroll", onScroll, { passive: true });
+          window.addEventListener("resize", onScroll, { passive: true });
+          onScroll();
+        } else if (!e.isIntersecting && listening) {
+          listening = false;
+          window.removeEventListener("scroll", onScroll);
+          window.removeEventListener("resize", onScroll);
+          update(); // settle at 0 or 1 when the section is left quickly
+        }
+      },
+      { rootMargin: "200px 0px" },
+    );
+    io.observe(section);
+    update();
+
+    return () => {
+      io.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+      ol.style.removeProperty("--fill");
+      setActive(-1);
+    };
+  }, [mode]);
+
+  // Phones: the current step is the last one whose node has crossed the middle band.
+  useEffect(() => {
+    const ol = ref.current;
+    if (mode !== "io" || !ol) return;
+    const items = Array.from(ol.children) as HTMLElement[];
+    const pick = () => {
+      const mid = window.innerHeight * 0.5;
+      let a = -1;
+      items.forEach((li, i) => {
+        const node = li.querySelector(".steps-x-icon") ?? li;
+        const r = node.getBoundingClientRect();
+        if (r.top + r.height / 2 <= mid) a = i;
+      });
+      setActive(a);
+    };
+    const io = new IntersectionObserver(pick, { rootMargin: "-45% 0px -50% 0px", threshold: 0 });
+    // The whole list too, so a fast fling past the band still settles correctly.
+    const outer = new IntersectionObserver(pick, { threshold: [0, 0.25, 0.5, 0.75, 1] });
+    items.forEach((li) => io.observe(li));
+    outer.observe(ol);
+    pick();
+    return () => {
+      io.disconnect();
+      outer.disconnect();
+      setActive(-1);
+    };
+  }, [mode]);
+
+  const goTo = (i: number) => {
+    const ol = ref.current;
+    const section = ol?.closest<HTMLElement>(".how-seq");
+    if (!ol) return;
+    if (mode === "seq" && section) {
+      const stage = section.querySelector<HTMLElement>(".how-stage") ?? section;
+      const headerH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 72;
+      const travel = section.offsetHeight - stage.offsetHeight;
+      const fill = Math.min(1, i / last + 0.02);
+      const p = Math.min(1, FILL_START + FILL_SPAN * fill);
+      const top = window.scrollY + section.getBoundingClientRect().top - headerH + p * travel;
+      window.scrollTo({ top: Math.round(top), behavior: "smooth" });
+    } else if (mode === "io") {
+      const li = ol.children[i] as HTMLElement | undefined;
+      const node = li?.querySelector<HTMLElement>(".steps-x-icon");
+      if (!node) return;
+      const r = node.getBoundingClientRect();
+      window.scrollTo({ top: Math.round(window.scrollY + r.top + r.height / 2 - window.innerHeight * 0.47), behavior: "smooth" });
+    }
+  };
+
+  const live = mode !== "off";
   return (
-    <ol className="steps-x">
-      {steps.map((s, i) => (
-        <li key={s.key} data-n={String(i + 1).padStart(2, "0")}>
-          <span className="steps-x-icon" aria-hidden>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              {icon[s.key]}
-            </svg>
-          </span>
-          <span className="steps-x-num" aria-hidden>{String(i + 1).padStart(2, "0")}</span>
-          <h3>{s.title}</h3>
-          <p>{s.line}</p>
-        </li>
-      ))}
+    <ol ref={ref} className="steps-x" data-live={live ? mode : undefined}>
+      {steps.map((s, i) => {
+        const reached = live && i <= active;
+        const current = live && i === active;
+        return (
+          <li
+            key={s.key}
+            data-n={String(i + 1).padStart(2, "0")}
+            className={[reached && "is-reached", current && "is-current", live && i < active && "is-seg"].filter(Boolean).join(" ") || undefined}
+            aria-current={current ? "step" : undefined}
+            onClick={live ? () => goTo(i) : undefined}
+          >
+            <span className="steps-x-icon" aria-hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                {icon[s.key]}
+              </svg>
+            </span>
+            <span className="steps-x-num" aria-hidden>{String(i + 1).padStart(2, "0")}</span>
+            <h3>{s.title}</h3>
+            <p>{s.line}</p>
+          </li>
+        );
+      })}
     </ol>
   );
 }

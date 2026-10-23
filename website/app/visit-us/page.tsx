@@ -36,7 +36,7 @@ export default function VisitUs() {
       >
         <div className="actions">
           <a className="btn btn--primary" href={site.mapsHref} target="_blank" rel="noopener noreferrer" data-track="directions"><IconPin />Get directions</a>
-          <a className="btn btn--ghost" href={site.phoneHref} data-track="call"><IconPhone />{site.phoneDisplay}</a>
+          <a className="btn btn--ghost" href={site.phoneHref} data-track="call"><IconPhone /><span className="notranslate" translate="no">{site.phoneDisplay}</span></a>
         </div>
       </PageHero>
 
@@ -55,7 +55,7 @@ export default function VisitUs() {
               <div key={f.area}><dt className="label">From {f.area}</dt><dd>{f.how}</dd></div>
             ))}
             <div><dt className="label">Hours</dt><dd>{site.hours}</dd></div>
-            <div><dt className="label">Phone and WhatsApp</dt><dd><a href={site.phoneHref}>{site.phoneDisplay}</a></dd></div>
+            <div><dt className="label">Phone and WhatsApp</dt><dd><a className="notranslate" translate="no" href={site.phoneHref}>{site.phoneDisplay}</a></dd></div>
             <div><dt className="label">Payment</dt><dd>UPI, cards and cash</dd></div>
           </dl>
         </Reveal>

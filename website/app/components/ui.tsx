@@ -221,7 +221,7 @@ export function CtaBand({
     <section className="cta" aria-label="Get a price">
       <div className="wrap">
         <div className="cta-copy">
-          <p className="label eyebrow">WhatsApp · {site.phoneDisplay}</p>
+          <p className="label eyebrow">WhatsApp · <span className="notranslate" translate="no">{site.phoneDisplay}</span></p>
           <h2>{title}</h2>
           <p className="cta-note">{site.hoursShort} · {site.addressShort}</p>
         </div>

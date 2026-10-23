@@ -37,7 +37,7 @@ export default function Footer() {
       <div className="wrap">
         <div className="footer-grid">
           <div className="footer-brand">
-            <Image src="/logo-128.webp" alt={site.name} width={64} height={44} />
+            <Image className="notranslate" translate="no" src="/logo-128.webp" alt={site.name} width={64} height={44} />
             <p>Car accessories and a PPF &amp; detailing studio on the Pune–Solapur road, Loni Kalbhor.</p>
 
             <div className="footer-actions">
@@ -49,7 +49,7 @@ export default function Footer() {
             <address className="footer-contact">
               <a href={site.mapsHref} target="_blank" rel="noopener noreferrer">{site.address}</a>
               <span>{site.hours}</span>
-              <a className="footer-phone" href={site.phoneHref}>{site.phoneDisplay}</a>
+              <a className="footer-phone notranslate" translate="no" href={site.phoneHref}>{site.phoneDisplay}</a>
             </address>
 
             <div className="footer-social">
@@ -93,13 +93,13 @@ export default function Footer() {
 
         <div className="footer-base">
           <div className="footer-base-left">
-            <span>© {new Date().getFullYear()} {site.name}</span>
+            <span>© {new Date().getFullYear()} <span className="notranslate" translate="no">{site.name}</span></span>
             <span className="footer-legal">
               <Link href="/privacy-policy/">Privacy policy</Link>
               <Link href="/terms/">Terms &amp; conditions</Link>
             </span>
           </div>
-          <a className="footer-credit" href={credit.href} target="_blank" rel="noopener">
+          <a className="footer-credit notranslate" translate="no" href={credit.href} target="_blank" rel="noopener">
             <span>Designed &amp; developed by</span>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img className="footer-credit-logo footer-credit-logo--dark" src="/brand/marketix-on-dark.webp" alt={credit.name} width={295} height={64} loading="lazy" decoding="async" />

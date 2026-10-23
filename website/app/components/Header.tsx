@@ -7,6 +7,7 @@ import { categories, companyLinks, primaryNav, studioLinks } from "@/lib/catalog
 import { site, whatsapp } from "@/lib/site";
 import { IconArrow, IconChevron, IconPhone, IconPin, IconWhatsApp, WhatsAppButton } from "./ui";
 import ThemeToggle from "./ThemeToggle";
+import { LangMenuItem, LangToggle, bootTranslate } from "./LangSwitch";
 
 const groups = ["Interior", "Lights", "Tech", "Exterior"] as const;
 
@@ -39,6 +40,9 @@ export default function Header() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Hindi chosen on an earlier page: load Google Translate again (only then).
+  useEffect(() => bootTranslate(), []);
 
   // Close the mobile menu on navigation, and lock page scroll while it's open.
   useEffect(() => setOpen(false), [pathname]);
@@ -85,7 +89,7 @@ export default function Header() {
                 ahead of the hero photo. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo-128.webp" srcSet="/logo-64.webp 1x, /logo-128.webp 2x" alt="" width={58} height={40} decoding="async" />
-            <span className="brand-name">
+            <span className="brand-name notranslate" translate="no">
               <strong>Jay Ganesh</strong>
               <span className="label">Detailing &amp; Accessories</span>
             </span>
@@ -151,6 +155,7 @@ export default function Header() {
           </nav>
 
           <div className="header-actions">
+            <LangToggle className="lang-toggle--head" />
             <ThemeToggle />
             <a className="btn btn--ghost btn--sm btn--call" href={site.phoneHref}><IconPhone />Call</a>
             <WhatsAppButton size="sm" className="btn--wa-head">WhatsApp</WhatsAppButton>
@@ -199,10 +204,11 @@ export default function Header() {
               ))}
             </ul>
           </details>
+          <LangMenuItem />
           <div className="mobile-contact">
             <div className="actions">
               <WhatsAppButton block>WhatsApp us</WhatsAppButton>
-              <a className="btn btn--ghost btn--block" href={site.phoneHref} data-track="call"><IconPhone />Call {site.phoneDisplay}</a>
+              <a className="btn btn--ghost btn--block" href={site.phoneHref} data-track="call"><IconPhone />Call <span className="notranslate" translate="no">{site.phoneDisplay}</span></a>
             </div>
             <p className="label">{site.hoursShort}</p>
             <p className="label">{site.addressShort}</p>

@@ -98,11 +98,12 @@
    Static (no pin, END poster) for reduced motion, without JS (rules mirrored
    in HeroReveal's <noscript>), and on phones until a portrait film exists
    (.hero-v--mv marks that it does). The 767/768px breakpoint must match Hero.tsx. */
-.hero-v { display: block; overflow: visible; min-height: 0; height: 520vh; --p: 0; }
-/* Pinned right under the sticky header from the first pixel, so nothing
-   slides up before the film starts scrubbing. */
+/* The hero runs underneath the sticky (transparent) header: pulled up by the
+   header's height and pinned at the very top, so it pins from the first pixel
+   of scroll and nothing slides. */
+.hero-v { display: block; overflow: visible; min-height: 0; height: 520vh; --p: 0; margin-top: calc(-1 * var(--header-h)); }
 .hero-v-stage {
-  position: sticky; top: var(--header-h); height: calc(100svh - var(--header-h)); overflow: hidden; isolation: isolate;
+  position: sticky; top: 0; height: 100svh; overflow: hidden; isolation: isolate;
   display: flex; align-items: center;
 }
 .hero-v .hero-x-bg { object-position: 85% 50%; }
@@ -155,9 +156,9 @@
 /* Phones (portrait film): pinned under the header, text at the top, actions
    and rating at the bottom over a dark gradient. */
 @media (max-width: 767px) {
-  .hero-v-stage { top: var(--header-h); height: calc(100svh - var(--header-h)); align-items: stretch; }
+  .hero-v-stage { align-items: stretch; }
   .hero-v .hero-x-bg { object-position: 50% 60%; }
-  .hero-v .hero-x-inner { display: flex; flex-direction: column; padding-block: 24px 20px; }
+  .hero-v .hero-x-inner { display: flex; flex-direction: column; padding-block: calc(var(--header-h) + 20px) 20px; }
   .hero-v .hero-x-copy { flex: 1; display: flex; flex-direction: column; gap: 14px; }
   .hero-v h1 { font-size: clamp(34px, 9.8vw, 40px); line-height: 1; }
   .hero-v .hero-x-kicker { font-size: 11px; letter-spacing: .18em; white-space: nowrap; }
@@ -321,56 +322,91 @@
 .compare-hero input:focus-visible ~ .compare-handle span { outline: 3px solid var(--brand-yellow); outline-offset: 3px; }
 .compare-caption { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 
-/* ---------- How it works ---------- */
-.steps-x { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; position: relative; }
+/* ---------- How it works ----------
+   A connected timeline: one icon node per step sitting exactly on the line.
+   Static (no JS, reduced motion, before hydration): every step fully active,
+   rail full. With JS (HowItWorks.tsx sets data-live on the <ol>):
+   - desktop: the section is pinned for ~200vh; scroll progress (--fill) fills
+     the rail and moves the current step;
+   - phones: each step becomes current as it crosses the middle of the screen. */
+.steps-x { list-style: none; margin: 0; padding: 0; display: grid; gap: 34px; position: relative; --node: 56px; --fill: 1; }
 .steps-x li {
-  position: relative; display: grid; grid-template-columns: auto 1fr; grid-template-areas: "icon num" "icon title" "icon text";
-  column-gap: 18px; row-gap: 6px; align-content: start; min-width: 0; overflow: hidden;
-  padding: 24px 22px; border-radius: var(--radius-card, 18px);
-  background: linear-gradient(160deg, var(--surface-100), var(--surface-000) 80%);
-  border: 1px solid rgba(255,255,255,.06);
-  transition: transform .35s var(--ease, ease), border-color .3s;
+  position: relative; display: grid; grid-template-columns: var(--node) minmax(0, 1fr);
+  grid-template-areas: "icon num" "icon title" "icon text"; column-gap: 20px; row-gap: 6px; align-content: start; min-width: 0;
 }
-.steps-x li:hover { transform: translateY(-3px); border-color: rgba(255,229,0,.3); }
+/* Fully active node (the default). */
 .steps-x-icon {
-  grid-area: icon; position: relative; z-index: 1; width: 60px; height: 60px; border-radius: 50%;
-  display: grid; place-items: center; color: var(--brand-yellow);
-  background: radial-gradient(circle at 30% 25%, rgba(255,229,0,.18), rgba(255,229,0,.04) 70%);
-  box-shadow: inset 0 0 0 1px rgba(255,229,0,.35), 0 0 0 6px rgba(255,229,0,.05);
+  grid-area: icon; position: relative; z-index: 1; width: var(--node); height: var(--node); border-radius: 50%;
+  display: grid; place-items: center; color: var(--on-yellow, #111);
+  background: var(--brand-yellow); box-shadow: inset 0 0 0 1px rgba(255,229,0,.45), 0 0 0 8px var(--surface-000);
+  transition: background-color .3s, color .3s, box-shadow .3s, transform .3s var(--ease, ease);
 }
-.steps-x-icon svg { width: 28px; height: 28px; }
-.steps-x-num {
-  grid-area: num; font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: .2em;
-  color: var(--yellow-text); font-variant-numeric: tabular-nums;
-}
+.steps-x-icon svg { width: 24px; height: 24px; }
+.steps-x-num { grid-area: num; font-family: var(--font-display); font-weight: 700; font-size: 12px; letter-spacing: .22em; color: var(--yellow-text); font-variant-numeric: tabular-nums; padding-top: 4px; }
 .steps-x-num::before { content: "Step "; }
-.steps-x h3 { grid-area: title; font-size: 24px; letter-spacing: -0.02em; }
-.steps-x p { grid-area: text; color: var(--ink-muted); font-size: 16px; line-height: 1.55; max-width: 36ch; }
-.steps-x li::after {
-  content: attr(data-n); position: absolute; right: 14px; bottom: -22px; z-index: 0;
-  font-family: var(--font-display); font-weight: 700; font-size: 120px; line-height: 1; letter-spacing: -0.04em;
-  color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,.05); pointer-events: none;
+/* CSS text isn't seen by Google Translate: give it the Hindi word when Hindi is on. */
+html[lang="hi"] .steps-x-num::before { content: "चरण "; letter-spacing: 0; }
+.steps-x h3 { grid-area: title; font-size: 22px; letter-spacing: -0.02em; }
+.steps-x p { grid-area: text; color: var(--ink-muted); font-size: 15.5px; line-height: 1.55; max-width: 34ch; }
+.steps-x-num, .steps-x h3, .steps-x p { transition: opacity .3s; }
+
+/* Live: steps not yet reached are dimmed with an outline node; the current one is lifted. */
+.steps-x[data-live] li { cursor: pointer; }
+.steps-x[data-live] li:not(.is-reached) .steps-x-icon { color: var(--brand-yellow); background: var(--surface-100); box-shadow: inset 0 0 0 1px rgba(255,229,0,.45), 0 0 0 8px var(--surface-000); }
+.steps-x[data-live] li:not(.is-reached) :is(.steps-x-num, h3, p) { opacity: .4; }
+.steps-x[data-live] li.is-current .steps-x-icon { transform: scale(1.12); box-shadow: inset 0 0 0 1px rgba(255,229,0,.45), 0 0 0 8px var(--surface-000), 0 0 28px 6px rgba(255,229,0,.32); }
+.steps-x[data-live] li:not(.is-reached):hover .steps-x-icon { box-shadow: inset 0 0 0 1.5px var(--brand-yellow), 0 0 0 8px var(--surface-000); }
+.steps-x[data-live] li:not(.is-reached):hover :is(.steps-x-num, h3, p) { opacity: .7; }
+
+/* The rail: through the node centres, from the first node to the last (vertical by default). */
+.steps-x::before, .steps-x::after {
+  content: ""; position: absolute; z-index: 0; left: calc(var(--node) / 2 - 1px); width: 2px;
+  top: calc(var(--node) / 2); height: calc(100% - var(--node)); border-radius: 2px;
 }
-@media (min-width: 720px) { .steps-x { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } }
-@media (min-width: 1100px) {
-  .steps-x { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; padding-top: 34px; }
-  .steps-x::before {
-    content: ""; position: absolute; top: 0; left: 30px; right: 30px; height: 1px;
-    background: linear-gradient(90deg, rgba(255,229,0,.6), rgba(255,229,0,.15) 85%, transparent);
+.steps-x::before { background: var(--soft-line-strong); }
+.steps-x::after { background: var(--brand-yellow); transform-origin: top; }
+
+/* Phones: the rail is drawn per step (node to next node), so it never runs past
+   the last one. ::before is the grey track, ::after the yellow fill. */
+@media (max-width: 899px) {
+  .steps-x::before, .steps-x::after { display: none; }
+  .steps-x li:not(:last-child)::before, .steps-x li:not(:last-child)::after {
+    content: ""; position: absolute; z-index: 0; left: calc(var(--node) / 2 - 1px); width: 2px;
+    top: var(--node); bottom: -34px;
   }
-  .steps-x li { grid-template-columns: 1fr; grid-template-areas: "icon" "num" "title" "text"; row-gap: 10px; padding: 30px 26px 34px; min-height: 300px; }
-  .steps-x li > .steps-x-icon::before {
-    content: ""; position: absolute; top: -69px; left: 50%; width: 9px; height: 9px; margin-left: -4.5px;
-    border-radius: 50%; background: var(--brand-yellow); box-shadow: 0 0 0 5px rgba(255,229,0,.15);
-  }
-  .steps-x li { overflow: visible; }
-  .steps-x li::after { right: 18px; bottom: 8px; }
-  .steps-x-icon { margin-bottom: 18px; }
+  .steps-x li:not(:last-child)::before { background: var(--soft-line-strong); }
+  .steps-x li:not(:last-child)::after { background: var(--brand-yellow); transform-origin: top; transition: transform .3s var(--ease, ease); }
+  /* .is-seg: the segment from this step down to the next, once the next step is reached. */
+  .steps-x[data-live] li:not(.is-seg)::after { transform: scaleY(0); }
 }
-[data-theme="light"] .steps-x li { background: linear-gradient(160deg, #fff, var(--surface-000) 80%); border-color: var(--line); }
-[data-theme="light"] .steps-x li::after { -webkit-text-stroke-color: rgba(18,19,23,.045); }
-[data-theme="light"] .steps-x-icon { color: var(--ink); background: rgba(255,229,0,.35); box-shadow: inset 0 0 0 1px rgba(18,19,23,.12); }
-@media (prefers-reduced-motion: reduce) { .steps-x li { transition: none; } .steps-x li:hover { transform: none; } }
+
+@media (min-width: 900px) {
+  .steps-x { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; }
+  .steps-x li { grid-template-columns: 1fr; grid-template-areas: "icon" "num" "title" "text"; justify-items: center; text-align: center; row-gap: 8px; }
+  .steps-x-icon { margin-bottom: 16px; }
+  .steps-x p { max-width: 28ch; }
+  /* Horizontal rail from the centre of column 1 to the centre of column 4. */
+  .steps-x::before, .steps-x::after {
+    top: calc(var(--node) / 2 - 1px); height: 2px; width: auto;
+    left: calc((100% - 3 * 28px) / 8); right: calc((100% - 3 * 28px) / 8);
+  }
+  .steps-x::after { transform-origin: left; transform: scaleX(var(--fill)); }
+}
+
+/* Desktop with JS: a tall section with a pinned stage. Native scrolling, nothing captured. */
+@media (min-width: 900px) and (min-height: 620px) and (prefers-reduced-motion: no-preference) {
+  html[data-js] .how-seq { height: 200vh; padding-block: 0; }
+  html[data-js] .how-stage {
+    position: sticky; top: var(--header-h); min-height: calc(100svh - var(--header-h));
+    display: grid; align-content: center; padding-block: clamp(32px, 5vh, 64px);
+  }
+}
+
+[data-theme="light"] .steps-x-icon { color: #121317; background: var(--brand-yellow); box-shadow: inset 0 0 0 1px rgba(18,19,23,.18), 0 0 0 8px var(--surface-000); }
+[data-theme="light"] .steps-x[data-live] li:not(.is-reached) .steps-x-icon { color: #121317; background: #fff; box-shadow: inset 0 0 0 1px rgba(18,19,23,.18), 0 0 0 8px var(--surface-000); }
+[data-theme="light"] .steps-x[data-live] li.is-current .steps-x-icon { box-shadow: inset 0 0 0 1px rgba(18,19,23,.18), 0 0 0 8px var(--surface-000), 0 0 26px 6px rgba(240,200,0,.45); }
+[data-theme="light"] .steps-x[data-live] li:not(.is-reached):hover .steps-x-icon { box-shadow: inset 0 0 0 1.5px #121317, 0 0 0 8px var(--surface-000); }
+@media (prefers-reduced-motion: reduce) { .steps-x-icon, .steps-x li::after, .steps-x-num, .steps-x h3, .steps-x p { transition: none; } }
 
 /* ---------- Accessories rail ---------- */
 .rail-x {
@@ -537,3 +573,20 @@
 /* The hero stays dark in both themes (its tokens are set on .hero-x). */
 [data-theme="light"] .h-sec--deep { background: var(--surface-200); }
 [data-theme="light"] .qq-x .quote { background: var(--surface-000); }
+
+/* Header over the dark hero (homepage): the same dark frosted bar from the
+   first pixel to the end of the pinned film, in both themes, so nothing
+   switches while the film scrolls under it. After the hero (data-dock="on",
+   set by Header.tsx) the normal header styles take over. */
+html:not([data-dock="on"]) body:has(.hero-v) .header:not(.is-open) {
+  background: rgba(8, 9, 11, .5);
+  -webkit-backdrop-filter: saturate(1.4) blur(16px);
+  backdrop-filter: saturate(1.4) blur(16px);
+  border-bottom-color: rgba(255, 255, 255, .08);
+  box-shadow: none;
+  --ink: #f4f5f6; --ink-muted: rgba(244,245,246,.8);
+  --line: rgba(255,255,255,.18); --line-strong: rgba(255,255,255,.45);
+  --soft-line: rgba(255,255,255,.14); --soft-line-strong: rgba(255,255,255,.32);
+  --fill-soft: rgba(255,255,255,.08); --fill-soft-hover: rgba(255,255,255,.14);
+  color: #f4f5f6;
+}

@@ -101,7 +101,7 @@ export default function PrivacyPolicy() {
       <h2>How to delete your data</h2>
       <p>
         To have your information deleted, including data received through our Instagram, Facebook or WhatsApp
-        automation, send a WhatsApp message to {site.phoneDisplay} with the words &ldquo;Delete my data&rdquo; and the
+        automation, send a WhatsApp message to <span className="notranslate" translate="no">{site.phoneDisplay}</span> with the words &ldquo;Delete my data&rdquo; and the
         phone number or social media username you contacted us from, or tell us in person at the shop. We will confirm
         and complete the request within 30 days, except for records we must keep by law, which we will tell you about.
       </p>

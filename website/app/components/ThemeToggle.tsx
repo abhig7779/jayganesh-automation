@@ -1,13 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { THEME_KEY as KEY } from "./theme-script";
 
 type Theme = "light" | "dark";
-const KEY = "jg-theme";
-
-// Runs in <head> before the page paints: a saved choice wins, otherwise the
-// phone or computer's own light/dark setting decides.
-export const themeScript = `(function(){try{var t=localStorage.getItem("${KEY}");if(t!=="light"&&t!=="dark"){t=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"}document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t}catch(e){document.documentElement.dataset.theme="dark"}})();`;
 
 export default function ThemeToggle({ className }: { className?: string }) {
   const [theme, setTheme] = useState<Theme>("dark");

@@ -33,7 +33,7 @@ import { areaServedLd, breadcrumbLd, businessRef, faqLd, graph, pageMetadata, we
 export function DealerBrandMark({ brand }: { brand: DealerBrand }) {
   const logo = brand.logo ? getBrandBySlug(brand.logo) : undefined;
   if (logo) return <BrandLogo brand={logo} color />;
-  return <span className="dealer-wordmark">{brand.name}</span>;
+  return <span className="dealer-wordmark notranslate" translate="no">{brand.name}</span>;
 }
 
 export function DealerBrandsSection({
@@ -290,7 +290,7 @@ export function DealerLogoRows() {
     {
       key: "seat-covers",
       label: "Seat covers",
-      items: [{ href: "/autoform-seat-covers-pune/", label: "Autoform seat covers in Pune", mark: autoform ? <BrandLogo brand={autoform} color /> : <span className="dealer-wordmark">Autoform</span> }],
+      items: [{ href: "/autoform-seat-covers-pune/", label: "Autoform seat covers in Pune", mark: autoform ? <BrandLogo brand={autoform} color /> : <span className="dealer-wordmark notranslate" translate="no">Autoform</span> }],
     },
     ...(["ppf", "headlights"] as const).map((cat) => ({
       key: cat,
@@ -305,10 +305,10 @@ export function DealerLogoRows() {
       {rows.map((r) => (
         <div key={r.key} className="dealer-row">
           <div className="dealer-row__head">
-            <p className="label dealer-row__label">{r.label}</p>
+            <p className="label dealer-row__label notranslate" translate="no">{r.label}</p>
             {r.hub && <Link className="text-link dealer-row__hub" href={r.hub.href}>{r.hub.label} <IconArrow /></Link>}
           </div>
-          <ul className="dealer-strip">
+          <ul className="dealer-strip notranslate" translate="no">
             {r.items.map((i) => (
               <li key={i.href}>
                 <Link href={i.href} aria-label={i.label} title={i.label}>{i.mark}</Link>

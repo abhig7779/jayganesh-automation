@@ -89,7 +89,7 @@ export default function ContactUs() {
                 <span className="contact-ico"><IconPhone /></span>
                 <div>
                   <p className="label">Call</p>
-                  <a className="contact-big" href={site.phoneHref} data-track="call">{site.phoneDisplay}</a>
+                  <a className="contact-big notranslate" translate="no" href={site.phoneHref} data-track="call">{site.phoneDisplay}</a>
                 </div>
               </li>
               <li>

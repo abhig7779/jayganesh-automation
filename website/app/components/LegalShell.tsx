@@ -26,9 +26,9 @@ export default function LegalShell({
 export function ContactBox() {
   return (
     <div className="contact-box">
-      <p><strong>{site.name}</strong></p>
+      <p><strong className="notranslate" translate="no">{site.name}</strong></p>
       <p>{site.address}</p>
-      <p>Phone and WhatsApp: <a href={site.phoneHref}>{site.phoneDisplay}</a></p>
+      <p>Phone and WhatsApp: <a className="notranslate" translate="no" href={site.phoneHref}>{site.phoneDisplay}</a></p>
       <p>{site.hours}</p>
     </div>
   );
