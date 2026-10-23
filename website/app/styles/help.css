@@ -79,3 +79,10 @@
 
 [data-theme="light"] .help-chip:hover { background: rgba(255,229,0,.25); }
 @media (prefers-reduced-motion: reduce) { .help-card { animation: none; } .help-fab { transition: none; } }
+
+/* Phones, home page: keep the help button out of the pinned hero's
+   actions; it comes back with the contact dock once the hero is passed. */
+@media (max-width: 1023px) {
+  html:not([data-dock="on"]) body:has(.hero-v) .help-widget { opacity: 0; pointer-events: none; transform: translateY(12px); transition: opacity .3s, transform .3s; }
+  body:has(.hero-v) .help-widget { transition: opacity .3s, transform .3s, bottom .35s; }
+}

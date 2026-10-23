@@ -134,6 +134,9 @@
 
 @media (min-width: 1024px) {
   .topbar { display: block; }
+  /* Not above the pinned scroll hero: it would scroll away while the film
+     stays put, which feels like the page is stuck. The hero shows the same info. */
+  body:has(.hero-v) .topbar { display: none; }
   .menu-toggle, .mobile-menu, .action-bar { display: none !important; }
   .header-actions .btn--call { display: inline-flex; }
   .brand img { height: 40px; }

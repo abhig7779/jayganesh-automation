@@ -163,8 +163,26 @@
   .hero-v-head { gap: 12px; }
   .hero-v .hero-x-line { font-size: 15.5px; line-height: 1.5; }
   .hero-v-chap { font-size: 15px; }
-  .hero-v-foot { margin-top: auto; gap: 14px; }
-  .hero-v .hero-x-actions { margin-top: 0; gap: 10px; }
+  /* Foot: one full-width WhatsApp button, then the rating (left) and
+     "See our work" (right) on a single line under it. */
+  .hero-v-foot {
+    margin-top: auto; display: grid; grid-template-columns: 1fr auto; align-items: center;
+    grid-template-areas: "wa wa" "rate work"; gap: 14px 12px;
+  }
+  .hero-v .hero-x-actions { display: contents; }
+  .hero-v .hero-x-actions > :first-child { grid-area: wa; width: 100%; justify-content: center; min-height: 54px; }
+  .hero-v .hero-x-actions > .btn--ghost {
+    grid-area: work; justify-self: end; min-height: 44px; padding: 0 2px; gap: 6px;
+    background: none; border: 0; backdrop-filter: none; -webkit-backdrop-filter: none;
+    font-size: 15px; color: #fff;
+  }
+  .hero-v .hero-v-foot > .rv-badge--hero {
+    grid-area: rate; justify-self: start; padding: 0; gap: 10px;
+    background: none; border: 0; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none;
+  }
+  .hero-v .hero-v-foot > .rv-badge--hero .rv-badge__g { width: 28px; height: 28px; padding: 5px; }
+  .hero-v .hero-v-foot > .rv-badge--hero .rv-badge__score { font-size: 16px; }
+  .hero-v .hero-v-foot > .rv-badge--hero .rv-badge__count { font-size: 12.5px; }
   .hero-v .hero-x-shade {
     background:
       linear-gradient(180deg, rgba(6,7,9,.92) 0%, rgba(6,7,9,.7) 26%, rgba(6,7,9,0) 46%),
