@@ -28,6 +28,7 @@ export function PageHero({
   lead,
   children,
   image,
+  imageAlt,
 }: {
   crumbs: { label: string; href?: string }[];
   eyebrow?: string;
@@ -39,6 +40,8 @@ export function PageHero({
   media?: React.ReactNode;
   /** The page's full-bleed photo. Omit for the compact, photo-less hero. */
   image?: HeroImageKey;
+  /** Page-specific alt text for the photo (e.g. with a brand name); defaults to the photo's own alt. */
+  imageAlt?: string;
 }) {
   const longLead = typeof lead === "string" && lead.length > LONG_LEAD;
   const copy = (
@@ -87,7 +90,7 @@ export function PageHero({
             src={src.desktop.jpg}
             srcSet={src.desktop.jpgSrcSet}
             sizes="100vw"
-            alt={src.alt}
+            alt={imageAlt ?? src.alt}
             width={src.desktop.width}
             height={src.desktop.height}
             loading="eager"

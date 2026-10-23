@@ -17,8 +17,7 @@ import {
   type DealerBrand,
   type DealerCategory,
 } from "@/lib/dealer-brands";
-import { ppf } from "@/lib/services/ppf";
-import { getProductCategory, howItWorks } from "@/lib/products";
+import { heroAlt } from "@/lib/heroes";
 import { site } from "@/lib/site";
 import { areaServedLd, breadcrumbLd, businessRef, faqLd, graph, pageMetadata, webPageLd } from "@/lib/seo";
 
@@ -27,9 +26,8 @@ import { areaServedLd, breadcrumbLd, businessRef, faqLd, graph, pageMetadata, we
 //   (/ppf-pune/, /car-lights/headlights/; `compact` strip on /car-lights/).
 // - <DealerBrandPage>     : /garware-ppf-pune/, /dhc-headlights-pune/ …
 // - <DealerHubPage>       : /ppf-brands-pune/, /headlight-brands-pune/
+// - <DealerLogoRows>      : homepage "Authorised dealer" logo rows
 // Styles: app/styles/dealer.css.
-
-const shortTitle = (t: string) => `${t} | ${site.shortName}`;
 
 /** Official logo in full colour, or a neutral text wordmark when no official file was found. */
 export function DealerBrandMark({ brand }: { brand: DealerBrand }) {
@@ -102,6 +100,10 @@ export function DealerBrandsSection({
 }
 
 /* ---------- Brand page ---------- */
+// Each page leads with the brand's own data (intro, named range, three brand
+// FAQs from lib/dealer-brands.ts), so most of the main copy is unique to the
+// brand. The shared template is kept short: a hero line, two generic FAQs,
+// the reviews carousel and the links.
 
 function brandCopy(b: DealerBrand) {
   const info = dealerCategories[b.category];
@@ -109,56 +111,49 @@ function brandCopy(b: DealerBrand) {
   const isPpf = b.category === "ppf";
   const path = dealerBrandPath(b);
   const h1 = `${product} in Pune – authorised dealer`;
-  const title = isPpf ? `${b.name} PPF in Pune, Authorised Dealer | Jay Ganesh` : `${b.name} Headlights in Pune, Authorised Dealer | Jay Ganesh`;
   const aka = b.alsoSearchedAs?.length ? ` (also searched as ${b.alsoSearchedAs.join(", ")})` : "";
-  const description = isPpf
-    ? `Authorised ${b.name} PPF dealer in Pune. ${b.name} paint protection film fitted at our studio on the Pune–Solapur Road, Loni Kalbhor, near Hadapsar. WhatsApp your car model.`
-    : `Authorised ${b.name} headlight dealer in Pune. ${b.name} LED and projector lights fitted at our shop on the Pune–Solapur Road, Loni Kalbhor, near Hadapsar. WhatsApp your model.`;
   const lead = isPpf
-    ? `${site.name} is an authorised ${b.name} dealer in Pune. We fit ${b.name} paint protection film${aka} at our own studio at ${site.addressShort}, on the Hadapsar side of Pune. Send us your car model on WhatsApp for the ${b.name} options and a price.`
-    : `${site.name} is an authorised ${b.name} dealer in Pune. We supply and fit ${b.name} headlights${aka} at our shop at ${site.addressShort}, on the Hadapsar side of Pune. Send us your car model on WhatsApp for the ${b.name} options that fit it and a price.`;
+    ? `${site.name} is an authorised ${b.name} dealer in Pune. We fit ${b.name} paint protection film${aka} at our own studio at ${site.addressShort}. WhatsApp your car model for ${b.name} options and a price.`
+    : `${site.name} is an authorised ${b.name} dealer in Pune. We supply and fit ${b.name} lights${aka} at our shop at ${site.addressShort}. WhatsApp your car model for the ${b.name} options that fit and a price.`;
   const message = isPpf
     ? `Hi Jay Ganesh, I'd like a price for ${b.name} PPF for my car. Car model: `
     : `Hi Jay Ganesh, I'd like ${b.name} headlights for my car. Car model and year: `;
 
-  const faqs = isPpf
+  // Two generic questions, after the brand's own three.
+  const generic = isPpf
     ? [
-        { q: `Are you an authorised ${b.name} PPF dealer in Pune?`, a: `Yes. ${site.name} is an authorised ${b.name} dealer, at ${site.addressShort}, Pune. We fit the film at our own studio.` },
-        { q: `What is the price of ${b.name} PPF?`, a: `It depends on your car model and how much of the car you want covered: a front kit, high-impact areas or the full body. WhatsApp us your car model and we'll send the ${b.name} price for your car.` },
-        { q: `What warranty comes with ${b.name} PPF?`, a: `PPF comes with a warranty card. The terms depend on the ${b.name} film you choose, so ask us on WhatsApp and we'll share the details for your film before you book.` },
-        { q: `How long does ${b.name} PPF fitting take?`, a: "It depends on how much of the car is covered. We'll confirm the time when you book, and the car stays in our studio while the film is fitted and settles." },
-        { q: `Where can I get ${b.name} PPF fitted in Pune?`, a: `At our studio at ${site.addressShort}, on the Pune–Solapur Road. We're open every day, 10 am to 8 pm. WhatsApp or call ${site.phoneDisplay} to book a slot.` },
+        { q: `Are you an authorised ${b.name} PPF dealer in Pune?`, a: `Yes. ${site.name} is an authorised ${b.name} dealer at ${site.addressShort}, Pune, open every day from 10 am to 8 pm. We fit the film ourselves at our studio.` },
+        { q: `What is the price of ${b.name} PPF?`, a: `It depends on the ${b.name} film, your car model and how much you cover: a front kit, high-impact areas or the full body. WhatsApp us your car model and we'll send the ${b.name} price for your car.` },
       ]
     : [
-        { q: `Are you an authorised ${b.name} dealer in Pune?`, a: `Yes. ${site.name} is an authorised ${b.name} dealer, at ${site.addressShort}, Pune. Our own team fits the lights at the shop.` },
+        { q: `Are you an authorised ${b.name} dealer in Pune?`, a: `Yes. ${site.name} is an authorised ${b.name} dealer at ${site.addressShort}, Pune, open every day from 10 am to 8 pm. Our own team fits, wires and aims the lights.` },
         { q: `What is the price of ${b.name} headlights?`, a: `It depends on your car model and the ${b.name} light you choose. WhatsApp us your car model, year and variant and we'll reply with the options and prices.` },
-        { q: `Will ${b.name} headlights fit my car?`, a: "The right fitting depends on the model, year and headlamp type. Send a photo of your headlights with the model on WhatsApp and we'll confirm what fits." },
-        { q: `Do you fit ${b.name} lights at the shop?`, a: "Yes. Our team fits and wires the lights at Loni Kalbhor, aims the beam, and tests everything with you before you drive out." },
-        { q: `Where can I buy ${b.name} headlights in Pune?`, a: `At our shop at ${site.addressShort}, on the Pune–Solapur Road, open every day from 10 am to 8 pm. WhatsApp or call ${site.phoneDisplay} first so we can check stock for your model.` },
       ];
+  const faqs = [...b.faqs, ...generic];
 
   const crumbs = [...info.parents, { label: info.hubLabel, href: info.hubPath }];
-  return { info, product, isPpf, path, h1, title, description, lead, message, faqs, crumbs };
+  const photoAlt = heroAlt[info.hero];
+  // Lower-case the photo caption's first letter ("A technician …"), but not an acronym ("LED headlights …").
+  const photoAltLc = /^[A-Z][a-z ]/.test(photoAlt) ? photoAlt.charAt(0).toLowerCase() + photoAlt.slice(1) : photoAlt;
+  const heroAltText = `${product} in Pune at ${site.shortName}: ${photoAltLc}`;
+  return { info, product, isPpf, path, h1, lead, message, faqs, crumbs, heroAltText };
 }
 
 export function dealerBrandMetadata(slug: string): Metadata {
   const b = getDealerBrand(slug);
   if (!b) return {};
-  const c = brandCopy(b);
-  return pageMetadata({ title: c.title, description: c.description, path: c.path });
+  return pageMetadata({ title: b.title, description: b.description, path: dealerBrandPath(b) });
 }
 
 export function DealerBrandPage({ slug }: { slug: string }) {
   const b = getDealerBrand(slug);
   if (!b) notFound();
-  const { info, product, isPpf, path, h1, title, description, lead, message, faqs, crumbs } = brandCopy(b);
-  const headlights = getProductCategory("headlights");
-
-  const whatWeDo = isPpf
-    ? ppf.packages.map((p) => ({ name: `${b.name} PPF: ${p.name.toLowerCase()}`, detail: p.includes.join(", ") + "." }))
-    : (headlights?.whatWeFit ?? []).map((w) => ({ name: w.name, detail: w.detail }));
-  const steps = isPpf ? ppf.process : howItWorks(`${b.name} headlights`);
-  const others = dealerBrandsIn(b.category).filter((x) => x.slug !== b.slug);
+  const { info, product, isPpf, path, h1, lead, message, faqs, crumbs, heroAltText } = brandCopy(b);
+  const siblings = dealerBrandsIn(b.category);
+  const others = siblings.filter((x) => x.slug !== b.slug);
+  // A short, different set of reviews on each brand page, so the carousel isn't a large identical block across them.
+  const reviewOffset = siblings.findIndex((x) => x.slug === b.slug) * 4;
+  const rangeTitle = isPpf ? `${b.name} PPF range we fit` : `${b.name} lights we fit`;
 
   return (
     <>
@@ -169,13 +164,22 @@ export function DealerBrandPage({ slug }: { slug: string }) {
             "@id": `${site.url}${path}#service`,
             name: `${product}, supplied and fitted`,
             serviceType: info.serviceType,
-            description: lead,
+            description: b.intro,
             url: site.url + path,
-            brand: { "@type": "Brand", name: b.name, ...(b.url ? { url: b.url } : {}) },
+            brand: { "@type": "Brand", name: b.name, ...(b.alsoSearchedAs?.length ? { alternateName: b.alsoSearchedAs } : {}), ...(b.url ? { url: b.url } : {}) },
             provider: businessRef,
             areaServed: areaServedLd,
+            ...(b.range.length
+              ? {
+                  hasOfferCatalog: {
+                    "@type": "OfferCatalog",
+                    name: rangeTitle,
+                    itemListElement: b.range.map((r) => ({ "@type": "Offer", itemOffered: { "@type": "Product", name: r.name, brand: { "@type": "Brand", name: b.name } } })),
+                  },
+                }
+              : {}),
           },
-          webPageLd({ name: title, description, path }),
+          webPageLd({ name: b.title, description: b.description, path }),
           faqLd(faqs, path),
           breadcrumbLd([...crumbs.map((c) => ({ name: c.label, path: c.href })), { name: product, path }]),
         )}
@@ -187,6 +191,7 @@ export function DealerBrandPage({ slug }: { slug: string }) {
         title={h1}
         lead={lead}
         image={info.hero}
+        imageAlt={heroAltText}
       >
         <div className="actions">
           <WhatsAppButton message={message}>WhatsApp for a {b.name} quote</WhatsAppButton>
@@ -194,46 +199,42 @@ export function DealerBrandPage({ slug }: { slug: string }) {
         </div>
       </PageHero>
 
-      <section className="band band--tight" aria-label={`Authorised ${b.name} dealer`}>
-        <div className="wrap">
-          <div className="dealer-lockup">
-            <DealerBrandMark brand={b} />
-            <p className="dealer-lockup__text"><strong>Authorised dealer</strong> · Pune</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="band band--panel">
+      <section className="band band--panel" aria-labelledby="brand-range-title">
         <Reveal className="wrap split split--start">
           <div className="stack-lg">
-            <SectionHead
-              eyebrow="What we do"
-              title={isPpf ? `${b.name} PPF, fitted at our studio` : `${b.name} lights, fitted at our shop`}
-              lead={isPpf ? `We supply ${b.name} film and fit it ourselves, panel by panel. Choose how much of the car you want covered.` : `We supply ${b.name} lights chosen for your car model and fit them ourselves.`}
-            />
-            {b.about && <p className="dealer-about">{b.about}{b.url && <> <a href={b.url} target="_blank" rel="noopener noreferrer">{b.name} website</a>.</>}</p>}
+            <div className="dealer-lockup">
+              <DealerBrandMark brand={b} />
+              <p className="dealer-lockup__text"><strong>Authorised dealer</strong> · Pune</p>
+            </div>
+            <div className="section-head">
+              <p className="label label--yellow eyebrow">About {b.name}</p>
+              <h2 id="brand-range-title">{rangeTitle}</h2>
+              <p className="lead">{b.intro}</p>
+            </div>
+            {b.url && (
+              <p className="dealer-about">
+                Product names and details are from {b.name}&apos;s own {b.url.includes("instagram.com") ? "Instagram" : "website"}:{" "}
+                <a href={b.url} target="_blank" rel="noopener noreferrer">{b.url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")}</a>.
+              </p>
+            )}
             <div className="actions">
-              <WhatsAppButton message={message}>Ask for {b.name} options</WhatsAppButton>
+              <WhatsAppButton message={message}>Ask which {b.name} {isPpf ? "film" : "light"} suits my car</WhatsAppButton>
             </div>
           </div>
-          <ul className="points">
-            {whatWeDo.map((w) => <li key={w.name}><strong>{w.name}</strong><span>{w.detail}</span></li>)}
-          </ul>
+          {b.range.length > 0 ? (
+            <div className="stack">
+              <ul className="points">
+                {b.range.map((r) => <li key={r.name}><strong>{r.name}</strong><span>{r.detail}</span></li>)}
+              </ul>
+              {b.rangeNote && <p className="dealer-about">{b.rangeNote}</p>}
+            </div>
+          ) : (
+            <ul className="points">
+              <li><strong>{b.name} range</strong><span>{b.rangeNote}</span></li>
+              <li><strong>{isPpf ? "Coverage" : "Fitting"}</strong><span>{isPpf ? "Front kit, high-impact areas or the full body, fitted panel by panel at our studio." : "Fitted, wired and beam-aimed by our own team, then tested with you before you drive out."}</span></li>
+            </ul>
+          )}
         </Reveal>
-      </section>
-
-      <section className="band">
-        <div className="wrap">
-          <Reveal><SectionHead eyebrow="How it works" title={isPpf ? "From inspection to handover" : "Three steps"} /></Reveal>
-          <Reveal as="ol" className="process">{steps.map((s) => <li key={s.step}><strong>{s.step}</strong><span>{s.detail}</span></li>)}</Reveal>
-        </div>
-      </section>
-
-      <section className="band band--panel">
-        <div className="wrap">
-          <Reveal><SectionHead eyebrow={`Google reviews · ${site.rating}★`} title={isPpf ? "What customers say about our PPF work" : "What customers say about their lights"} /></Reveal>
-          <ReviewsCarousel topics={info.topics} />
-        </div>
       </section>
 
       <section className="band">
@@ -243,7 +244,14 @@ export function DealerBrandPage({ slug }: { slug: string }) {
         </Reveal>
       </section>
 
-      <section className="band band--tight band--panel">
+      <section className="band band--panel">
+        <div className="wrap">
+          <Reveal><SectionHead eyebrow={`Google reviews · ${site.rating}★`} title={isPpf ? "What customers say about our PPF work" : "What customers say about their lights"} /></Reveal>
+          <ReviewsCarousel topics={info.topics} limit={6} offset={reviewOffset} />
+        </div>
+      </section>
+
+      <section className="band band--tight">
         <Reveal className="wrap stack-lg">
           <div className="stack">
             <p className="label">Other {isPpf ? "PPF" : "headlight"} brands we&apos;re authorised for</p>
@@ -268,6 +276,45 @@ export function DealerBrandPage({ slug }: { slug: string }) {
   );
 }
 
+/* ---------- Homepage dealer strip ---------- */
+
+/** Compact "Authorised dealer" logo rows for the homepage: Autoform, then the PPF and headlight brands, each linking to its page. */
+export function DealerLogoRows() {
+  const autoform = getBrandBySlug("autoform");
+  const rows: { key: string; label: string; hub?: { href: string; label: string }; items: { href: string; label: string; mark: React.ReactNode }[] }[] = [
+    {
+      key: "seat-covers",
+      label: "Seat covers",
+      items: [{ href: "/autoform-seat-covers-pune/", label: "Autoform seat covers in Pune", mark: autoform ? <BrandLogo brand={autoform} color /> : <span className="dealer-wordmark">Autoform</span> }],
+    },
+    ...(["ppf", "headlights"] as const).map((cat) => ({
+      key: cat,
+      label: cat === "ppf" ? "PPF" : "Headlights",
+      hub: { href: dealerCategories[cat].hubPath, label: `All ${dealerCategories[cat].hubLabel.toLowerCase()}` },
+      items: dealerBrandsIn(cat).map((b) => ({ href: dealerBrandPath(b), label: `${dealerProductName(b)} in Pune`, mark: <DealerBrandMark brand={b} /> })),
+    })),
+  ];
+
+  return (
+    <div className="dealer-rows">
+      {rows.map((r) => (
+        <div key={r.key} className="dealer-row">
+          <p className="label dealer-row__label">{r.label}</p>
+          <ul className="dealer-strip">
+            {r.items.map((i) => (
+              <li key={i.href}>
+                <Link href={i.href} aria-label={i.label} title={i.label}>{i.mark}</Link>
+              </li>
+            ))}
+          </ul>
+          {r.hub && <Link className="text-link dealer-row__hub" href={r.hub.href}>{r.hub.label} <IconArrow /></Link>}
+        </div>
+      ))}
+      <p className="dealer-legal">Brand names and logos belong to their owners.</p>
+    </div>
+  );
+}
+
 /* ---------- Hub page ---------- */
 
 function hubCopy(category: DealerCategory) {
@@ -281,8 +328,8 @@ function hubCopy(category: DealerCategory) {
     title: isPpf ? "PPF Brands in Pune, Authorised Dealer | Jay Ganesh" : "Headlight Brands in Pune, Authorised Dealer | Jay Ganesh",
     h1: isPpf ? "PPF brands in Pune – authorised dealer" : "Headlight brands in Pune – authorised dealer",
     description: isPpf
-      ? `Authorised dealer for ${list} PPF in Pune. Fitted at our studio on the Pune–Solapur Road, Loni Kalbhor. WhatsApp your car model.`
-      : `Authorised dealer for ${list} headlights in Pune. Fitted at our Loni Kalbhor shop on the Pune–Solapur Road. WhatsApp your model.`,
+      ? `${list} PPF in Pune from one authorised dealer, fitted at our studio. WhatsApp your car model.`
+      : `${list} headlights in Pune from one authorised dealer, fitted at our shop. WhatsApp your car.`,
     lead: isPpf
       ? `${site.name} is an authorised dealer for ${list} paint protection film. Every film is fitted by our own team at our studio at ${site.addressShort}, on the Hadapsar side of Pune. Pick a brand, or WhatsApp your car model and we'll suggest options.`
       : `${site.name} is an authorised dealer for ${list} headlights and car lighting. Our own team fits them at our shop at ${site.addressShort}, on the Hadapsar side of Pune. Pick a brand, or WhatsApp your car model and we'll suggest what fits.`,

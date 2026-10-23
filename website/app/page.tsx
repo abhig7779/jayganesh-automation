@@ -7,6 +7,7 @@ import AccessoryRail from "./components/AccessoryRail";
 import HomeGallery from "./components/HomeGallery";
 import ReviewsCarousel from "./components/ReviewsCarousel";
 import ReelsShowcase from "./components/ReelsShowcase";
+import { DealerLogoRows } from "./components/DealerBrands";
 import GoogleRating from "./components/GoogleRating";
 import Reveal from "./components/Reveal";
 import { CtaBand, Faq, JsonLd, Photo, Price, SectionHead, Visit, WhatsAppButton, IconArrow } from "./components/ui";
@@ -91,6 +92,21 @@ export default function Home() {
                 </Link>
               ))}
             </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Authorised-dealer brands: each logo links to its brand page (lib/dealer-brands.ts) */}
+      <section className="h-sec h-sec--tight" aria-labelledby="dealer-title">
+        <div className="wrap">
+          <Reveal>
+            <Head id="dealer-title" eyebrow="Authorised dealer" title="Brands we're authorised to sell and fit" lead="Autoform seat covers, plus PPF and headlight brands. Tap a logo for the brand's page in Pune.">
+              <div className="actions">
+                <Link className="h-link" href="/ppf-brands-pune/">PPF brands <IconArrow /></Link>
+                <Link className="h-link" href="/headlight-brands-pune/">Headlight brands <IconArrow /></Link>
+              </div>
+            </Head>
+            <DealerLogoRows />
           </Reveal>
         </div>
       </section>
