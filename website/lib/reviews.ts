@@ -46,10 +46,9 @@ function groupIndian(n: number): string {
   return `${rest},${last3}`;
 }
 
-/** Rounded-down review count for display, e.g. 737 → "700+", 760 → "750+".
- *  The exact count only goes into JSON-LD (aggregateRating), where Google
- *  requires the real number. */
-export const countText: string = `${groupIndian(Math.floor(reviewsData.count / 50) * 50)}+`;
+/** Current review count with a "+", e.g. "745+" (more keep coming in).
+ *  The exact number only goes into JSON-LD (aggregateRating). */
+export const countText: string = `${groupIndian(reviewsData.count)}+`;
 
 function titleCase(word: string): string {
   return word
