@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import Link from "next/link";
@@ -41,6 +42,9 @@ const hiDpi = "(min-resolution: 2dppx)";
 const loDpi = "(max-resolution: 1.99dppx)";
 
 const exists = (publicPath: string) => fs.existsSync(path.join(process.cwd(), "public", publicPath));
+/** Short content hash, so a re-encoded film gets a new URL and no browser or CDN keeps the old one. */
+const version = (publicPath: string) =>
+  createHash("sha1").update(fs.readFileSync(path.join(process.cwd(), "public", publicPath))).digest("hex").slice(0, 8);
 
 function film(name: string): HeroFilm | null {
   const base = `/video/${name}`;
@@ -49,7 +53,7 @@ function film(name: string): HeroFilm | null {
   // Phone posters also have a 540px-wide copy ({name}-start-540.webp, ~27 KB vs ~56 KB).
   const small = (p: string) => (exists(p.replace(/\.jpg$/, "-540.webp")) ? p.replace(/\.jpg$/, "-540.webp") : undefined);
   return {
-    src: `${base}.mp4`,
+    src: `${base}.mp4?v=${version(`${base}.mp4`)}`,
     start: { jpg: `${base}-start.jpg`, webp: webp(`${base}-start.jpg`), webpSmall: small(`${base}-start.jpg`) },
     end: { jpg: `${base}-end.jpg`, webp: webp(`${base}-end.jpg`), webpSmall: small(`${base}-end.jpg`) },
   };

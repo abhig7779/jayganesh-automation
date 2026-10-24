@@ -234,8 +234,9 @@
 }
 .footer .footer-act:hover { background: var(--fill-soft-hover); border-color: var(--line-strong); color: var(--ink); }
 .footer-act svg { width: 16px; height: 16px; flex: none; }
-.footer .footer-act--wa { background: var(--whatsapp-green, #25d366); border-color: transparent; color: #fff; }
-.footer .footer-act--wa:hover { background: var(--whatsapp-green, #25d366); color: #fff; filter: brightness(1.06); }
+/* Dark ink on WhatsApp green: white text on #25d366 is only 1.98:1 (WCAG needs 4.5:1). */
+.footer .footer-act--wa { background: var(--whatsapp-green, #25d366); border-color: transparent; color: #08210f; }
+.footer .footer-act--wa:hover { background: var(--whatsapp-green, #25d366); color: #08210f; filter: brightness(1.06); }
 .footer-contact { font-size: 14.5px; line-height: 1.5; }
 
 /* "Designed & developed by Marketix Studio" — one logo file per theme. */

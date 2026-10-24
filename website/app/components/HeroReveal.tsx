@@ -53,6 +53,8 @@ function Sources({ poster, media }: { poster: HeroPoster; media?: string }) {
 // Scroll progress where each shot of the film starts (cuts at 5.7, 11.1, 16.5 of 22.2 s).
 const cuts = [0.26, 0.5, 0.74];
 const chapterAt = (p: number) => cuts.filter((c) => p >= c).length;
+// Frame rate the films are encoded at (H.264 4:2:0, keyframe every 4 frames, no B-frames).
+const FPS = 15;
 
 export default function HeroReveal({ desktop, mobile, alt, kicker, title, chapters, queries, children }: Props) {
   const root = useRef<HTMLElement>(null);
@@ -152,9 +154,13 @@ export default function HeroReveal({ desktop, mobile, alt, kicker, title, chapte
       const v = video.current;
       // iOS/Safari: only seek once a frame is decodable; skip while a seek is
       // in flight so seeks never queue up.
+      // Seek to the middle of the target frame, and only when the frame
+      // actually changes: in-between seeks would show the same picture but
+      // keep the decoder busy, which is what made the scrub stick.
       if (v && v.readyState >= 2 && v.duration > 0 && !v.seeking) {
-        const t = shown * Math.max(0, v.duration - 0.05);
-        if (Math.abs(v.currentTime - t) > 0.02) v.currentTime = t;
+        const last = Math.floor(v.duration * FPS) - 1;
+        const frame = Math.min(last, Math.round(shown * last));
+        if (frame !== Math.floor(v.currentTime * FPS + 0.01)) v.currentTime = (frame + 0.5) / FPS;
       }
 
       if (shown !== p || (v && v.seeking)) raf = requestAnimationFrame(tick);
