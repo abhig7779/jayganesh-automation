@@ -35,7 +35,10 @@
 .dealer-strip .brand-logo__name { color: #fff !important; opacity: .78; font-size: 13px; }
 .dealer-strip .dealer-wordmark {
   min-height: 0; padding: 0; border: 0; background: none; color: #fff; opacity: .78; font-size: 14px;
+  /* Long names ("Garware Ice Cool") wrap inside the tile instead of widening it past its column. */
+  white-space: normal; text-align: center; line-height: 1.25;
 }
+.dealer-strip :is(a, .dealer-tile) { min-width: 0; }
 .dealer-strip :is(a, .dealer-tile):hover .dealer-wordmark, .dealer-strip :is(a, .dealer-tile):hover .brand-logo__name { opacity: 1; }
 /* Light theme: the same wall in black ink on light tiles. */
 [data-theme="light"] .dealer-strip .brand-logo__img { filter: brightness(0) !important; opacity: .72; }
