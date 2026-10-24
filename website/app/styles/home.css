@@ -168,6 +168,12 @@
     inset: auto 0; top: 50%; height: auto; aspect-ratio: 9 / 16;
     translate: 0 -50%; object-position: 50% 50%;
   }
+  /* Chrome rounds the poster's LCP area down but not the video's, so a
+     same-size film still counted as "larger" (a late LCP on slow phones).
+     A hair smaller keeps it below the poster; the poster hides once the film
+     has faded in, so no sliver of it shows at the edges. */
+  .hero-v--mv .hero-v-video { scale: .99; }
+  .hero-v--mv.is-ready .hero-v-poster { visibility: hidden; transition: visibility 0s .7s; }
   .hero-v .hero-x-inner { display: flex; flex-direction: column; padding-block: calc(var(--header-h) + 20px) 20px; }
   .hero-v .hero-x-copy { flex: 1; display: flex; flex-direction: column; gap: 14px; }
   .hero-v h1 { font-size: clamp(34px, 9.8vw, 40px); line-height: 1; }
