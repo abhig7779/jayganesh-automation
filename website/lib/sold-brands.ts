@@ -32,10 +32,9 @@ export const speakerBrands: SoldBrand[] = [
   { name: "Audison", logo: "audison", url: "https://audison.com/" },
   // infinityspeakers.com and harmanaudio.in only return a bot check: text chip.
   { name: "Infinity" },
-  // Owner wrote "Basofex". No car-audio brand of that exact name was found
-  // (Oct 2026); the nearest match, the UK brand Bassface, could not be tied to
-  // the shop with confidence, so it is shown as the owner typed it.
-  { name: "Basofex" },
+  // Owner also wrote "Basofex". Web searches (Oct 2026) found no car-audio
+  // brand by that name or a close spelling (Bassface, Bluefox, Bassoholic were
+  // checked), so it is left off until the shop confirms the name.
   { name: "Rockford Fosgate", logo: "rockford-fosgate", url: "https://rockfordfosgate.com/" },
 ];
 
@@ -49,9 +48,10 @@ export const windowFilmBrands: SoldBrand[] = [
   { name: "LLumar", logo: "llumar", url: "https://www.llumar.com/automotive-film" },
   // https://dhcautosolutions.com/ (home page post: "DHC Sun Protection Films … Nano Ceramic technology")
   { name: "DHC", logo: "dhc", url: "https://dhcautosolutions.com/" },
-  // Owner wrote "Iccool". Not identified with confidence (candidates: Garware's
-  // "Ice Cool" film line, or icoolfilms.com), so shown as the owner typed it.
-  { name: "Iccool" },
+  // Owner wrote "Iccool": Garware's "Ice Cool" sun-control line, the one sold
+  // by window-film dealers in Pune and India (e.g. Ice Cool Elite, Ice Cool
+  // Shield). icoolfilms.com is an unrelated US/Korean brand with no India sales.
+  { name: "Garware Ice Cool", url: "https://www.garwarehitechfilms.com/sun-control-films" },
 ];
 
 export const soldBrandsIn = (c: SoldCategory) => (c === "speakers" ? speakerBrands : windowFilmBrands);

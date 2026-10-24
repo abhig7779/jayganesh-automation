@@ -4,11 +4,12 @@
 // FACTS RULE: no prices, specs or warranty years.
 
 /**
- * Autoform ranges the shop offers, spelt as the owner gave them. Not yet
- * checked against autoformindia.com: its catalogue loads from an API that
- * isn't readable without a browser (Oct 2026), so no range descriptions are
- * shown. "Lucenzo" matches a "Lucenzo series" post tagged @autoformindia.
- * TODO(shop): confirm the exact range names against the Autoform catalogue.
+ * Autoform ranges the shop offers (owner wrote "signecher Emporio pro lucenzo
+ * pro"). Spellings checked on Google, Oct 2026: "Lucenzo" is the name Autoform
+ * uses on its own product pages (e.g. U-Impress covers), and "Emporio" is
+ * Autoform's own name ("Emporio by Autoform" stores). Range details aren't
+ * public (autoformindia.com loads its catalogue in the browser only), so no
+ * descriptions are shown.
  */
 export const autoformRanges = ["Signature", "Emporio Pro", "Lucenzo Pro"];
 
