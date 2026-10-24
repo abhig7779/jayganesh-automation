@@ -66,7 +66,7 @@ export default function SeatCovers() {
                   name: "Custom seat covers, made in-house",
                   itemListElement: [...customMaterials, ...customDesigns].map((x) => ({
                     "@type": "Offer",
-                    itemOffered: { "@type": "Product", name: `Custom seat covers: ${x.name}`, description: x.detail },
+                    itemOffered: { "@type": "Service", name: `Custom seat covers: ${x.name}`, description: x.detail },
                   })),
                 },
                 {
@@ -75,7 +75,7 @@ export default function SeatCovers() {
                   url: `${site.url}/autoform-seat-covers-pune/`,
                   itemListElement: autoformRanges.map((r) => ({
                     "@type": "Offer",
-                    itemOffered: { "@type": "Product", name: `Autoform ${r}`, brand: { "@type": "Brand", name: "Autoform" } },
+                    itemOffered: { "@type": "Service", name: `Autoform ${r} seat covers, fitted`, brand: { "@type": "Brand", name: "Autoform" } },
                   })),
                 },
               ],

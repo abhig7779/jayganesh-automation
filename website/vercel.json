@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.jayganeshcaraccessories.com" }],
+      "destination": "https://jayganeshcaraccessories.com/:path*",
+      "permanent": true
+    }
+  ]
+}

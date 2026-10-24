@@ -184,7 +184,9 @@ export function DealerBrandPage({ slug }: { slug: string }) {
                   hasOfferCatalog: {
                     "@type": "OfferCatalog",
                     name: rangeTitle,
-                    itemListElement: b.range.map((r) => ({ "@type": "Offer", itemOffered: { "@type": "Product", name: r.name, brand: { "@type": "Brand", name: b.name } } })),
+                    // Service, not Product: we fit these ranges in the studio and show no
+                    // prices, and Google rejects a Product without price, review or rating.
+                    itemListElement: b.range.map((r) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name: `${b.name} ${r.name} fitting`, brand: { "@type": "Brand", name: b.name } } })),
                   },
                 }
               : {}),
