@@ -23,20 +23,20 @@
   list-style: none; margin: 0; padding: 0;
 }
 .dealer-strip li { display: flex; }
-.dealer-strip a {
+.dealer-strip :is(a, .dealer-tile) {
   flex: 1; display: flex; align-items: center; justify-content: center; height: 76px; padding: 0 18px;
   border-radius: 14px; background: var(--fill-soft); border: 1px solid var(--soft-line);
   text-decoration: none; transition: background-color .25s, border-color .25s, transform .2s var(--ease);
 }
-.dealer-strip a:hover { background: var(--fill-soft-hover); border-color: var(--soft-line-strong); transform: translateY(-2px); }
+.dealer-strip :is(a, .dealer-tile):hover { background: var(--fill-soft-hover); border-color: var(--soft-line-strong); transform: translateY(-2px); }
 .dealer-strip .brand-logo { padding: 0; background: none !important; --logo-h: 30px; --logo-w: 120px; justify-self: center; }
 .dealer-strip .brand-logo__img { filter: brightness(0) invert(1) !important; opacity: .78; }
-.dealer-strip a:hover .brand-logo__img { opacity: 1; }
+.dealer-strip :is(a, .dealer-tile):hover .brand-logo__img { opacity: 1; }
 .dealer-strip .brand-logo__name { color: #fff !important; opacity: .78; font-size: 13px; }
 .dealer-strip .dealer-wordmark {
   min-height: 0; padding: 0; border: 0; background: none; color: #fff; opacity: .78; font-size: 14px;
 }
-.dealer-strip a:hover .dealer-wordmark, .dealer-strip a:hover .brand-logo__name { opacity: 1; }
+.dealer-strip :is(a, .dealer-tile):hover .dealer-wordmark, .dealer-strip :is(a, .dealer-tile):hover .brand-logo__name { opacity: 1; }
 /* Light theme: the same wall in black ink on light tiles. */
 [data-theme="light"] .dealer-strip .brand-logo__img { filter: brightness(0) !important; opacity: .72; }
 [data-theme="light"] .dealer-strip .brand-logo__img--light { display: none; }
@@ -45,7 +45,7 @@
 [data-theme="light"] .dealer-strip .dealer-wordmark { color: #121317 !important; }
 @media (max-width: 479px) {
   .dealer-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .dealer-strip a { height: 68px; padding: 0 14px; }
+  .dealer-strip :is(a, .dealer-tile) { height: 68px; padding: 0 14px; }
 }
 
 /* Text wordmark for brands with no official logo file: a neutral chip that reads on both themes. */
@@ -79,7 +79,7 @@
 /* Homepage rows: one row of up to 7 tiles per category on desktop. */
 @media (min-width: 1024px) {
   .dealer-rows .dealer-strip { grid-template-columns: repeat(7, minmax(0, 1fr)); }
-  .dealer-rows .dealer-strip a { padding: 0 14px; }
+  .dealer-rows .dealer-strip :is(a, .dealer-tile) { padding: 0 14px; }
   .dealer-rows .dealer-strip .brand-logo { --logo-w: 104px; --logo-h: 28px; }
 }
 @media (min-width: 768px) and (max-width: 1023px) {
@@ -88,25 +88,49 @@
 
 /* Premium hover: a yellow spotlight on the tile border that follows the
    cursor (--mx/--my from TileSpotlight), a soft glow and a slight lift. */
-.dealer-strip a { position: relative; isolation: isolate; }
-.dealer-strip a::before {
+.dealer-strip :is(a, .dealer-tile) { position: relative; isolation: isolate; }
+.dealer-strip :is(a, .dealer-tile)::before {
   content: ""; position: absolute; inset: -1px; z-index: -1; border-radius: inherit; padding: 1px;
   background: radial-gradient(160px circle at var(--mx, 50%) var(--my, 50%), rgba(255,229,0,.95), rgba(255,229,0,.25) 40%, transparent 70%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude;
   opacity: 0; transition: opacity .3s;
 }
-.dealer-strip a::after {
+.dealer-strip :is(a, .dealer-tile)::after {
   content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
   background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(255,229,0,.10), transparent 65%);
   opacity: 0; transition: opacity .3s;
 }
 @media (hover: hover) {
-  .dealer-strip a:hover { box-shadow: 0 14px 34px -18px rgba(255,229,0,.45), 0 0 0 1px rgba(255,229,0,.12); }
-  .dealer-strip a:hover::before, .dealer-strip a:hover::after { opacity: 1; }
-  .dealer-strip a:hover .brand-logo__img { transform: scale(1.04); }
+  .dealer-strip :is(a, .dealer-tile):hover { box-shadow: 0 14px 34px -18px rgba(255,229,0,.45), 0 0 0 1px rgba(255,229,0,.12); }
+  .dealer-strip :is(a, .dealer-tile):hover::before, .dealer-strip :is(a, .dealer-tile):hover::after { opacity: 1; }
+  .dealer-strip :is(a, .dealer-tile):hover .brand-logo__img { transform: scale(1.04); }
   .dealer-strip .brand-logo__img { transition: opacity .25s, transform .3s var(--ease, ease); }
 }
-.dealer-strip a:focus-visible { outline: 2px solid var(--brand-yellow); outline-offset: 3px; }
-[data-theme="light"] .dealer-strip a:hover { box-shadow: 0 14px 34px -18px rgba(18,19,23,.35); }
-@media (prefers-reduced-motion: reduce) { .dealer-strip a, .dealer-strip a:hover { transform: none; } }
+.dealer-strip :is(a, .dealer-tile):focus-visible { outline: 2px solid var(--brand-yellow); outline-offset: 3px; }
+[data-theme="light"] .dealer-strip :is(a, .dealer-tile):hover { box-shadow: 0 14px 34px -18px rgba(18,19,23,.35); }
+@media (prefers-reduced-motion: reduce) { .dealer-strip :is(a, .dealer-tile), .dealer-strip :is(a, .dealer-tile):hover { transform: none; } }
+
+/* Rows with more than 7 brands (speakers): an even 4-column grid that keeps
+   the same tile size as the 7-across rows on desktop. */
+@media (min-width: 1024px) {
+  .dealer-strip.dealer-strip--wrap { grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: calc((100% - 60px) * 4 / 7 + 30px); }
+}
+@media (min-width: 480px) and (max-width: 1023px) {
+  .dealer-strip.dealer-strip--wrap { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+/* Stand-alone "brands we sell and fit" wall (speaker and film pages): tiles are not links. */
+.dealer-strip--sold { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.dealer-strip--sold .dealer-tile { cursor: default; }
+@media (min-width: 1024px) {
+  .dealer-strip--sold:not(.dealer-strip--wrap) { grid-template-columns: repeat(5, minmax(0, 1fr)); max-width: calc((100% - 60px) * 5 / 7 + 40px); }
+  .dealer-strip--sold .brand-logo { --logo-w: 104px; --logo-h: 28px; }
+}
+
+/* Small "Authorised dealer" tag on the homepage row labels. */
+.dealer-row__label { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.dealer-row__tag {
+  display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px;
+  border: 1px solid rgba(255, 229, 0, .45); color: var(--yellow-text, var(--brand-yellow));
+  font-size: 10.5px; letter-spacing: .06em; line-height: 1.5; white-space: nowrap;
+}

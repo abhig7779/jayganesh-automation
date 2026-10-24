@@ -1,4 +1,5 @@
 import type { MediaKey } from "./media";
+import type { HeroImageKey } from "./heroes";
 
 // Product category pages under Accessories: lights, audio and screens,
 // dashcams. One entry per page; the shared template is
@@ -7,7 +8,9 @@ import type { MediaKey } from "./media";
 // FACTS RULE (brand book): no prices, specs, wattages, warranty years or
 // compatibility promises here. Brands are only those the shop has fitted, as
 // shown in its own Instagram posts and real Google reviews ("brands we've
-// fitted include …", never "authorised dealer"). Reviews are quoted from
+// fitted include …", never "authorised dealer"). The speakers page shows the
+// owner's speaker-brand list (lib/sold-brands.ts) as "brands we sell and fit",
+// also never "authorised dealer". Reviews are quoted from
 // lib/reviews.json by id, never retyped.
 
 export type Faq = { q: string; a: string };
@@ -41,6 +44,8 @@ export type ProductCategory = {
   faqs: Faq[];
   photo: MediaKey;
   photoLabel: string;
+  /** Hero photo key, when the slug itself isn't one (lib/heroes.ts). */
+  hero?: HeroImageKey;
 };
 
 export type HubSlug = "car-lights" | "audio-screens";
@@ -160,6 +165,39 @@ export const productCategories: ProductCategory[] = [
     photoLabel: "Android stereo in a car dashboard",
   },
   {
+    slug: "speakers",
+    path: "/audio-screens/speakers/",
+    hub: "audio-screens",
+    menuLabel: "Speakers",
+    title: "Car Speakers, Subwoofers & Amplifiers in Pune | Jay Ganesh",
+    description: "Car speakers, subwoofers and amplifiers fitted at our Loni Kalbhor shop, Pune. Sony, Pioneer, Alpine, Audison, Rockford Fosgate and more. WhatsApp us.",
+    eyebrow: "Audio & screens · Speakers",
+    h1: "Car speakers, subwoofers and amplifiers",
+    lead: "Jay Ganesh Car Accessories sells and fits car speakers, subwoofers and amplifiers, matched to your car's doors, dashboard and wiring. Brands we sell and fit include Sony, Pioneer, Alpine, Morel, Audison, Infinity and Rockford Fosgate. Visit our shop at Kawadipat Toll Naka, Loni Kalbhor, Pune, or WhatsApp your car model for options.",
+    serviceType: "Car speaker and audio installation",
+    item: "speakers",
+    whatWeFit: [
+      { name: "Door and dashboard speakers", detail: "Replacement or upgrade speakers sized for your car's speaker positions." },
+      { name: "Subwoofers", detail: "For deeper bass, placed to suit your boot space." },
+      { name: "Amplifiers", detail: "To power the speakers and subwoofer, wired neatly behind the trims." },
+      { name: "Stereo hook-up", detail: "Connected to your car's stereo, or to a new Android stereo." },
+    ],
+    // Shown as a logo wall from lib/sold-brands.ts ("brands we sell and fit").
+    brands: [],
+    reviews: ["nilesh-more"],
+    reviewsTitle: "What customers say about their car audio",
+    faqs: [
+      { q: "Which speaker brands do you sell and fit?", a: "Brands we sell and fit include Sony, Pioneer, Alpine, Morel, Audison, Infinity and Rockford Fosgate. What's in stock changes, so WhatsApp your car model and we'll share current options." },
+      { q: "Will new speakers fit my car?", a: "Most cars can take upgraded speakers, but the size and mounting depend on the model and variant. Send your model, year and variant on WhatsApp and we'll tell you what fits." },
+      { q: "Do I need an amplifier or a subwoofer?", a: "Not always. It depends on the speakers, your stereo and how you like your music. Tell us what you want from the upgrade and we'll suggest a setup." },
+      { q: "Can I keep my car's original stereo?", a: "Often, yes. Some upgrades work with the factory stereo and some sound better with a new one. We'll check this for your car before you buy." },
+      { q: "How much does a speaker upgrade cost?", a: "It depends on your car, the brand and whether you add a subwoofer or amplifier. WhatsApp your car model and we'll reply with options and prices." },
+    ],
+    photo: "audio",
+    photoLabel: "Car speakers and audio upgrade",
+    hero: "audio-screens",
+  },
+  {
     slug: "360-camera",
     path: "/audio-screens/360-camera/",
     hub: "audio-screens",
@@ -242,8 +280,8 @@ export const hubs: Hub[] = [
     h1: "Car audio, screens and cameras",
     lead: "Jay Ganesh Car Accessories fits Android stereos, speakers and 360° cameras, matched to your car's dashboard and wiring. Our team fits and tests everything at Kawadipat Toll Naka, Loni Kalbhor, Pune. Pick a type below, or WhatsApp your car model and we'll reply with the options that suit it.",
     photo: "stereo",
-    children: ["android-stereo", "360-camera"],
-    more: [{ name: "Speakers and subwoofers", blurb: "Clearer sound and deeper bass.", photo: "audio" }],
+    children: ["android-stereo", "speakers", "360-camera"],
+    more: [],
   },
 ];
 

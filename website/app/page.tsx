@@ -96,11 +96,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Authorised-dealer brands: each logo links to its brand page (lib/dealer-brands.ts) */}
+      {/* Brands: authorised-dealer rows (lib/dealer-brands.ts, tagged) and the
+          speaker and window-film brands we sell and fit (lib/sold-brands.ts). */}
       <section className="h-sec h-sec--tight" aria-labelledby="dealer-title">
         <div className="wrap">
           <Reveal>
-            <Head id="dealer-title" eyebrow="Authorised dealer" title="Brands we're authorised to sell and fit" lead="Autoform seat covers, plus PPF and headlight brands. Tap a logo for the brand's page in Pune." />
+            <Head id="dealer-title" eyebrow="Brands" title="Brands we sell and fit" lead="Authorised dealer for Autoform seat covers and leading PPF and headlight brands. We also fit top speaker and window-film brands." />
             <DealerLogoRows />
           </Reveal>
         </div>

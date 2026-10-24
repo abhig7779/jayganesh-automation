@@ -4,6 +4,8 @@ import { services } from "@/lib/services";
 import { categories } from "@/lib/catalog";
 import { serviceAreas } from "@/lib/seo";
 import { dealerBrandNames, dealerBrandPath, dealerBrandsIn, dealerCategories, dealerProductName } from "@/lib/dealer-brands";
+import { speakerBrands, windowFilmBrands } from "@/lib/sold-brands";
+import { autoformRanges, customDesigns, customMaterials, designDisclaimer } from "@/lib/seat-covers";
 
 // /llms.txt (https://llmstxt.org): a plain summary of the business for AI
 // assistants. Built at build time from the same data as the site, so the Google
@@ -14,7 +16,7 @@ export function GET() {
   const u = (p: string) => `${site.url}${p}`;
   const body = `# ${site.name}
 
-> ${site.name} is a car accessories shop and PPF, ceramic coating and car detailing studio at ${site.addressShort}, Pune, Maharashtra, India. It is an authorised dealer in Pune for Autoform seat covers, for ${dealerBrandNames("ppf").join(", ")} paint protection film (PPF), and for ${dealerBrandNames("headlights").join(", ")} headlights. It sells and fits seat covers, lights, Android stereos, speakers, 360° cameras and dashcams, and protects and cleans cars in its own indoor studio. Rated ${site.rating} on Google from ${site.reviews} reviews (updated daily; last refreshed ${reviewsData.updatedAt}). ${site.customers} customers served. Open every day, 10 am to 8 pm.
+> ${site.name} is a car accessories shop and PPF, ceramic coating and car detailing studio at ${site.addressShort}, Pune, Maharashtra, India. It is an authorised dealer in Pune for Autoform seat covers, for ${dealerBrandNames("ppf").join(", ")} paint protection film (PPF), and for ${dealerBrandNames("headlights").join(", ")} headlights. It makes custom seat covers in-house, sells and fits seat covers, lights, Android stereos, speakers, subwoofers and amplifiers, 360° cameras and dashcams, fits sun-control window film, and protects and cleans cars in its own indoor studio. Rated ${site.rating} on Google from ${site.reviews} reviews (updated daily; last refreshed ${reviewsData.updatedAt}). ${site.customers} customers served. Open every day, 10 am to 8 pm.
 
 Prices depend on the car model and are quoted on WhatsApp; the shop does not publish fixed prices online.
 
@@ -35,11 +37,17 @@ Prices depend on the car model and are quoted on WhatsApp; the shop does not pub
 
 - [Detailing studio](${u("/detailing-studio/")}): overview of PPF, ceramic coating, detailing and new-car protection
 ${services.map((s) => `- [${s.menuLabel}](${u(`/${s.slug}/`)}): ${s.description}`).join("\n")}
+- [Car window film](${u("/car-window-film-pune/")}): sun-control window film fitted at the studio, only films that keep the glass within India's legal visible-light limits (at least 70% on the front and rear windscreens, at least 50% on side windows, under the Central Motor Vehicles Rules). Price depends on the car model and film; WhatsApp for a quote.
 
 ## Car accessories
 
 - [All accessories](${u("/accessories/")}): accessories chosen for your car model and fitted at the shop
 ${categories.map((c) => `- [${c.name}](${u(c.href ?? `/accessories/#${c.key}`)}): ${c.blurb}`).join("\n")}
+
+## Seat covers
+
+- [Custom seat covers, made in-house](${u("/seat-covers/")}): made to order for your car model and fitted at the shop. Materials: ${customMaterials.map((m) => m.name).join(", ")}. Designs: ${customDesigns.map((d) => d.name).join(", ")}. ${designDisclaimer}
+- [Autoform seat covers (authorised dealer)](${u("/autoform-seat-covers-pune/")}): Autoform ranges offered: ${autoformRanges.join(", ")}.
 
 ## Authorised-dealer brands
 
@@ -47,6 +55,11 @@ ${categories.map((c) => `- [${c.name}](${u(c.href ?? `/accessories/#${c.key}`)})
 ${dealerBrandsIn("ppf").map((b) => `- [${dealerProductName(b)} in Pune](${u(dealerBrandPath(b))}): ${b.note}`).join("\n")}
 - [Headlight brands (authorised dealer)](${u(dealerCategories.headlights.hubPath)})
 ${dealerBrandsIn("headlights").map((b) => `- [${dealerProductName(b)} in Pune](${u(dealerBrandPath(b))}): ${b.note}`).join("\n")}
+
+## Brands we sell and fit (not authorised-dealer brands)
+
+- [Car speakers, subwoofers and amplifiers](${u("/audio-screens/speakers/")}): brands we sell and fit include ${speakerBrands.map((b) => b.name).join(", ")}
+- [Car window film](${u("/car-window-film-pune/")}): brands we sell and fit include ${windowFilmBrands.map((b) => b.name).join(", ")}
 
 ## Key pages
 

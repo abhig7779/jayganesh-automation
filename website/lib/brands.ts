@@ -2,12 +2,17 @@
 //
 // Every file in public/brands/ was taken from the brand's own website (see
 // `source`), or its official Instagram, never from Wikipedia, logo aggregators or image search. Brands
-// with no official logo file found (Alphatron, Innavi, Morel, Night Scene)
-// are not listed here, so they keep their text chip.
+// with no official logo file found (Alphatron, Innavi, Morel, Night Scene,
+// Infinity) are not listed here, so they keep their text chip. Infinity's
+// sites (infinityspeakers.com, harmanaudio.in) only answer with a bot check,
+// and morelhifi.com has no logo file (its header images are an "iconO2" mark).
 //
 // Authorised-dealer brands (owner-confirmed, Oct 2026): Autoform seat covers,
 // plus the PPF and headlight brands in lib/dealer-brands.ts. Blaupunkt, 70mai
 // and the rest are "brands we've fitted include …" only (see lib/products.ts).
+// The speaker brands (Sony, Pioneer, Alpine, Audison, Rockford Fosgate …) and
+// window-film brands in lib/sold-brands.ts are "brands we sell and fit", never
+// "authorised dealer".
 
 export type Brand = {
   slug: string;
@@ -193,6 +198,62 @@ export const brands: Brand[] = [
     url: "https://moco.co.in/",
     source: "https://moco.co.in/cdn/shop/files/MOCO_LOGO_1_2.png",
     note: "Header logo of moco.co.in (white and yellow on transparent).",
+  },
+  {
+    slug: "sony",
+    name: "Sony",
+    logo: "/brands/sony.svg",
+    width: 100,
+    height: 18,
+    ink: "white-mono",
+    url: "https://www.sony.net/",
+    source: "https://www.sony.co.jp/en/",
+    note: "Inline header <svg> (\"SONY\") of Sony Group's corporate site (sony.net redirects to sony.co.jp/en/), saved as a file. White fill; sony.co.in answered 403.",
+  },
+  {
+    slug: "pioneer",
+    name: "Pioneer",
+    logo: "/brands/pioneer.png",
+    width: 600,
+    height: 87,
+    ink: "color",
+    url: "https://pioneer-india.in/",
+    source: "https://usa.pioneer/cdn/shop/files/PIO_LOGO_PMS_201_8c315660-3691-43e4-992c-616c3bf88bb1.png?v=1727370409&width=600",
+    note: "Header logo of usa.pioneer (Pioneer Electronics USA, on Pioneer's own .pioneer domain). The header logo of pioneer-india.in (assets.jpn.pioneer/ja/assets/img/logo.svg) redirects to a 'sorry' page from outside Japan.",
+  },
+  {
+    slug: "alpine",
+    name: "Alpine",
+    logo: "/brands/alpine.png",
+    logoDark: "/brands/alpine-white.png",
+    width: 800,
+    height: 98,
+    ink: "color",
+    url: "https://www.alpine-usa.com/",
+    source: "https://www.alpine-usa.com/static/images/Alpine_Logo_Black_Digital.png",
+    note: "Header logo of alpine-usa.com (Alpine Electronics of America). Dark variant: https://www.alpine-usa.com/static/images/Alpine_Logo_White_Negative_Digital.png. Downscaled from 3056px wide.",
+  },
+  {
+    slug: "audison",
+    name: "Audison",
+    logo: "/brands/audison.svg",
+    width: 109,
+    height: 24,
+    ink: "color",
+    url: "https://audison.com/",
+    source: "https://static.audison.com/media/2022/11/audison_logo_c.svg",
+    note: "Header logo of audison.com (blue wordmark). A white version is at https://static.audison.com/media/2022/10/audison_logo.svg.",
+  },
+  {
+    slug: "rockford-fosgate",
+    name: "Rockford Fosgate",
+    logo: "/brands/rockford-fosgate.svg",
+    width: 183,
+    height: 31,
+    ink: "white-mono",
+    url: "https://rockfordfosgate.com/",
+    source: "https://rockfordfosgate.com/",
+    note: "Inline header <svg> on rockfordfosgate.com, saved as a file. White mark and wordmark.",
   },
 ];
 

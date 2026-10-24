@@ -73,7 +73,7 @@ const business = {
   // Other ways people spell and search for the shop (Google search data, Oct 2026).
   alternateName: [site.shortName, "Jai Ganesh Car Accessories", "Jayganesh Car Accessories", "Jay Ganesh Car Decor"],
   description:
-    `Car accessories and car decor shop with a PPF, ceramic coating and detailing studio at Kawadipat Toll Naka on the Pune–Solapur Road, Loni Kalbhor, Pune. Authorised dealer of Autoform seat covers, of ${dealerBrandNames("ppf").join(", ")} paint protection film, and of ${dealerBrandNames("headlights").join(", ")} headlights.`,
+    `Car accessories and car decor shop with a PPF, ceramic coating and detailing studio at Kawadipat Toll Naka on the Pune–Solapur Road, Loni Kalbhor, Pune. Authorised dealer of Autoform seat covers, of ${dealerBrandNames("ppf").join(", ")} paint protection film, and of ${dealerBrandNames("headlights").join(", ")} headlights. Also makes custom seat covers in-house, and sells and fits car speakers, subwoofers and amplifiers, and sun-control window film.`,
   // Brands the shop is an authorised dealer for (lib/dealer-brands.ts), plus Autoform.
   brand: [
     { "@type": "Brand", name: "Autoform" },
@@ -128,10 +128,16 @@ const business = {
         "@type": "OfferCatalog",
         name: "Detailing studio",
         url: `${site.url}/detailing-studio/`,
-        itemListElement: services.map((s) => ({
-          "@type": "Offer",
-          itemOffered: { "@type": "Service", "@id": `${site.url}/${s.slug}/#service`, name: s.menuLabel, url: `${site.url}/${s.slug}/` },
-        })),
+        itemListElement: [
+          ...services.map((s) => ({
+            "@type": "Offer",
+            itemOffered: { "@type": "Service", "@id": `${site.url}/${s.slug}/#service`, name: s.menuLabel, url: `${site.url}/${s.slug}/` },
+          })),
+          {
+            "@type": "Offer",
+            itemOffered: { "@type": "Service", "@id": `${site.url}/car-window-film-pune/#service`, name: "Car window film (sun-control film)", url: `${site.url}/car-window-film-pune/` },
+          },
+        ],
       },
       {
         "@type": "OfferCatalog",
@@ -145,6 +151,10 @@ const business = {
           {
             "@type": "Offer",
             itemOffered: { "@type": "Service", "@id": `${site.url}/autoform-seat-covers-pune/#service`, name: "Autoform seat covers", url: `${site.url}/autoform-seat-covers-pune/` },
+          },
+          {
+            "@type": "Offer",
+            itemOffered: { "@type": "Service", "@id": `${site.url}/seat-covers/#service`, name: "Custom seat covers, made in-house", url: `${site.url}/seat-covers/` },
           },
         ],
       },

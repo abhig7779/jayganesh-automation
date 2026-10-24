@@ -19,6 +19,7 @@ import {
   type DealerCategory,
 } from "@/lib/dealer-brands";
 import { heroAlt } from "@/lib/heroes";
+import { soldBrandsIn, soldCategories, type SoldBrand, type SoldCategory } from "@/lib/sold-brands";
 import { site } from "@/lib/site";
 import { areaServedLd, breadcrumbLd, businessRef, faqLd, graph, pageMetadata, webPageLd } from "@/lib/seo";
 
@@ -27,7 +28,10 @@ import { areaServedLd, breadcrumbLd, businessRef, faqLd, graph, pageMetadata, we
 //   (/ppf-pune/, /car-lights/headlights/; `compact` strip on /car-lights/).
 // - <DealerBrandPage>     : /garware-ppf-pune/, /dhc-headlights-pune/ …
 // - <DealerHubPage>       : /ppf-brands-pune/, /headlight-brands-pune/
-// - <DealerLogoRows>      : homepage "Authorised dealer" logo rows
+// - <DealerLogoRows>      : homepage "Brands we sell and fit" logo rows
+//                           (authorised rows tagged; speaker and film rows not)
+// - <SoldBrandsSection>   : "Brands we sell and fit" logo wall for speakers and
+//                           window film (lib/sold-brands.ts), never "authorised"
 // Styles: app/styles/dealer.css.
 
 /** Official logo in full colour, or a neutral text wordmark when no official file was found. */
@@ -282,23 +286,87 @@ export function DealerBrandPage({ slug }: { slug: string }) {
   );
 }
 
-/* ---------- Homepage dealer strip ---------- */
+/* ---------- Brands we sell and fit (not authorised) ---------- */
 
-/** Compact "Authorised dealer" logo rows for the homepage: Autoform, then the PPF and headlight brands, each linking to its page. */
+/** Official logo for a sold brand, or the neutral text wordmark chip. */
+export function SoldBrandMark({ brand }: { brand: SoldBrand }) {
+  const logo = brand.logo ? getBrandBySlug(brand.logo) : undefined;
+  if (logo) return <BrandLogo brand={logo} color />;
+  return <span className="dealer-wordmark notranslate" translate="no">{brand.name}</span>;
+}
+
+/** Monochrome logo wall of the speaker or window-film brands we sell and fit. */
+export function SoldBrandsSection({ category, panel = false, title, lead }: { category: SoldCategory; panel?: boolean; title?: string; lead?: string }) {
+  const list = soldBrandsIn(category);
+  const product = soldCategories[category].product;
+  return (
+    <section className={["band", panel && "band--panel"].filter(Boolean).join(" ")} aria-labelledby={`sold-${category}-title`}>
+      <div className="wrap">
+        <Reveal>
+          <div className="section-head">
+            <p className="label label--yellow eyebrow">Brands we sell and fit</p>
+            <h2 id={`sold-${category}-title`}>{title ?? `${product.charAt(0).toUpperCase()}${product.slice(1)} brands we sell and fit`}</h2>
+            <p className="lead">{lead ?? `WhatsApp your car model and we'll tell you which ${product} options suit it, with prices. What's in stock changes, so ask before you visit.`}</p>
+          </div>
+        </Reveal>
+        <TileSpotlight selector=".dealer-strip--sold span.dealer-tile" />
+        <ul className={["dealer-strip", "dealer-strip--sold", list.length > 7 && "dealer-strip--wrap"].filter(Boolean).join(" ")}>
+          {list.map((b) => (
+            <li key={b.name}>
+              <span className="dealer-tile" title={b.name}><SoldBrandMark brand={b} /></span>
+            </li>
+          ))}
+        </ul>
+        <p className="dealer-legal">Brand names and logos belong to their owners.</p>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Homepage logo wall ---------- */
+
+type LogoRow = {
+  key: string;
+  label: string;
+  /** Owner-confirmed authorised dealer: shows a small tag on the row label. */
+  authorised: boolean;
+  hub?: { href: string; label: string };
+  items: { key: string; href: string; label: string; mark: React.ReactNode }[];
+};
+
+/**
+ * Homepage "Brands we sell and fit" rows: Autoform, the PPF and headlight
+ * brands (authorised, tagged), then the speaker and window-film brands we sell
+ * and fit (not tagged), each tile linking to its page.
+ */
 export function DealerLogoRows() {
   const autoform = getBrandBySlug("autoform");
-  const rows: { key: string; label: string; hub?: { href: string; label: string }; items: { href: string; label: string; mark: React.ReactNode }[] }[] = [
+  const soldRow = (cat: SoldCategory, hubLabel: string): LogoRow => {
+    const c = soldCategories[cat];
+    return {
+      key: cat,
+      label: c.label,
+      authorised: false,
+      hub: { href: c.path, label: hubLabel },
+      items: soldBrandsIn(cat).map((b) => ({ key: b.name, href: c.path, label: `${b.name} ${c.product}, sold and fitted in Pune`, mark: <SoldBrandMark brand={b} /> })),
+    };
+  };
+  const rows: LogoRow[] = [
     {
       key: "seat-covers",
       label: "Seat covers",
-      items: [{ href: "/autoform-seat-covers-pune/", label: "Autoform seat covers in Pune", mark: autoform ? <BrandLogo brand={autoform} color /> : <span className="dealer-wordmark notranslate" translate="no">Autoform</span> }],
+      authorised: true,
+      items: [{ key: "autoform", href: "/autoform-seat-covers-pune/", label: "Autoform seat covers in Pune", mark: autoform ? <BrandLogo brand={autoform} color /> : <span className="dealer-wordmark notranslate" translate="no">Autoform</span> }],
     },
-    ...(["ppf", "headlights"] as const).map((cat) => ({
+    ...(["ppf", "headlights"] as const).map((cat): LogoRow => ({
       key: cat,
       label: cat === "ppf" ? "PPF" : "Headlights",
+      authorised: true,
       hub: { href: dealerCategories[cat].hubPath, label: `All ${dealerCategories[cat].hubLabel.toLowerCase()}` },
-      items: dealerBrandsIn(cat).map((b) => ({ href: dealerBrandPath(b), label: `${dealerProductName(b)} in Pune`, mark: <DealerBrandMark brand={b} /> })),
+      items: dealerBrandsIn(cat).map((b) => ({ key: b.slug, href: dealerBrandPath(b), label: `${dealerProductName(b)} in Pune`, mark: <DealerBrandMark brand={b} /> })),
     })),
+    soldRow("speakers", "Car speakers"),
+    soldRow("window-film", "Window film"),
   ];
 
   return (
@@ -307,12 +375,15 @@ export function DealerLogoRows() {
       {rows.map((r) => (
         <div key={r.key} className="dealer-row">
           <div className="dealer-row__head">
-            <p className="label dealer-row__label notranslate" translate="no">{r.label}</p>
+            <p className="label dealer-row__label">
+              <span className="notranslate" translate="no">{r.label}</span>
+              {r.authorised && <span className="dealer-row__tag">Authorised dealer</span>}
+            </p>
             {r.hub && <Link className="text-link dealer-row__hub" href={r.hub.href}>{r.hub.label} <IconArrow /></Link>}
           </div>
-          <ul className="dealer-strip notranslate" translate="no">
+          <ul className={["dealer-strip", "notranslate", r.items.length > 7 && "dealer-strip--wrap"].filter(Boolean).join(" ")} translate="no">
             {r.items.map((i) => (
-              <li key={i.href}>
+              <li key={i.key}>
                 <Link href={i.href} aria-label={i.label} title={i.label}>{i.mark}</Link>
               </li>
             ))}

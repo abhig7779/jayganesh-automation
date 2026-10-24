@@ -9,6 +9,7 @@ import { reels, reelUrl } from "@/lib/reels";
 import ReviewsCarousel from "../components/ReviewsCarousel";
 import { BrandLogo } from "../components/BrandLogos";
 import { getBrandBySlug } from "@/lib/brands";
+import { autoformRanges } from "@/lib/seat-covers";
 import { site, whatsapp } from "@/lib/site";
 import { areaServedLd, breadcrumbLd, businessRef, faqLd, graph, pageMetadata, webPageLd } from "@/lib/seo";
 
@@ -41,7 +42,10 @@ const steps = [
   { step: "Fitting at our shop", detail: "Bring the car to Kawadipat Toll Naka and our team fits the covers." },
 ];
 
+const rangeList = autoformRanges.join(", ").replace(/, ([^,]*)$/, " and $1");
+
 const faqs = [
+  { q: "Which Autoform ranges do you offer?", a: `We offer Autoform's ${rangeList} ranges. Which designs and colours are made for your car depends on the model, so WhatsApp your model, year and variant and we'll check.` },
   { q: "What is the price of Autoform seat covers?", a: "It depends on your car model and the Autoform range you choose. Send your model, year and variant on WhatsApp and we'll share the options and prices for your car." },
   { q: "Do you have Autoform seat covers for my car?", a: "Autoform makes covers for specific car models. Tell us your model, year and variant on WhatsApp and we'll check what's available for it." },
   { q: "Are you an authorised Autoform dealer?", a: `Yes. ${site.name} is an authorised dealer of Autoform seat covers in Pune, at Kawadipat Toll Naka on the Pune–Solapur Road, Loni Kalbhor.` },
@@ -104,7 +108,15 @@ export default function AutoformSeatCovers() {
 
       <section className="band band--panel">
         <Reveal className="wrap split split--start">
-          <SectionHead eyebrow="Why Autoform" title="Covers made for your model" lead="Autoform's covers are designed model by model. We supply them and fit them." />
+          <div className="stack-lg">
+            <SectionHead eyebrow="Why Autoform" title="Covers made for your model" lead="Autoform's covers are designed model by model. We supply them and fit them." />
+            <div className="stack">
+              <p className="label">Autoform ranges we offer</p>
+              <ul className="chips notranslate" translate="no">
+                {autoformRanges.map((r) => <li key={r}><span>Autoform {r}</span></li>)}
+              </ul>
+            </div>
+          </div>
           <ul className="points">
             {why.map((w) => <li key={w.t}><strong>{w.t}</strong><span>{w.d}</span></li>)}
           </ul>

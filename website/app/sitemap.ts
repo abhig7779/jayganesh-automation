@@ -12,6 +12,7 @@ const routes: Entry[] = [
   { path: "/", priority: 1, changeFrequency: "daily" }, // rating and reviews refresh daily
   { path: "/detailing-studio/", priority: 0.9, changeFrequency: "weekly" },
   ...services.map((s): Entry => ({ path: `/${s.slug}/`, priority: 0.9, changeFrequency: "weekly" })),
+  { path: "/car-window-film-pune/", priority: 0.8, changeFrequency: "monthly" },
   { path: "/accessories/", priority: 0.9, changeFrequency: "weekly" },
   { path: "/seat-covers/", priority: 0.9, changeFrequency: "weekly" },
   { path: "/autoform-seat-covers-pune/", priority: 0.9, changeFrequency: "weekly" },
@@ -24,6 +25,7 @@ const routes: Entry[] = [
   { path: "/audio-screens/", priority: 0.6, changeFrequency: "monthly" },
   { path: "/audio-screens/360-camera/", priority: 0.8, changeFrequency: "monthly" },
   { path: "/audio-screens/android-stereo/", priority: 0.7, changeFrequency: "monthly" },
+  { path: "/audio-screens/speakers/", priority: 0.7, changeFrequency: "monthly" },
   { path: "/dashcams/", priority: 0.7, changeFrequency: "monthly" },
   { path: "/car-accessories-hadapsar/", priority: 0.8, changeFrequency: "monthly" },
   { path: "/car-accessories-kharadi/", priority: 0.8, changeFrequency: "monthly" },

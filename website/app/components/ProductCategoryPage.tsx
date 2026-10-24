@@ -10,7 +10,7 @@ import { getHub, getProductCategory, howItWorks, hubs, productCategories, type H
 import type { Topic } from "@/lib/reviews";
 import ReviewsCarousel from "./ReviewsCarousel";
 import BrandLogos from "./BrandLogos";
-import { DealerBrandsSection } from "./DealerBrands";
+import { DealerBrandsSection, SoldBrandsSection } from "./DealerBrands";
 import { getBrand, type Brand } from "@/lib/brands";
 
 // Which Google reviews each category page shows.
@@ -18,6 +18,7 @@ const topicsFor: Record<string, Topic[]> = {
   headlights: ["lighting"],
   "ambient-lighting": ["ambient", "lighting"],
   "android-stereo": ["audio"],
+  speakers: ["audio"],
   "360-camera": ["camera", "audio"],
   dashcams: ["dashcam", "camera"],
 };
@@ -25,7 +26,7 @@ import { site, whatsapp } from "@/lib/site";
 import { breadcrumbLd, faqLd, graph, pageMetadata, serviceLd, webPageLd } from "@/lib/seo";
 
 // Shared template for the accessory product-category pages (headlights,
-// ambient lighting, Android stereo, 360° camera, dashcams) and their hubs
+// ambient lighting, Android stereo, speakers, 360° camera, dashcams) and their hubs
 // (/car-lights/, /audio-screens/). Content lives in lib/products.ts.
 
 // Category and hub slugs double as hero photo keys (lib/heroes.ts).
@@ -76,7 +77,7 @@ export default function ProductCategoryPage({ slug }: { slug: string }) {
         eyebrow={c.eyebrow}
         title={c.h1}
         lead={c.lead}
-        image={heroKeyFor(c.slug)}
+        image={c.hero ?? heroKeyFor(c.slug)}
       >
         <p className="label">Price on WhatsApp · fitted at our shop</p>
         <div className="actions">
@@ -86,6 +87,7 @@ export default function ProductCategoryPage({ slug }: { slug: string }) {
       </PageHero>
 
       {c.slug === "headlights" && <DealerBrandsSection category="headlights" />}
+      {c.slug === "speakers" && <SoldBrandsSection category="speakers" title="Speaker brands we sell and fit" />}
 
       <section className="band band--panel">
         <Reveal className="wrap split split--start">
@@ -195,6 +197,13 @@ export function HubPage({ slug }: { slug: HubSlug }) {
       </PageHero>
 
       {h.slug === "car-lights" && <DealerBrandsSection category="headlights" compact />}
+      {h.slug === "audio-screens" && (
+        <SoldBrandsSection
+          category="speakers"
+          title="Speaker brands we sell and fit"
+          lead="Speakers, subwoofers and amplifiers from these brands, fitted at our shop. WhatsApp your car model for the options that suit it."
+        />
+      )}
 
       <section className="band band--panel">
         <div className="wrap">

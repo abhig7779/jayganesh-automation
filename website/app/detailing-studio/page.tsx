@@ -58,6 +58,9 @@ export default function StudioHub() {
               </Link>
             ))}
           </Reveal>
+          <p className="pc-note" style={{ marginTop: 18 }}>
+            Also at the studio: <Link href="/car-window-film-pune/">sun-control window film</Link>, fitted within India&apos;s legal visible-light limits.
+          </p>
         </div>
       </section>
 
