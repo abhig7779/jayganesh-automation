@@ -160,9 +160,14 @@
   .hero-v .hero-x-bg { object-position: 50% 60%; }
   /* Portrait film: show its full width so the car sits centred and whole
      (cover would crop ~18% off the sides on tall phones); the dark bands
-     above and below sit under the text and button shading. */
+     above and below sit under the text and button shading. The poster and
+     the video get the same 9:16 box (not object-fit: contain), so the video
+     never counts as a larger LCP element than the poster. */
   .hero-v--mv .hero-x-media { background: #060709; }
-  .hero-v--mv .hero-x-bg { object-fit: contain; object-position: 50% 50%; }
+  .hero-v--mv .hero-x-bg {
+    inset: auto 0; top: 50%; height: auto; aspect-ratio: 9 / 16;
+    translate: 0 -50%; object-position: 50% 50%;
+  }
   .hero-v .hero-x-inner { display: flex; flex-direction: column; padding-block: calc(var(--header-h) + 20px) 20px; }
   .hero-v .hero-x-copy { flex: 1; display: flex; flex-direction: column; gap: 14px; }
   .hero-v h1 { font-size: clamp(34px, 9.8vw, 40px); line-height: 1; }
