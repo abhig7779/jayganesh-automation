@@ -8,6 +8,8 @@ import { useEffect } from "react";
 // WhatsApp, call and directions clicks anywhere on the site, plus events that
 // components send with track() (form leads, help questions, reel plays).
 export const GA_ID = "G-Q4TQV4VMWY";
+// Microsoft Clarity project "Jay Ganesh Car Accessories website".
+const CLARITY_ID = "z37q5pmykc";
 
 type Gtag = (...args: unknown[]) => void;
 type GaWindow = { dataLayer?: unknown[]; gtag?: Gtag };
@@ -60,6 +62,11 @@ export default function Analytics() {
         {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`}
       </Script>
       <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="lazyOnload" />
+      {/* Microsoft Clarity: session recordings and heatmaps. The stub queues calls;
+          the tag itself loads lazily so it never competes with the page's first paint. */}
+      <Script id="clarity" strategy="lazyOnload">
+        {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${CLARITY_ID}");`}
+      </Script>
     </>
   );
 }
