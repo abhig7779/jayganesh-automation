@@ -87,7 +87,16 @@
 }
 @media (min-width: 768px) and (max-width: 1023px) {
   .dealer-rows .dealer-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .dealer-fill { grid-column: span var(--span-t); }
 }
+
+/* Fill tile: closes the gap in short rows (Seat covers, Window film) with one line and a link. */
+.dealer-fill { grid-column: 1 / -1; }
+.dealer-strip .dealer-fill a { justify-content: space-between; gap: 16px; padding: 0 24px; background: transparent; border-style: dashed; }
+.dealer-fill__text { color: var(--ink-muted); font-size: 14.5px; line-height: 1.35; }
+.dealer-fill__cta { font-size: 14.5px; white-space: nowrap; }
+@media (min-width: 1024px) { .dealer-fill { grid-column: span var(--span-d); } }
+@media (max-width: 479px) { .dealer-strip .dealer-fill a { height: auto; padding: 14px 16px; flex-direction: column; align-items: flex-start; gap: 6px; } }
 
 /* Premium hover: a yellow spotlight on the tile border that follows the
    cursor (--mx/--my from TileSpotlight), a soft glow and a slight lift. */

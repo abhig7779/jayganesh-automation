@@ -334,6 +334,8 @@ type LogoRow = {
   authorised: boolean;
   hub?: { href: string; label: string };
   items: { key: string; href: string; label: string; mark: React.ReactNode }[];
+  /** Wide tile that fills the rest of a short row with one useful line and a link. */
+  fill?: { text: string; cta: string; href: string };
 };
 
 /**
@@ -359,6 +361,7 @@ export function DealerLogoRows() {
       label: "Seat covers",
       authorised: true,
       items: [{ key: "autoform", href: "/autoform-seat-covers-pune/", label: "Autoform seat covers in Pune", mark: autoform ? <BrandLogo brand={autoform} color /> : <span className="dealer-wordmark notranslate" translate="no">Autoform</span> }],
+      fill: { text: "Covers made for your car model, fitted at our shop", cta: "Check your car", href: "/autoform-seat-covers-pune/" },
     },
     ...(["ppf", "headlights"] as const).map((cat): LogoRow => ({
       key: cat,
@@ -368,7 +371,7 @@ export function DealerLogoRows() {
       items: dealerBrandsIn(cat).map((b) => ({ key: b.slug, href: dealerBrandPath(b), label: `${dealerProductName(b)} in Pune`, mark: <DealerBrandMark brand={b} /> })),
     })),
     soldRow("speakers", "Car speakers"),
-    soldRow("window-film", "Window film"),
+    { ...soldRow("window-film", "Window film"), fill: { text: "Legal tint levels only", cta: "See window film", href: soldCategories["window-film"].path } },
   ];
 
   return (
@@ -389,6 +392,15 @@ export function DealerLogoRows() {
                 <Link href={i.href} aria-label={i.label} title={i.label}>{i.mark}</Link>
               </li>
             ))}
+            {r.fill && r.items.length % 7 !== 0 && (
+              // Spans the empty columns (7 per row on desktop, 4 on tablet; full width on phones).
+              <li className="dealer-fill" style={{ "--span-d": 7 - (r.items.length % 7), "--span-t": 4 - (r.items.length % 4 || 4) || 4 } as React.CSSProperties}>
+                <Link href={r.fill.href} translate="yes">
+                  <span className="dealer-fill__text">{r.fill.text}</span>
+                  <span className="text-link dealer-fill__cta">{r.fill.cta} <IconArrow /></span>
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       ))}

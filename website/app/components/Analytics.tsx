@@ -63,8 +63,10 @@ export default function Analytics() {
       </Script>
       <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="lazyOnload" />
       {/* Microsoft Clarity: session recordings and heatmaps. The stub queues calls;
-          the tag itself loads lazily so it never competes with the page's first paint. */}
-      <Script id="clarity" strategy="lazyOnload">
+          the tag itself loads lazily so it never competes with the page's first paint.
+          The id must NOT be "clarity": an element id becomes window.clarity, and the
+          loader would then skip its stub and crash ("a[c] is not a function"). */}
+      <Script id="ms-clarity-init" strategy="lazyOnload">
         {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${CLARITY_ID}");`}
       </Script>
     </>

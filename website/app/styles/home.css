@@ -360,8 +360,6 @@
 .steps-x-icon svg { width: 24px; height: 24px; }
 .steps-x-num { grid-area: num; font-family: var(--font-display); font-weight: 700; font-size: 12px; letter-spacing: .22em; color: var(--yellow-text); font-variant-numeric: tabular-nums; padding-top: 4px; }
 .steps-x-num::before { content: "Step "; }
-/* CSS text isn't seen by Google Translate: give it the Hindi word when Hindi is on. */
-html[lang="hi"] .steps-x-num::before { content: "चरण "; letter-spacing: 0; }
 .steps-x h3 { grid-area: title; font-size: 22px; letter-spacing: -0.02em; }
 .steps-x p { grid-area: text; color: var(--ink-muted); font-size: 15.5px; line-height: 1.55; max-width: 34ch; }
 .steps-x-num, .steps-x h3, .steps-x p { transition: opacity .3s; }
