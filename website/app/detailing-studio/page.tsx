@@ -65,6 +65,28 @@ export default function StudioHub() {
       </section>
 
       <section className="band">
+        <Reveal className="wrap split split--flip">
+          <div className="stack-lg">
+            <SectionHead eyebrow="Inside the studio" title="Light on every panel" />
+            <div className="prose">
+              <p>
+                Light strips run along the walls and ceiling of the studio, so every panel is lit evenly while we work and
+                when we check the finish with you.
+              </p>
+              <p>Come and see it: bring your car in for a free paint inspection.</p>
+            </div>
+            <div className="actions">
+              <WhatsAppButton message="Hi Jay Ganesh, I'd like to book a free paint inspection. Car model: ">Book a free paint inspection</WhatsAppButton>
+            </div>
+          </div>
+          <div className="about-photos">
+            <Photo label="A satin-black BE 6 in the studio" m="studioMatteBe6" ratio="4 / 5" sizes="(min-width: 960px) 22vw, 50vw" />
+            <Photo label="The studio's light tunnel" m="studioBayPortrait" ratio="4 / 5" sizes="(min-width: 960px) 22vw, 50vw" />
+          </div>
+        </Reveal>
+      </section>
+
+      <section className="band band--panel">
         <Reveal className="wrap split split--start split--sticky">
           <SectionHead eyebrow="Questions" title="The studio: common questions" />
           <Faq items={faqs} />

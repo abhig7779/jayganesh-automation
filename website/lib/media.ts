@@ -57,6 +57,8 @@ export const media = {
   shopFrontHighway: { src: gen("shop-front-highway"), alt: "The orange Jay Ganesh Car Accessories sign at Kawadipat Toll Naka, with cars being fitted out front", stock: false },
   autoformDisplay: { src: gen("shop-autoform-display"), alt: "Autoform seat cover display and accessories shelves inside the Jay Ganesh shop", stock: false },
   studioBayReal: { src: gen("studio-bay-real"), alt: "A Mahindra BE 6 in the Jay Ganesh detailing studio under the light tunnel", stock: false },
+  studioBayPortrait: { src: gen("studio-bay-real-portrait"), alt: "A Mahindra BE 6 facing out of the Jay Ganesh studio's light tunnel", stock: false },
+  studioMatteBe6: { src: gen("studio-matte-be6"), alt: "A satin-black Mahindra BE 6 on the red and grey floor of the Jay Ganesh detailing studio", stock: false },
 
   // Inner-page hero photos reused as card photos.
   headlight: { src: hero("headlights-desktop"), alt: "LED headlights glowing on a black SUV", stock: false },
