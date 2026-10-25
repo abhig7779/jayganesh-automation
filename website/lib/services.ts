@@ -31,6 +31,7 @@ export type Service = {
   faqs: { q: string; a: string }[];
   photoSlots: string[]; // descriptions of the real photos to shoot for this page
   photos: MediaKey[]; // stand-in photos, same order as photoSlots
+  showcase?: { photo: MediaKey; label: string; title: string; text: string }; // a real job photo, shown above "Recent work"
 };
 
 export const services: Service[] = [ppf, ceramic, detailing, newCar];

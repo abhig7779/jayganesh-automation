@@ -80,4 +80,10 @@ export const ppf: Service = {
     "Before and after: stone chips on a bumper",
     "Finished SUV under the studio's ceiling lights",
   ],
+  showcase: {
+    photo: "studioMatteBe6",
+    label: "Matte PPF on a Mahindra BE 6",
+    title: "Matte PPF on a Mahindra BE 6",
+    text: "This BE 6 left our studio in matte paint protection film. Matte PPF gives the paint a satin finish and protects it from chips and scratches, the same way clear film does.",
+  },
 };

@@ -124,6 +124,15 @@ export default async function ServicePage({ params }: { params: Promise<{ servic
       <section className={s.compare ? "band band--panel" : "band"}>
         <div className="wrap">
           <Reveal><SectionHead eyebrow="From the studio" title="Recent work" /></Reveal>
+          {s.showcase && (
+            <Reveal className="split split--flip showcase">
+              <div className="stack-lg">
+                <h3>{s.showcase.title}</h3>
+                <div className="prose"><p>{s.showcase.text}</p></div>
+              </div>
+              <Photo label={s.showcase.label} m={s.showcase.photo} ratio="4 / 5" sizes="(min-width: 960px) 440px, 100vw" />
+            </Reveal>
+          )}
           <Reveal className="grid grid-3">
             {s.photoSlots.slice(1).map((p, i) => <Photo key={p} label={p} m={s.photos[i + 1]} />)}
           </Reveal>

@@ -80,7 +80,7 @@ export default function StudioHub() {
             </div>
           </div>
           <div className="about-photos">
-            <Photo label="A satin-black BE 6 in the studio" m="studioMatteBe6" ratio="4 / 5" sizes="(min-width: 960px) 22vw, 50vw" />
+            <Photo label="Matte PPF on a Mahindra BE 6" m="studioMatteBe6" ratio="4 / 5" sizes="(min-width: 960px) 22vw, 50vw" />
             <Photo label="The studio's light tunnel" m="studioBayPortrait" ratio="4 / 5" sizes="(min-width: 960px) 22vw, 50vw" />
           </div>
         </Reveal>
