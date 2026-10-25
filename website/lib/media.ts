@@ -59,6 +59,7 @@ export const media = {
   studioBayReal: { src: gen("studio-bay-real"), alt: "A Mahindra BE 6 in the Jay Ganesh detailing studio under the light tunnel", stock: false },
   studioBayPortrait: { src: gen("studio-bay-real-portrait"), alt: "A Mahindra BE 6 facing out of the Jay Ganesh studio's light tunnel", stock: false },
   studioMatteBe6: { src: gen("studio-matte-be6"), alt: "A Mahindra BE 6 finished in matte paint protection film at the Jay Ganesh detailing studio", stock: false },
+  owner: { src: gen("owner-maruti-kalbhor"), alt: "Maruti Kalbhor, owner of Jay Ganesh Car Accessories, at the shop in Loni Kalbhor", stock: false, position: "50% 30%" },
 
   // Inner-page hero photos reused as card photos.
   headlight: { src: hero("headlights-desktop"), alt: "LED headlights glowing on a black SUV", stock: false },

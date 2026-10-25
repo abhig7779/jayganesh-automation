@@ -88,6 +88,25 @@ export default function AboutUs() {
       </section>
 
       <section className="band">
+        <Reveal className="wrap split split--flip">
+          <div className="stack-lg">
+            <SectionHead eyebrow="Meet the owner" title="Maruti Kalbhor" />
+            <div className="prose">
+              <p>
+                Maruti Kalbhor runs Jay Ganesh Car Accessories and the detailing studio at Kawadipat Toll Naka.
+                Have a question about your car, or something to sort out after a fitting? Talk to us directly.
+              </p>
+            </div>
+            <div className="actions">
+              <WhatsAppButton message="Hi Maruti ji, I'd like to talk about my car. Car model: ">WhatsApp us</WhatsAppButton>
+              <CallButton />
+            </div>
+          </div>
+          <Photo label="Maruti Kalbhor, owner" m="owner" ratio="4 / 5" sizes="(min-width: 960px) 40vw, 100vw" />
+        </Reveal>
+      </section>
+
+      <section className="band band--panel">
         <div className="wrap">
           <Reveal><SectionHead eyebrow="What we do" title="Accessories and studio work, in one place" lead="Bring your car once. Leave with it protected, cleaned and fitted out." /></Reveal>
           <Reveal className="grid grid-3">
@@ -109,7 +128,7 @@ export default function AboutUs() {
         </div>
       </section>
 
-      <section className="band band--panel">
+      <section className="band">
         <Reveal className="wrap split split--start">
           <SectionHead eyebrow="Why customers choose us" title="Simple reasons, kept every day" lead={`It's why we're rated ${site.rating} on Google by ${site.reviews} customers.`} />
           <ul className="points">
@@ -120,7 +139,7 @@ export default function AboutUs() {
         </Reveal>
       </section>
 
-      <section className="band">
+      <section className="band band--panel">
         <Reveal className="wrap split split--flip">
           <div className="stack-lg">
             <SectionHead eyebrow="The team" title="Hands-on installers, in the black and yellow" />
@@ -141,7 +160,7 @@ export default function AboutUs() {
         </Reveal>
       </section>
 
-      <section className="band band--panel">
+      <section className="band">
         <div className="wrap">
           <Reveal><SectionHead eyebrow="Areas we serve" title="Eastern Pune and the Solapur highway" lead="Most of our customers drive in from these areas. The shop is an easy run down the Pune–Solapur road." /></Reveal>
           <Reveal>
@@ -153,7 +172,7 @@ export default function AboutUs() {
         </div>
       </section>
 
-      <section className="band">
+      <section className="band band--panel">
         <Reveal className="wrap split split--start">
           <SectionHead eyebrow="FAQ" title="About the shop" />
           <Faq items={faqs} />

@@ -92,6 +92,10 @@ export function serviceLd({ name, serviceType, description, path }: { name: stri
 }
 
 export function webPageLd({ type = "WebPage", name, description, path }: { type?: string; name: string; description: string; path: string }) {
+  // The page's branded share card is its main image, so Google's search thumbnail
+  // shows the designed card (logo, title, rating) rather than a plain photo from the page.
+  const card = ogCard(path, ogAlt(name));
+  const image = { "@type": "ImageObject", "@id": `${site.url}${path}#primaryimage`, url: site.url + card.url, contentUrl: site.url + card.url, width: card.width, height: card.height, caption: card.alt };
   return {
     "@type": type,
     "@id": `${site.url}${path}#webpage`,
@@ -101,6 +105,8 @@ export function webPageLd({ type = "WebPage", name, description, path }: { type?
     inLanguage: "en-IN",
     isPartOf: { "@id": WEBSITE_ID },
     about: businessRef,
+    primaryImageOfPage: image,
+    image,
   };
 }
 
