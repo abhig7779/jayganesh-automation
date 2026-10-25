@@ -65,9 +65,9 @@ export default function VisitUs() {
         <div className="wrap">
           <Reveal><SectionHead eyebrow="When you arrive" title="The shop and the studio" /></Reveal>
           <Reveal className="grid grid-3">
-            <Photo label="Shop front from the highway" m="studioBay" />
-            <Photo label="Accessories display inside" />
-            <Photo label="Studio entrance" m="hero" />
+            <Photo label="Shop front from the highway" m="shopFrontHighway" />
+            <Photo label="Accessories display inside" m="autoformDisplay" />
+            <Photo label="Inside the detailing studio" m="studioBayReal" />
           </Reveal>
           <div className="actions" style={{ marginTop: 36 }}>
             <WhatsAppButton message="Hi Jay Ganesh, I'd like to visit. When is a good time? Car model: ">Tell us you&apos;re coming</WhatsAppButton>

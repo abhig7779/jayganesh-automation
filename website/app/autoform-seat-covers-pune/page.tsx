@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "../styles/local.css";
-import { CallButton, CtaBand, Faq, IconArrow, JsonLd, SectionHead, Visit, WhatsAppButton } from "../components/ui";
+import { CallButton, CtaBand, Faq, IconArrow, JsonLd, Photo, SectionHead, Visit, WhatsAppButton } from "../components/ui";
 import { PageHero } from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import { popularCars } from "@/lib/catalog";
@@ -116,6 +116,7 @@ export default function AutoformSeatCovers() {
                 {autoformRanges.map((r) => <li key={r}><span>Autoform {r}</span></li>)}
               </ul>
             </div>
+            <Photo label="Our Autoform seat cover display at Loni Kalbhor" m="autoformDisplay" ratio="4 / 3" sizes="(min-width: 960px) 45vw, 100vw" />
           </div>
           <ul className="points">
             {why.map((w) => <li key={w.t}><strong>{w.t}</strong><span>{w.d}</span></li>)}

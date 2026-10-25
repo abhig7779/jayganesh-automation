@@ -51,6 +51,13 @@ export const media = {
   workHatchInterior: planned("new-work-hatch-interior", "A hatchback interior after a deep clean", hero("accessories-mobile"), "A car cabin after interior work at the Jay Ganesh shop"),
   workSuvStereo: planned("new-work-suv-stereo", "An Android stereo and 360° camera fitted in an SUV", hero("android-stereo-mobile"), "An Android touchscreen stereo fitted in a car's dashboard"),
 
+  // Real photos of the shop and studio (owner's photos, Oct 2026; customer
+  // number plates blurred), in /public/images/gen/ so optimize-images.py sizes them.
+  shopFront: { src: gen("shop-front-detailing-studio"), alt: "Jay Ganesh Car Accessories and Detailing Studio shop front on the Pune–Solapur road, Loni Kalbhor", stock: false },
+  shopFrontHighway: { src: gen("shop-front-highway"), alt: "The orange Jay Ganesh Car Accessories sign at Kawadipat Toll Naka, with cars being fitted out front", stock: false },
+  autoformDisplay: { src: gen("shop-autoform-display"), alt: "Autoform seat cover display and accessories shelves inside the Jay Ganesh shop", stock: false },
+  studioBayReal: { src: gen("studio-bay-real"), alt: "A Mahindra BE 6 in the Jay Ganesh detailing studio under the light tunnel", stock: false },
+
   // Inner-page hero photos reused as card photos.
   headlight: { src: hero("headlights-desktop"), alt: "LED headlights glowing on a black SUV", stock: false },
   lightsDark: { src: hero("car-lights-desktop"), alt: "An LED tail-light bar glowing on a black SUV", stock: false },

@@ -83,7 +83,7 @@ export default function AboutUs() {
               </p>
             </div>
           </div>
-          <Photo label="Laying paint protection film on a bonnet" m="ppfApply" ratio="4 / 3" sizes="(min-width: 960px) 45vw, 100vw" />
+          <Photo label="The Jay Ganesh shop and detailing studio at Loni Kalbhor" m="shopFront" ratio="4 / 3" sizes="(min-width: 960px) 45vw, 100vw" />
         </Reveal>
       </section>
 
