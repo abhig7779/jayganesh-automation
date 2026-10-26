@@ -1,5 +1,9 @@
 {
-  "day-01": {},
+  "day-01": {
+    "alerts": {
+      "WAITING": "due 26 Oct, 07:30 pm IST but its files are not in the Google Drive folder yet (or set \"approved\": true)"
+    }
+  },
   "day-02": {},
   "day-03": {},
   "day-04": {},
