@@ -60,20 +60,19 @@
     {
       "day": 3,
       "date": "2026-10-28",
-      "time": "20:00",
+      "time": "18:30",
       "occasion": "",
       "type": "reel",
-      "format": "Music-edit reel",
-      "business": "Studio",
+      "format": "Install reel",
+      "business": "Accessories",
       "made_by": "Jay Ganesh team",
-      "title": "Inside the new studio",
+      "title": "Scorpio Classic full black look",
       "platforms": [
         "instagram",
-        "facebook",
-        "youtube"
+        "facebook"
       ],
       "approved": false,
-      "caption": "Pune–Solapur road varcha navin PPF studio. 🔥\n\nLights on. Film on. Scratch gone. 🎬\n\nPPF from ₹{{PRICE_PPF_FROM}} · Ceramic coating from ₹{{PRICE_CERAMIC_FROM}}\n📲 WhatsApp for your car's price: {{WHATSAPP}}\n\n{{FOOTER}}\n\n{{HASHTAGS}} #DetailingStudio",
+      "caption": "Scorpio Classic S11 – full black look 🖤🔥\n\nSagla fitting aamchya shop madhe kela:\n🔴 LED tail lamps\n💡 LED headlights\n🟫 Premium floor mats\n🟢 Door lights\n\nTumchya gaadi la pan asa look hava? Car model WhatsApp kara, options ani price sangto 👇\n📲 {{WHATSAPP}}\n\n{{FOOTER}}\n\n{{HASHTAGS}} #ScorpioClassic #MahindraScorpio #CarModification #LEDTailLamps",
       "first_comment": "",
       "collaborators": [],
       "vars": {},
