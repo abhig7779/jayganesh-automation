@@ -1,3 +1,18 @@
 {
-  "files": {}
+  "files": {
+    "day-06/video.mp4": {
+      "driveId": "18LquoFCTd61KiWpJcDs8O_QJ61m8gpXq",
+      "name": "innova-ppf-reel.mp4",
+      "md5": "6c81d3485c869dee20c0185c9938acef",
+      "size": 128172843,
+      "at": "2026-10-28T06:48:27.406Z"
+    },
+    "day-06/cover.jpg": {
+      "driveId": "12eePaYG2Mt0LpVMQwF1kOrV8o5pfg_X7",
+      "name": "cover.jpg",
+      "md5": "dbaef4e4a0539b7fbb24ffdfa6a59aa5",
+      "size": 448025,
+      "at": "2026-10-28T06:48:31.529Z"
+    }
+  }
 }
