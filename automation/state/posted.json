@@ -10,7 +10,18 @@
       "WAITING": "due 27 Oct, 07:30 pm IST but its files are not in the Google Drive folder yet (or set \"approved\": true)"
     }
   },
-  "day-03": {},
+  "day-03": {
+    "instagram": {
+      "id": "18040619105845369",
+      "url": "https://www.instagram.com/reel/DfCVIGHDUxB/",
+      "at": "2026-10-28T11:31:33.946Z"
+    },
+    "facebook": {
+      "id": "1421685363409471",
+      "url": "https://www.facebook.com/105450074857682/videos/1421685363409471",
+      "at": "2026-10-28T11:31:46.076Z"
+    }
+  },
   "day-04": {},
   "day-05": {},
   "day-06": {},
