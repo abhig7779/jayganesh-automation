@@ -7,7 +7,8 @@
   },
   "day-02": {
     "alerts": {
-      "WAITING": "due 27 Oct, 07:30 pm IST but its files are not in the Google Drive folder yet (or set \"approved\": true)"
+      "WAITING": "due 27 Oct, 07:30 pm IST but its files are not in the Google Drive folder yet (or set \"approved\": true)",
+      "MISSED": "was due 27 Oct, 07:30 pm IST; post it by hand or run with FORCE_DAY=2"
     }
   },
   "day-03": {
