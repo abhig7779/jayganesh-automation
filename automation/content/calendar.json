@@ -145,33 +145,22 @@
     {
       "day": 6,
       "date": "2026-10-31",
-      "time": "20:00",
+      "time": "17:00",
       "occasion": "",
       "type": "reel",
       "format": "Music-edit reel",
       "business": "Studio",
       "made_by": "Jay Ganesh team",
-      "title": "Foam wash, start to finish",
+      "title": "Innova Crysta Ultraguard PPF",
       "platforms": [
         "instagram",
-        "facebook",
-        "youtube"
+        "facebook"
       ],
-      "approved": false,
-      "caption": "Hi gaadi 2 varsha dhutli navhti. 😳 Ata paha…\n\nSnow foam → rinse → interior deep clean → shine. ✨\n\nDiwali-ready foam wash + interior from ₹{{PRICE_WASH_FROM}}.\nComment WASH and we'll send you a slot.\n\n{{FOOTER}}\n\n{{HASHTAGS}} #FoamWash #Satisfying",
+      "approved": true,
+      "caption": "Innova Crysta × Ultraguard PPF ✨\n\nAlready white, but now it really shines.\n\nThis Innova Crysta is protected with Ultraguard premium-quality paint protection film at our studio in Loni Kalbhor. Super white, deep gloss, and the customer loved it at delivery.\n\nWant this look for your car? WhatsApp us your car model and we'll share the options and prices.\n\n{{FOOTER}}\n\n#innovacrysta #ppfpune #paintprotectionfilm #cardetailingpune #jayganeshcaraccessories",
       "first_comment": "",
       "collaborators": [],
-      "vars": {},
-      "youtube": {
-        "title": "2 years without a wash… satisfying foam wash ✨ #Shorts",
-        "description": "Snow foam, rinse, interior deep clean and final shine at the Jay Ganesh detailing studio, Pune.\n\nDiwali-ready wash from ₹{{PRICE_WASH_FROM}}.\n\n{{FOOTER}}",
-        "tags": [
-          "foam wash",
-          "satisfying car wash",
-          "car detailing Pune",
-          "Jay Ganesh Car Accessories"
-        ]
-      }
+      "vars": {}
     },
     {
       "day": 7,
