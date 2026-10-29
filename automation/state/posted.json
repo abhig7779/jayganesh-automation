@@ -23,7 +23,11 @@
       "at": "2026-10-28T11:31:46.076Z"
     }
   },
-  "day-04": {},
+  "day-04": {
+    "alerts": {
+      "WAITING": "due 29 Oct, 01:00 pm IST but its files are not in the Google Drive folder yet (or set \"approved\": true)"
+    }
+  },
   "day-05": {},
   "day-06": {},
   "day-07": {},
