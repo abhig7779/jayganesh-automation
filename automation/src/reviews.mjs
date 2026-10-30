@@ -16,6 +16,8 @@ const cfg = {
   location: e.GBP_LOCATION, // accounts/123/locations/456
   minAutoStars: Number(e.AUTO_REPLY_MIN_STARS || 4),
   sinceDays: Number(e.REVIEW_SINCE_DAYS || 30),
+  minAgeMinutes: Number(e.REVIEW_MIN_AGE_MINUTES || 10), // wait this long after a review so the reply looks human
+  skipNames: (e.REVIEW_SKIP_NAMES || "Jayganesh Car").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean), // the shop's own account, never answered
   maxPerRun: Number(e.MAX_REPLIES_PER_RUN || 10),
   dryRun: ["1", "true", "yes"].includes(String(e.DRY_RUN || "").toLowerCase()),
 };
@@ -93,8 +95,15 @@ const writer = replyWriter({ phone: vars.WHATSAPP });
 const all = await api.reviews(cfg.location);
 const since = Date.now() - cfg.sinceDays * 864e5;
 const recentReplies = all.filter((r) => r.reviewReply?.comment).map((r) => r.reviewReply.comment);
+const tooNew = Date.now() - cfg.minAgeMinutes * 6e4;
 const todo = all.filter(
-  (r) => !r.reviewReply && new Date(r.updateTime || r.createTime) > since && !state.replied[r.reviewId] && !state.drafts[r.reviewId],
+  (r) =>
+    !r.reviewReply &&
+    new Date(r.updateTime || r.createTime) > since &&
+    new Date(r.updateTime || r.createTime) <= tooNew &&
+    !cfg.skipNames.includes((r.reviewer?.displayName || "").trim().toLowerCase()) &&
+    !state.replied[r.reviewId] &&
+    !state.drafts[r.reviewId],
 );
 console.log(`${all.length} reviews read, ${todo.length} without a reply in the last ${cfg.sinceDays} days.`);
 

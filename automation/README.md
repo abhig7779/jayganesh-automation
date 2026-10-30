@@ -129,7 +129,7 @@ Requirements: the Instagram account is a **Professional (Business)** account, **
 
 ## Google review auto-replies
 
-The *Reply to Google reviews* workflow runs every 2 hours (07:45–21:45 IST). It reads the Jay Ganesh Business Profile and handles reviews from the last 30 days that have no owner reply:
+The *Reply to Google reviews* workflow runs every 10 minutes (07:30–22:20 IST) (07:45–21:45 IST). It reads the Jay Ganesh Business Profile and handles reviews from the last 30 days that have no owner reply:
 
 | Rating | What happens |
 |---|---|

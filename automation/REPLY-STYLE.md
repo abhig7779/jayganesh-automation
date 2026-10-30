@@ -27,6 +27,12 @@ Jay Ganesh Car Accessories & Detailing Studio, Kawadipat Toll Naka, Loni Kalbhor
 - Complaint: *Husen ji, we're truly sorry … Our owner would like to speak with you personally. Please call or WhatsApp him on 99813 97676. – Team Jay Ganesh*
 - Hindi in English letters: *S G ji, aapko jo pareshani hui uske liye hume sach mein afsos hai … Kripya owner se seedha 99813 97676 par call ya WhatsApp kariye.*
 
+## How the cloud job behaves
+- Runs every 10 minutes, 07:30–22:20 IST, on GitHub (the Mac can be off). It answers a review only once it is **10+ minutes old** (`REVIEW_MIN_AGE_MINUTES`) so replies feel human, never within seconds.
+- 4–5★ reviews are answered automatically. 1–3★ open a GitHub issue; comment `/approve` or `/reply <text>` to post.
+- Reviewer names in `REVIEW_SKIP_NAMES` (default `Jayganesh Car`, the shop's own account) are never answered.
+- Needs the secret `OPENAI_API_KEY` (or `ANTHROPIC_API_KEY`); until it is set the job skips quietly.
+
 ## Audit notes (30 Oct 2026)
 - 793 reviews, average 4.9; 776 replied. Old bulk replies (2025–Sep 2026) are a generic emoji style (`… again soon! 🚗✨`). We don't rewrite them. New replies follow this guide.
 - Replies from 24–25 Oct (139): consistent sign-off, "ji" used; known gaps: too many "Thank you" openings, and 5 replies to Marathi written in English letters were answered in Devanagari (acceptable, but rule 2 now says match the script).
