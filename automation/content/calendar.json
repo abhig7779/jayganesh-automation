@@ -128,32 +128,27 @@
       "date": "2026-11-07",
       "time": "17:00",
       "occasion": "",
-      "type": "reel",
-      "format": "Car-edit reel",
+      "type": "image",
+      "format": "Creative",
       "business": "Studio",
       "made_by": "Jay Ganesh team",
-      "title": "Innova Crysta studio car edit",
+      "title": "Dash cams: record every drive",
       "platforms": [
         "instagram",
-        "facebook",
-        "youtube"
+        "facebook"
       ],
       "approved": false,
-      "caption": "Innova Crysta, white and glossy. ✨\n\nProtected with Ultraguard paint protection film at our studio in Loni Kalbhor.\n\nWant this look for your car? WhatsApp us your car model and we'll share the options and prices.\n\n{{FOOTER}}\n\n#innovacrysta #ppfpune #paintprotectionfilm #cardetailingpune #jayganeshcaraccessories",
+      "caption": "Record every drive. 🎥\n\nDash cams fitted with neat, hidden wiring at our shop in Loni Kalbhor.\n\nWhatsApp us your car model and we will share the options and prices.\n\n{{FOOTER}}\n\n#dashcam #carcamera #caraccessoriespune #carsafety #jayganeshcaraccessories",
       "first_comment": "",
       "collaborators": [],
       "vars": {},
-      "youtube": {
-        "title": "Innova Crysta studio car edit | Ultraguard PPF | Pune #Shorts",
-        "description": "Innova Crysta in the Jay Ganesh studio, protected with Ultraguard paint protection film (PPF). Kawadipat Toll Naka, Loni Kalbhor (Pune–Solapur Road).\n\n{{FOOTER}}",
-        "tags": [
-          "Innova Crysta",
-          "PPF Pune",
-          "Ultraguard PPF",
-          "car edit",
-          "car detailing Pune",
-          "Jay Ganesh Car Accessories"
-        ]
+      "gbp": {
+        "summary": "Dash cams fitted with neat, hidden wiring at Jay Ganesh Car Accessories in Loni Kalbhor, Pune, on the Pune–Solapur road. Tap below to see the dash cams we fit.",
+        "cta": {
+          "actionType": "LEARN_MORE",
+          "url": "https://jayganeshcaraccessories.com/dashcams/?utm_source=google&utm_medium=gbp&utm_campaign=day-09"
+        },
+        "image": "dash-cam-front-rear-installation-loni-kalbhor-pune.jpg"
       }
     },
     {
