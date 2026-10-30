@@ -53,7 +53,8 @@ function Sources({ poster, media }: { poster: HeroPoster; media?: string }) {
 // Scroll progress where each shot of the film starts (cuts at 5.7, 11.1, 16.5 of 22.2 s).
 const cuts = [0.26, 0.5, 0.74];
 const chapterAt = (p: number) => cuts.filter((c) => p >= c).length;
-// Frame rate the films are encoded at (H.264 4:2:0, keyframe every 4 frames, no B-frames).
+// Frame rate the films are encoded at (H.264 4:2:0, 960×540 / 540×960, CRF 28,
+// keyframe every 8 frames, no B-frames, faststart: ~2 MB each).
 const FPS = 15;
 
 export default function HeroReveal({ desktop, mobile, alt, kicker, title, chapters, queries, children }: Props) {
@@ -274,9 +275,11 @@ export default function HeroReveal({ desktop, mobile, alt, kicker, title, chapte
               onError={() => setFailed(true)}
             />
           )}
-          {film && failed && (
+          {/* While the film downloads (or if it fails), scrolling crossfades to the
+              END poster, so the hero never looks stuck on a slow connection. */}
+          {film && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img className="hero-x-bg hero-v-end hero-v-endfade" src={film.end.webp ?? film.end.jpg} alt="" aria-hidden />
+            <img className="hero-x-bg hero-v-end hero-v-endfade" src={film.end.webp ?? film.end.jpg} alt="" aria-hidden decoding="async" fetchPriority="low" />
           )}
           <span className="hero-x-shade" aria-hidden />
         </div>

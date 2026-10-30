@@ -41,18 +41,36 @@ export default function Reveal({
     }
 
     setState("armed");
+    let raf = 0;
+    const show = () => {
+      setState("in");
+      io.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
     const io = new IntersectionObserver(
       (entries) => {
-        if (entries.some((e) => e.isIntersecting || e.boundingClientRect.top < 0)) {
-          setState("in");
-          io.disconnect();
-        }
+        if (entries.some((e) => e.isIntersecting || e.boundingClientRect.top < 0)) show();
       },
       // Start a little before it reaches the screen, so fast scrolling never shows a gap.
       { rootMargin: "0px 0px 20% 0px", threshold: 0 },
     );
+    // A fast flick can carry the element from below the screen to above it between
+    // two observer checks; the observer then never fires and it would stay hidden.
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        if (el.getBoundingClientRect().top < window.innerHeight * 1.2) show();
+      });
+    };
     io.observe(el);
-    return () => io.disconnect();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      io.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
   return createElement(

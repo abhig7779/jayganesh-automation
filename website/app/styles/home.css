@@ -114,6 +114,7 @@
 .hero-v.is-ready .hero-v-video { opacity: 1; }
 .hero-v.is-failed .hero-v-video { display: none; }
 .hero-v-endfade { opacity: var(--p); }
+.hero-v.is-ready:not(.is-failed) .hero-v-endfade { opacity: 0; transition: opacity .7s var(--ease, ease); }
 .hero-v .hero-x-shade {
   background:
     linear-gradient(90deg, rgba(6,7,9,.95) 0%, rgba(6,7,9,.82) 28%, rgba(6,7,9,.35) 50%, rgba(6,7,9,0) 70%),
