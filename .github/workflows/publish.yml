@@ -74,6 +74,21 @@ jobs:
           DRY_RUN: ${{ inputs.dry_run }}
         run: node src/publish.mjs
 
+      # Same creative on the Google Business Profile ("What's new" post with its own SEO image and button).
+      # Independent of the step above: a failed Instagram post does not stop it, and the log is saved either way.
+      - name: Post to Google Business Profile
+        if: always()
+        continue-on-error: true
+        env:
+          MEDIA_BASE_URL: ${{ vars.MEDIA_BASE_URL }}
+          GBP_LOCATION: ${{ vars.GBP_LOCATION }}
+          GBP_CLIENT_ID: ${{ secrets.GBP_CLIENT_ID }}
+          GBP_CLIENT_SECRET: ${{ secrets.GBP_CLIENT_SECRET }}
+          GBP_REFRESH_TOKEN: ${{ secrets.GBP_REFRESH_TOKEN }}
+          FORCE_DAY: ${{ inputs.day }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: node src/gbp-posts.mjs
+
       - name: Save posting log
         if: always() && inputs.dry_run != true
         run: |

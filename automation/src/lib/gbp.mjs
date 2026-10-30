@@ -40,6 +40,11 @@ export function gbp({ clientId, clientSecret, refreshToken }) {
     return d.locations || [];
   }
 
+  // One location with only the fields in readMask (e.g. "latlng,storefrontAddress"). Read-only.
+  async function location(locationPath, readMask) {
+    return api(`https://mybusinessbusinessinformation.googleapis.com/v1/${locationPath.replace(/^accounts\/[^/]+\//, "")}?readMask=${encodeURIComponent(readMask)}`);
+  }
+
   // locationPath looks like "accounts/123/locations/456"
   async function reviews(locationPath, { max = 100 } = {}) {
     const out = [];
@@ -57,7 +62,22 @@ export function gbp({ clientId, clientSecret, refreshToken }) {
     return api(`https://mybusiness.googleapis.com/v4/${reviewName}/reply`, { method: "PUT", body: JSON.stringify({ comment }) });
   }
 
-  return { accounts, locations, reviews, reply };
+  // "What's new" post with a photo and one button. locationPath looks like "accounts/123/locations/456".
+  // cta is { actionType, url? }; CALL needs no url. Returns the post's resource name and its search URL.
+  async function createLocalPost({ location, summary, cta, imageUrl }) {
+    const body = {
+      languageCode: "en",
+      topicType: "STANDARD",
+      summary,
+      callToAction: cta.actionType === "CALL" ? { actionType: "CALL" } : { actionType: cta.actionType, url: cta.url },
+      media: [{ mediaFormat: "PHOTO", sourceUrl: imageUrl }],
+    };
+    const d = await api(`https://mybusiness.googleapis.com/v4/${location}/localPosts`, { method: "POST", body: JSON.stringify(body) });
+    if (!d.name) throw new Error("Business Profile API: post created but no resource name returned");
+    return { name: d.name, url: d.searchUrl || "" };
+  }
+
+  return { accounts, locations, location, reviews, reply, createLocalPost };
 }
 
 export const STARS = { ONE: 1, TWO: 2, THREE: 3, FOUR: 4, FIVE: 5 };
