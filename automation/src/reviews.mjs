@@ -37,7 +37,7 @@ const missing = Object.entries({
   GBP_CLIENT_ID: cfg.clientId,
   GBP_CLIENT_SECRET: cfg.clientSecret,
   GBP_REFRESH_TOKEN: cfg.refreshToken,
-  ANTHROPIC_API_KEY: e.ANTHROPIC_API_KEY,
+  "OPENAI_API_KEY or ANTHROPIC_API_KEY": e.OPENAI_API_KEY || e.ANTHROPIC_API_KEY,
 })
   .filter(([, v]) => !v)
   .map(([k]) => k);

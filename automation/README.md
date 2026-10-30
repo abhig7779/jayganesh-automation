@@ -88,7 +88,8 @@ Upload in the Cloudflare dashboard: **R2 → jayganesh-content → Upload**, typ
 | `GBP_CLIENT_ID` | Secret | OAuth client ID for reviews (falls back to `YT_CLIENT_ID` if not set) |
 | `GBP_CLIENT_SECRET` | Secret | OAuth client secret for reviews (falls back to `YT_CLIENT_SECRET`) |
 | `GBP_REFRESH_TOKEN` | Secret | Business Profile token (see *Google review auto-replies*) |
-| `ANTHROPIC_API_KEY` | Secret | Claude API key for writing review replies |
+| `OPENAI_API_KEY` | Secret | OpenAI API key for writing review replies (model: variable `OPENAI_MODEL`, default `gpt-5`). Used when set; otherwise Claude is used |
+| `ANTHROPIC_API_KEY` | Secret | Claude API key for writing review replies (only if no OpenAI key) |
 | `GBP_LOCATION` | Variable | `accounts/…/locations/…`, printed by the first reviews run |
 
 Paste tokens straight into GitHub secrets. Don't send them over chat or email.
