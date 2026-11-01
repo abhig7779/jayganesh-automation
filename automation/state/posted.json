@@ -30,7 +30,24 @@
     }
   },
   "day-05": {},
-  "day-06": {},
+  "day-06": {
+    "instagram": {
+      "id": "18103964567554228",
+      "url": "https://www.instagram.com/reel/DfMtTIbAKXz/",
+      "at": "2026-11-01T12:15:08.426Z"
+    },
+    "facebook": {
+      "id": "1123611973734305",
+      "url": "https://www.facebook.com/105450074857682/videos/1123611973734305",
+      "at": "2026-11-01T12:16:17.296Z"
+    },
+    "youtube": {
+      "id": "Lui7yITlXBM",
+      "url": "https://youtube.com/shorts/Lui7yITlXBM",
+      "privacy": "public",
+      "at": "2026-11-01T12:16:59.575Z"
+    }
+  },
   "day-07": {},
   "day-08": {},
   "day-09": {},
