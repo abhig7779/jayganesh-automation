@@ -59,4 +59,5 @@ export const newCar: Service = {
     "PPF being fitted on a new car's front bumper",
     "Finished new car handed over to the family",
   ],
+  work: { reels: "ppf", reviews: ["ppf", "coating"] },
 };

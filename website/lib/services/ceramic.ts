@@ -51,6 +51,7 @@ export const ceramic: Service = {
     { q: "How long does ceramic coating last?", a: "With hand washing and a yearly top-up, coating keeps its gloss and water beading for years. We'll tell you what to expect for the coating on your package." },
     { q: "Does ceramic coating stop scratches?", a: "It resists very light marks, but it does not stop stone chips or deep scratches. For that, choose PPF." },
     { q: "When can I wash the car?", a: "Wait 7 days. After that, hand wash with a pH-neutral shampoo and a clean microfibre mitt." },
+    { q: "Do you do graphene coating?", a: "Yes. We apply Kovalent graphene coating at our Loni Kalbhor studio; recent jobs include a Mahindra Thar and a Land Rover Defender. Like ceramic coating, it adds gloss and water beading but does not stop stone chips, so pair it with PPF if you want chip protection." },
     { q: "Can you coat over PPF?", a: "Yes. Many owners fit PPF first and then coat the film for extra gloss and easier washing." },
     { q: "How long does a ceramic coating take?", a: "Plan for the car to stay with us for about two days: washing, decontamination, polishing, coating and curing. Paint that needs more correction can take longer, so send your car model and a photo on WhatsApp for an exact time." },
     { q: "Is ceramic coating worth it in Pune?", a: "It is worth it if you want the car to stay glossy and wash clean easily, especially if it's parked outdoors in sun and dust. It won't stop stone chips, so if you drive on the highway often, pair it with PPF." },
@@ -62,4 +63,5 @@ export const ceramic: Service = {
     "Machine polishing under an inspection light",
     "Deep gloss reflection of the studio lights on a dark car",
   ],
+  work: { reels: "coating", reviews: ["coating"] },
 };

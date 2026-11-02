@@ -66,4 +66,5 @@ export const detailing: Service = {
     "Interior seat shampoo in progress",
     "Before and after: a muddy footwell",
   ],
+  work: { reels: "coating", reviews: ["detailing", "coating"] },
 };

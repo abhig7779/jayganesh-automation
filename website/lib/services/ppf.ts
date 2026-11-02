@@ -71,6 +71,8 @@ export const ppf: Service = {
     { q: "Do you give a warranty?", a: "Yes, PPF comes with a warranty card. Ask us on WhatsApp for the film brand and warranty period for your package." },
     { q: "Is PPF worth it for a new car in Pune?", a: "For most new cars, yes, especially if you drive on highways like the Pune–Solapur road. PPF takes the stone chips and scratches that would otherwise mark new paint for good, and it can be removed later without harming the factory finish. If the car mostly stays in the city, a front kit is a sensible start." },
     { q: "Can PPF be fitted on a used car?", a: "Yes. We inspect the paint first and polish where needed, so existing swirl marks are not sealed under the film. Deep scratches and chips should be repaired before the film goes on; we'll point them out at inspection." },
+    { q: "Which PPF brands do you fit?", a: "We're an authorised dealer for Garware, 3M, LLumar, Ultraguard, DHC, Night Scene and myTVS paint protection film, so we can compare them on your car and quote each. Each brand has its own page on this site with its film range." },
+    { q: "Do you fit matte PPF?", a: "Yes. Matte PPF gives gloss paint a satin finish and protects it from chips and scratches the same way clear film does. We've fitted matte PPF on a Mahindra BE 6, and Garware's range includes Matte and Matte+ films." },
     { q: "Where can I get PPF done near Hadapsar, Kharadi or Wagholi?", a: "At our studio at Kawadipat Toll Naka on the Pune–Solapur road, Loni Kalbhor. Customers come from Hadapsar, Manjri, Kharadi, Wagholi, Fursungi and Uruli Kanchan. WhatsApp +91 99813 97676 with your car model to book a slot." },
   ],
   photos: ["ppfApply", "ppfEdge", "polish", "newCar"],
@@ -86,4 +88,5 @@ export const ppf: Service = {
     title: "Matte PPF on a Mahindra BE 6",
     text: "This BE 6 left our studio in matte paint protection film. Matte PPF gives the paint a satin finish and protects it from chips and scratches, the same way clear film does.",
   },
+  work: { reels: "ppf", reviews: ["ppf"] },
 };

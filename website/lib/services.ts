@@ -1,3 +1,5 @@
+import type { ReelCategory } from "./reels";
+import type { Topic } from "./reviews";
 import type { PriceKey } from "./prices";
 import type { MediaKey } from "./media";
 import { ppf } from "./services/ppf";
@@ -32,6 +34,7 @@ export type Service = {
   photoSlots: string[]; // descriptions of the real photos to shoot for this page
   photos: MediaKey[]; // stand-in photos, same order as photoSlots
   showcase?: { photo: MediaKey; label: string; title: string; text: string }; // a real job photo, shown above "Recent work"
+  work?: { reels: ReelCategory; reviews: Topic[] }; // real Instagram reels and Google reviews for this service
 };
 
 export const services: Service[] = [ppf, ceramic, detailing, newCar];

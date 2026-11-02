@@ -6,6 +6,10 @@ import { PageHero } from "../components/PageHero";
 import { serviceHero } from "@/lib/heroes";
 import Reveal from "../components/Reveal";
 import { DealerBrandsSection } from "../components/DealerBrands";
+import ReelsShowcase from "../components/ReelsShowcase";
+import ReviewsCarousel from "../components/ReviewsCarousel";
+import { reels } from "@/lib/reels";
+import { reviewsFor } from "@/lib/reviews";
 import { getService, services } from "@/lib/services";
 import { studioLinks } from "@/lib/catalog";
 import { facts } from "@/lib/prices";
@@ -27,6 +31,8 @@ export async function generateMetadata({ params }: { params: Promise<{ service: 
 export default async function ServicePage({ params }: { params: Promise<{ service: string }> }) {
   const s = getService((await params).service);
   if (!s) notFound();
+  const hasReels = !!s.work && reels.some((r) => r.category === s.work!.reels);
+  const hasReviews = !!s.work && reviewsFor(s.work.reviews).length > 0;
 
   const path = `/${s.slug}/`;
   const warranty =
@@ -133,9 +139,20 @@ export default async function ServicePage({ params }: { params: Promise<{ servic
               <Photo label={s.showcase.label} m={s.showcase.photo} ratio="4 / 5" sizes="(min-width: 960px) 440px, 100vw" />
             </Reveal>
           )}
-          <Reveal className="grid grid-3">
-            {s.photoSlots.slice(1).map((p, i) => <Photo key={p} label={p} m={s.photos[i + 1]} />)}
-          </Reveal>
+          {/* Real reels of this work when we have them; stand-in photos otherwise. */}
+          {hasReels ? (
+            <Reveal><ReelsShowcase category={s.work!.reels} /></Reveal>
+          ) : (
+            <Reveal className="grid grid-3">
+              {s.photoSlots.slice(1).map((p, i) => <Photo key={p} label={p} m={s.photos[i + 1]} />)}
+            </Reveal>
+          )}
+          {hasReviews && (
+            <Reveal className="stack-lg">
+              <SectionHead eyebrow="Google reviews" title={`What customers say about our ${s.menuLabel === "PPF" ? "PPF" : s.menuLabel.toLowerCase()}`} />
+              <ReviewsCarousel topics={s.work!.reviews} />
+            </Reveal>
+          )}
         </div>
       </section>
 

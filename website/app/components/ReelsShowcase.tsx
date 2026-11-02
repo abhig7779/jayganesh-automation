@@ -244,8 +244,9 @@ function ReelModal({
   );
 }
 
-export default function ReelsShowcase() {
-  const [filter, setFilter] = useState<Filter>("all");
+/** With `category`, shows only that kind of work and hides the filter tabs (service pages). */
+export default function ReelsShowcase({ category }: { category?: ReelCategory } = {}) {
+  const [filter, setFilter] = useState<Filter>(category ?? "all");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [edge, setEdge] = useState({ start: true, end: false });
   const railRef = useRef<HTMLUListElement>(null);
@@ -309,19 +310,21 @@ export default function ReelsShowcase() {
   return (
     <div className="rl">
       <div className="rl__top">
-        <div className="rl-tabs" role="group" aria-label="Filter reels">
-          {FILTERS.map((f) => (
-            <button
-              key={f.key}
-              type="button"
-              className="rl-tab"
-              aria-pressed={filter === f.key}
-              onClick={() => setFilter(f.key)}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
+        {!category && (
+          <div className="rl-tabs" role="group" aria-label="Filter reels">
+            {FILTERS.map((f) => (
+              <button
+                key={f.key}
+                type="button"
+                className="rl-tab"
+                aria-pressed={filter === f.key}
+                onClick={() => setFilter(f.key)}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+        )}
         <div className="rl-arrows">
           <button type="button" className="rl-icon-btn" onClick={() => scrollBy(-1)} disabled={edge.start} aria-label="Scroll reels left">
             <Chevron dir="left" />
