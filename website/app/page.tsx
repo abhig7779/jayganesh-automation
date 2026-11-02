@@ -63,7 +63,7 @@ export default function Home() {
       <div className="trust-x" role="group" aria-label="Why customers choose us">
         <div className="wrap">
           <ul>
-            <li><GoogleRating variant="compact" /></li>
+            <li className="trust-x__rating"><GoogleRating variant="compact" /></li>
             <li>{site.customers} customers</li>
             <li>{site.hoursShort}</li>
           </ul>

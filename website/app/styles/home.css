@@ -242,6 +242,8 @@
 @media (max-width: 559px) {
   .trust-x ul { flex-direction: column; gap: 6px; }
   .trust-x li + li::before { display: none; }
+  /* The hero badge right above already shows the rating on phones. */
+  .trust-x__rating { display: none !important; }
 }
 
 /* ---------- Studio service cards ---------- */

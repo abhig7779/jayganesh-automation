@@ -1,12 +1,13 @@
 name: Refresh website Google reviews
 
-# Daily at 07:00 IST. Pulls the live Google rating, review count and latest reviews
-# into website/lib/reviews.json so the site never shows a stale number.
+# Four times a day (07:00, 12:00, 17:00, 22:00 IST). Pulls the live Google rating, review count and
+# newest reviews from the shop's Business Profile API into website/lib/reviews.json; the commit makes
+# Vercel redeploy the site, so the count on the website follows Google within hours.
 # On any API problem the script leaves the file untouched (the site keeps its last good data).
 # (Not to be confused with reviews.yml, which replies to reviews.)
 on:
   schedule:
-    - cron: "30 1 * * *"
+    - cron: "30 1,6,11,16 * * *"
   workflow_dispatch:
 
 permissions:
@@ -21,27 +22,32 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
+      GBP_CLIENT_ID: ${{ secrets.GBP_CLIENT_ID }}
+      GBP_CLIENT_SECRET: ${{ secrets.GBP_CLIENT_SECRET }}
+      GBP_REFRESH_TOKEN: ${{ secrets.GBP_REFRESH_TOKEN }}
+      GBP_LOCATION: ${{ vars.GBP_LOCATION }}
       GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
       GOOGLE_PLACE_ID: ${{ secrets.GOOGLE_PLACE_ID }}
+      HAS_SOURCE: ${{ secrets.GBP_REFRESH_TOKEN != '' || secrets.GOOGLE_MAPS_API_KEY != '' }}
     steps:
-      - name: Skip when the API key is missing
-        if: env.GOOGLE_MAPS_API_KEY == ''
-        run: echo "::notice title=Website reviews::GOOGLE_MAPS_API_KEY secret is not set, so the Google reviews refresh was skipped."
+      - name: Skip when no Google login or key is set
+        if: env.HAS_SOURCE != 'true'
+        run: echo "::notice title=Website reviews::Neither GBP_REFRESH_TOKEN nor GOOGLE_MAPS_API_KEY is set, so the Google reviews refresh was skipped."
 
       - uses: actions/checkout@v4
-        if: env.GOOGLE_MAPS_API_KEY != ''
+        if: env.HAS_SOURCE == 'true'
 
       - uses: actions/setup-node@v4
-        if: env.GOOGLE_MAPS_API_KEY != ''
+        if: env.HAS_SOURCE == 'true'
         with:
           node-version: 20
 
       - name: Fetch rating, count and reviews
-        if: env.GOOGLE_MAPS_API_KEY != ''
+        if: env.HAS_SOURCE == 'true'
         run: node website/scripts/fetch-reviews.mjs
 
       - name: Commit if changed
-        if: env.GOOGLE_MAPS_API_KEY != ''
+        if: env.HAS_SOURCE == 'true'
         run: |
           if [[ -n "$(git status --porcelain website/lib/reviews.json)" ]]; then
             git config user.name "jayganesh-bot"

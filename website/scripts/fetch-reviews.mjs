@@ -1,6 +1,9 @@
 #!/usr/bin/env node
-// Refresh lib/reviews.json from Google (Places API, New).
+// Refresh lib/reviews.json from Google.
 //
+// Preferred: the shop's own Google Business Profile API (exact review count, newest reviews):
+//   GBP_CLIENT_ID=... GBP_CLIENT_SECRET=... GBP_REFRESH_TOKEN=... GBP_LOCATION=accounts/…/locations/… node scripts/fetch-reviews.mjs
+// Fallback: Places API (New):
 //   GOOGLE_MAPS_API_KEY=... [GOOGLE_PLACE_ID=...] node scripts/fetch-reviews.mjs
 //
 // Updates rating + review count and merges Google's latest reviews into the saved list.
@@ -108,9 +111,70 @@ function mapGoogleReview(g) {
   };
 }
 
-async function main() {
+const STARS = { ONE: 1, TWO: 2, THREE: 3, FOUR: 4, FIVE: 5 };
+
+// Google adds a machine translation to non-English reviews; keep only the first part.
+const stripTranslation = (t) => String(t ?? "").split(/\n*\((?:Translated by Google|Original)\)\n*/)[0].trim();
+
+function mapGbpReview(g) {
+  const name = g?.reviewer?.displayName?.trim();
+  const text = stripTranslation(g?.comment);
+  const stars = STARS[g?.starRating];
+  if (!name || g?.reviewer?.isAnonymous || !text || !stars) return null;
+  return {
+    id: slug(name),
+    name,
+    stars,
+    text,
+    when: "",
+    publishTime: g.createTime ?? null,
+    ...(g?.reviewer?.profilePhotoUrl ? { photo: g.reviewer.profilePhotoUrl } : {}),
+  };
+}
+
+/** Google Business Profile API: { rating, count, reviews } or null when not configured. */
+async function fromBusinessProfile() {
+  const { GBP_CLIENT_ID: id, GBP_CLIENT_SECRET: secret, GBP_REFRESH_TOKEN: refresh, GBP_LOCATION: location } = process.env;
+  if (!id || !secret || !refresh || !location) return null;
+  const tok = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    body: new URLSearchParams({ client_id: id, client_secret: secret, refresh_token: refresh, grant_type: "refresh_token" }),
+    signal: AbortSignal.timeout(TIMEOUT_MS),
+  }).then((r) => r.json());
+  if (!tok.access_token) throw new Error(`Google token refresh failed: ${tok.error_description || tok.error || "no token"}`);
+  let rating, count, pageToken = "";
+  const reviews = [];
+  // Newest first; two pages (100 reviews) is plenty for a daily refresh.
+  for (let page = 0; page < 2; page++) {
+    const q = new URLSearchParams({ pageSize: "50", orderBy: "updateTime desc", ...(pageToken ? { pageToken } : {}) });
+    const res = await fetch(`https://mybusiness.googleapis.com/v4/${location.trim()}/reviews?${q}`, {
+      headers: { Authorization: `Bearer ${tok.access_token}` },
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+    const d = await res.json();
+    if (!res.ok) throw new Error(`Business Profile reviews → HTTP ${res.status}: ${d.error?.message ?? ""}`);
+    rating ??= d.averageRating;
+    count ??= d.totalReviewCount;
+    reviews.push(...(d.reviews ?? []));
+    pageToken = d.nextPageToken ?? "";
+    if (!pageToken) break;
+  }
+  log(`Business Profile: rating ${rating}, ${count} reviews, ${reviews.length} fetched.`);
+  return { rating, count, reviews: reviews.map(mapGbpReview).filter(Boolean) };
+}
+
+async function fromPlaces() {
   const key = process.env.GOOGLE_MAPS_API_KEY?.trim();
-  if (!key) skip("GOOGLE_MAPS_API_KEY is not set.");
+  if (!key) return null;
+  const placeId = process.env.GOOGLE_PLACE_ID?.trim() || (await resolvePlaceId(key));
+  const d = await api(`https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}?languageCode=en`, {
+    key,
+    fieldMask: "rating,userRatingCount,reviews",
+  });
+  return { rating: d.rating, count: d.userRatingCount, reviews: (Array.isArray(d.reviews) ? d.reviews : []).map(mapGoogleReview).filter(Boolean) };
+}
+
+async function main() {
 
   let current;
   try {
@@ -120,23 +184,20 @@ async function main() {
   }
   const today = new Date().toISOString().slice(0, 10);
 
-  const placeId = process.env.GOOGLE_PLACE_ID?.trim() || (await resolvePlaceId(key));
-  const details = await api(`https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}?languageCode=en`, {
-    key,
-    fieldMask: "rating,userRatingCount,reviews",
-  });
+  const details = (await fromBusinessProfile()) ?? (await fromPlaces());
+  if (!details) skip("neither the Business Profile login (GBP_*) nor GOOGLE_MAPS_API_KEY is set.");
 
   // Plausibility checks: never replace good data with something worse.
   const rating = Number(details.rating);
-  const count = Number(details.userRatingCount);
+  const count = Number(details.count);
   if (!Number.isFinite(rating) || rating <= 0 || rating > 5) skip(`rating missing or invalid (${details.rating}).`);
-  if (!Number.isInteger(count) || count <= 0) skip(`userRatingCount missing or invalid (${details.userRatingCount}).`);
+  if (!Number.isInteger(count) || count <= 0) skip(`review count missing or invalid (${details.count}).`);
   if (Number.isFinite(current.count) && count < current.count) {
     skip(`count went down (${current.count} → ${count}); keeping the saved data.`);
   }
 
   // Merge reviews. Fresh Google copies win over saved ones (newer text / exact publishTime).
-  const fetched = (Array.isArray(details.reviews) ? details.reviews : []).map(mapGoogleReview).filter(Boolean);
+  const fetched = details.reviews;
   const byKey = new Map();
   for (const r of current.reviews ?? []) byKey.set(dedupeKey(r), r);
   for (const r of fetched) {
@@ -173,7 +234,7 @@ async function main() {
     count,
     updatedAt: current.updatedAt,
     source: "google",
-    reviews: merged.map(({ id, name, stars, text, when, publishTime, approxTime }) => ({
+    reviews: merged.map(({ id, name, stars, text, when, publishTime, approxTime, topics, photo }) => ({
       id,
       name,
       stars,
@@ -181,6 +242,9 @@ async function main() {
       when,
       publishTime: publishTime ?? null,
       ...(publishTime || !approxTime ? {} : { approxTime }),
+      // Keep the saved topic tags and the reviewer's photo.
+      ...(topics ? { topics } : {}),
+      ...(photo ? { photo } : {}),
     })),
   };
 
