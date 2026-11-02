@@ -91,13 +91,14 @@ for (const p of posts) {
   const d = new Date(`${p.date}T12:00:00+05:30`);
   rows.push([
     `=IMAGE("${preview}")`,
-    d.toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short", timeZone: "Asia/Kolkata" }),
-    new Date(`${p.date}T${p.time}:00+05:30`).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" }),
+    // Leading ' keeps these as text, so Sheets doesn't turn "5:00 PM" into 17:00.
+    "'" + d.toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short", timeZone: "Asia/Kolkata" }),
+    "'" + new Date(`${p.date}T${p.time}:00+05:30`).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" }),
     kind(p),
     p.title.replace(/ \(needs footage\)$/, ""),
     targets.map((t) => PLAT[t]).join(" + "),
     label,
-    at ? ist(at) : "",
+    at ? "'" + ist(at) : "",
     link(log.instagram?.url, "Instagram"),
     link(log.facebook?.url, "Facebook"),
     link(log.youtube?.url, "YouTube"),
