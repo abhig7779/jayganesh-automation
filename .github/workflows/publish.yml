@@ -89,6 +89,17 @@ jobs:
           DRY_RUN: ${{ inputs.dry_run }}
         run: node src/gbp-posts.mjs
 
+      - name: Update the calendar sheet (posted rows turn green)
+        if: always()
+        continue-on-error: true
+        env:
+          MEDIA_BASE_URL: ${{ vars.MEDIA_BASE_URL }}
+          CALENDAR_SHEET_ID: ${{ vars.CALENDAR_SHEET_ID }}
+          GBP_CLIENT_ID: ${{ secrets.GBP_CLIENT_ID }}
+          GBP_CLIENT_SECRET: ${{ secrets.GBP_CLIENT_SECRET }}
+          GBP_REFRESH_TOKEN: ${{ secrets.GBP_REFRESH_TOKEN }}
+        run: node src/calendar-sheet.mjs
+
       - name: Save posting log
         if: always() && inputs.dry_run != true
         run: |
