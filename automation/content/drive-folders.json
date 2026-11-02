@@ -1,220 +1,192 @@
 {
-  "period": "2026-10-26 to 2026-11-24",
+  "period": "2026-10-28 to 2026-12-29",
   "month": {
-    "id": "1OeC8q9vHnRO_u1agcizEemDFvKkNXVz4",
-    "url": "https://drive.google.com/drive/folders/1OeC8q9vHnRO_u1agcizEemDFvKkNXVz4",
-    "name": "2026-10-26 → 2026-11-24 · Month 1"
+    "id": "1WOEuka_CMd9w5pTDi79R1i6cB00aneIN",
+    "url": "https://drive.google.com/drive/folders/1WOEuka_CMd9w5pTDi79R1i6cB00aneIN",
+    "name": "2026-10-28 → 2026-12-29 · Content plan"
   },
   "days": {
-    "1": {
-      "name": "Day 01 · 26 Oct (Mon) · Carousel · Abhi",
-      "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/1nuleDljLjqxiSI4F8rRQHnkZ3XMYji6E",
-      "raw": "https://drive.google.com/drive/folders/1M5HBK9UA85qgXU7XgmJOjHkIZZMJiZOI",
-      "edited": "https://drive.google.com/drive/folders/1-qNpq2s2b9sTUzCrBz3gYgNUY4HGU2kf"
-    },
-    "2": {
-      "name": "Day 02 · 27 Oct (Tue) · Car-tip video · Abhi",
-      "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/14Hr6cMyI1Q7oKVkahteymp9Ro0HxsHvW",
-      "raw": "https://drive.google.com/drive/folders/1971QvUCyNfr5KHhEni9txp0LyjtPCSWj",
-      "edited": "https://drive.google.com/drive/folders/1iJH6Xm3y6MUsEMMxb2Q6JClF8qbsh5ct"
-    },
     "3": {
-      "name": "Day 03 · 28 Oct (Wed) · Music-edit reel · Prafull",
-      "owner": "Prafull",
-      "url": "https://drive.google.com/drive/folders/1DyZnTyQj6UwiwPkdW59wUONP153M6EVZ",
-      "raw": "https://drive.google.com/drive/folders/1nIVg_VQgvPDXdpZIQPVKzHhddphfZViY",
-      "edited": "https://drive.google.com/drive/folders/18J5UQu-GhTgw0FeQDct5o3Uet6RbYUoa"
-    },
-    "4": {
-      "name": "Day 04 · 29 Oct (Thu) · Carousel · Abhi",
+      "name": "Day 03 · 28 Oct (Wed) · Install reel · Abhi",
       "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/1SAoYHkH6Dc2QYG-yGXcsA7Uunu7ICKSn",
-      "raw": "https://drive.google.com/drive/folders/1cxMXGOikbrq9OJ6dJpiQlFCz6vPd51xR",
-      "edited": "https://drive.google.com/drive/folders/1_vyv_3GB9pPo8xCsP_Imb450KxU6O56s"
-    },
-    "5": {
-      "name": "Day 05 · 30 Oct (Fri) · Customer video · Abhi",
-      "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/1WTiiL6x3Y7bMZ5QQJ6X8iwjLUP8ZLZ3m",
-      "raw": "https://drive.google.com/drive/folders/1vP5Neu2_MSAHGxv0Sqk-XFzTOYktTKuU",
-      "edited": "https://drive.google.com/drive/folders/1odU9clfAyYc6trkWATDoEk8OWUJVHIti"
+      "url": "https://drive.google.com/drive/folders/1Ifb1DFwpXOFuMZFYja6sQAIlQpZ7Cn7p",
+      "raw": "https://drive.google.com/drive/folders/1YSbZYwBQCZhqrNXsSqNjeNjGiKDZCmpG",
+      "edited": "https://drive.google.com/drive/folders/1iK46O1_9SNZC6tIlWcz6_ifffPpFpnAd"
     },
     "6": {
-      "name": "Day 06 · 31 Oct (Sat) · Music-edit reel · Prafull",
-      "owner": "Prafull",
-      "url": "https://drive.google.com/drive/folders/1OUaCYzuFdQ1a9JlxCM1C3DLQyacvdIoS",
-      "raw": "https://drive.google.com/drive/folders/1Pr2ll1-aJaR-9_ytirJXv6V9p3epkm6r",
-      "edited": "https://drive.google.com/drive/folders/1abapWutjgpWHV9KCXs_6c-lGWDna0lY-"
+      "name": "Day 06 · 01 Nov (Sun) · Polished reel (our edit) · Abhi",
+      "owner": "Abhi",
+      "url": "https://drive.google.com/drive/folders/1jGy9jI-XURug3CSFGfBJywAZEjm6yUkD",
+      "raw": "https://drive.google.com/drive/folders/1HN1ed6IDYFWYYJiyWRaPiU7Z-ctvSLJe",
+      "edited": "https://drive.google.com/drive/folders/1FBnnTZkLGDBNlRCh47oIAeTHA7QhHrbv"
     },
     "7": {
-      "name": "Day 07 · 01 Nov (Sun) · Image creative · Abhi",
+      "name": "Day 07 · 03 Nov (Tue) · Creative (offer) · Abhi",
       "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/1u3YEKjGP5HgsthA_43mTD9I_23AT6lgX",
-      "raw": "https://drive.google.com/drive/folders/1a1se4gSrMF8elU_9eRixBmK86UAUMy0F",
-      "edited": "https://drive.google.com/drive/folders/1EkAPvaSIH8qkcV_giJ7dL8pDNknuEsfv"
+      "url": "https://drive.google.com/drive/folders/1fibrHERZMNznPpGBiWIppe_ZWNq2Y9Xi",
+      "raw": "https://drive.google.com/drive/folders/1Us8JeFMw9TOYKd78aKzzilPeZVEIhgXZ",
+      "edited": "https://drive.google.com/drive/folders/1qYdnknq9_gnrHD4W7QwREc6tyvBn1imm"
     },
     "8": {
-      "name": "Day 08 · 02 Nov (Mon) · Carousel · Abhi",
+      "name": "Day 08 · 06 Nov (Fri) · Creative · Abhi",
       "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/11ryrJH0lVyfpkcBPtUzGE82vpatN5ur-",
-      "raw": "https://drive.google.com/drive/folders/1TRvy7i2KHWroMI1ohNos29FgQdyyL87X",
-      "edited": "https://drive.google.com/drive/folders/1qoR7GwnKJJRMY9jGVcwaRcWcPWATVPMG"
+      "url": "https://drive.google.com/drive/folders/11PZ3c7GiCchB6TWQ6KsNjtbMMBpTUXX3",
+      "raw": "https://drive.google.com/drive/folders/1vmgj8UoEDmEcQIwzQoEhWNbMfgSQ8WSc",
+      "edited": "https://drive.google.com/drive/folders/1pJnkz2tp3pXSLYEPdEtMEJs5l35y7Bhq"
     },
     "9": {
-      "name": "Day 09 · 03 Nov (Tue) · Car-tip video · Abhi",
+      "name": "Day 09 · 07 Nov (Sat) · Creative · Abhi",
       "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/1zIeKvVcwIYqstYIGwzSrkQ2y-wgqx-Hn",
-      "raw": "https://drive.google.com/drive/folders/1bAp712_iIZ4odbC-nsI6DwHh8j0Jan4m",
-      "edited": "https://drive.google.com/drive/folders/119_CaliiuFYYe84ekCPo_AH0pmFTgL-b"
+      "url": "https://drive.google.com/drive/folders/1vAvFNLYXVdOFYciZruXIE0Zfhkr4mOxk",
+      "raw": "https://drive.google.com/drive/folders/10ONop5xNFwnYeFLJavmXvW3d15OFCXU0",
+      "edited": "https://drive.google.com/drive/folders/1KF6k-6nxnih68TXsPJRQsBXtEiq3_mSb"
     },
     "10": {
-      "name": "Day 10 · 04 Nov (Wed) · Music-edit reel · Prafull",
-      "owner": "Prafull",
-      "url": "https://drive.google.com/drive/folders/15bvDZrWPpLmGqChz7UcSkaX_e0GUeBXX",
-      "raw": "https://drive.google.com/drive/folders/1JTuHYPXQFOBu6u3tl-2yZHw747fNzvVG",
-      "edited": "https://drive.google.com/drive/folders/1T3Jb9yTB8bwc_w2L7tnLC3VG9NrkG3Cy"
+      "name": "Day 10 · 10 Nov (Tue) · Creative (offer) · Abhi",
+      "owner": "Abhi",
+      "url": "https://drive.google.com/drive/folders/1cBs4C-ES21Y6EiQtSO-m2fKXaNyimnhv",
+      "raw": "https://drive.google.com/drive/folders/1PKuhxmubzweVkAQZAu-uqE83H1k1dIgc",
+      "edited": "https://drive.google.com/drive/folders/1WTjGyCOO4Rl6mI-w2f2asBu7TP62Mmqy"
     },
     "11": {
-      "name": "Day 11 · 05 Nov (Thu) · Customer video · Abhi",
+      "name": "Day 11 · 11 Nov (Wed) · Polished reel (our edit) · Abhi",
       "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/1_rdHcKReZJ9Kds4fqtUsa5uWqrbNHFjF",
-      "raw": "https://drive.google.com/drive/folders/1k5fEYQCivvLweUnPPxp6ecWyRn_pECaW",
-      "edited": "https://drive.google.com/drive/folders/1HxVVah_vDk1QIuPWeuI5BcOcb0RDnPLc"
+      "url": "https://drive.google.com/drive/folders/1zWG4LwF1y85XdWJefjevlcdnv1AVIPxy",
+      "raw": "https://drive.google.com/drive/folders/1HMoEulldqbbGfOpXmsQjZqdYjk7ji9vv",
+      "edited": "https://drive.google.com/drive/folders/1t0NLYjLMoy51e-dotXzE8BZZMJb-jts7"
     },
     "12": {
-      "name": "Day 12 · 06 Nov (Fri) · Festive post · Abhi",
+      "name": "Day 12 · 13 Nov (Fri) · Creative · Abhi",
       "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/1haGEy6ykIN20g3qSbmRi8XNP6sYQahxk",
-      "raw": "https://drive.google.com/drive/folders/1uP6ERnSQWmBNSdtcn-bHjl899ZltTEpU",
-      "edited": "https://drive.google.com/drive/folders/1pZXrllWr3rVx1U9cItC8E8J_3ODassVk"
+      "url": "https://drive.google.com/drive/folders/1kMsmlJXNKtT_Ik8ZVcBZUqVfq2qH-DyY",
+      "raw": "https://drive.google.com/drive/folders/1Kscqhi4Gs-S_dBFDsbw8Uq2aoYGAv2Q-",
+      "edited": "https://drive.google.com/drive/folders/1oL1QDZs12XwQnvPJupYLz_Zk_BlJUO-l"
     },
     "13": {
-      "name": "Day 13 · 07 Nov (Sat) · Music-edit reel · Prafull",
+      "name": "Day 13 · 14 Nov (Sat) · Car-edit reel · Prafull",
       "owner": "Prafull",
-      "url": "https://drive.google.com/drive/folders/1pqFqLxfvOc5ERuKuultedxbcBv_dXF52",
-      "raw": "https://drive.google.com/drive/folders/1UHCJeTyQHV96PhQvONdcgUC0DaP1ilzz",
-      "edited": "https://drive.google.com/drive/folders/18ZK6HcPAwt88uqIybG7moZ9JRplADWGh"
+      "url": "https://drive.google.com/drive/folders/1Do6qoDcrkrrRDw3MhLAeolRoRWvdFTRu",
+      "raw": "https://drive.google.com/drive/folders/1vLeRbcnvSqqKZowCeuxLOnmPOMUVo66F",
+      "edited": "https://drive.google.com/drive/folders/1-fprD8nBNyCnzsS_3wjfJG9At_1boYs5"
     },
     "14": {
-      "name": "Day 14 · 08 Nov (Sun) · Festive post (video) · Abhi",
+      "name": "Day 14 · 17 Nov (Tue) · Creative · Abhi",
       "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/1QwM3FZUUUHTbH6Q_vJEfODZv254dcZnY",
-      "raw": "https://drive.google.com/drive/folders/1gHR9zUBzckqljaxuPRBvUR9oCXJrOYqO",
-      "edited": "https://drive.google.com/drive/folders/1WLVvnL_aeg0ZVFuOO6NBCc9HkmdtDUGu"
+      "url": "https://drive.google.com/drive/folders/1ZUcHAfuA3IqLRTD-tPDy0qE1ujV_7teR",
+      "raw": "https://drive.google.com/drive/folders/1n_Z0QlWaS-qYM-AvNryGo9mNwq3AZ0sD",
+      "edited": "https://drive.google.com/drive/folders/1cLNMe5pt3DyhECIvFXOBnIQai7FCbdcG"
     },
     "15": {
-      "name": "Day 15 · 09 Nov (Mon) · Festive post · Abhi",
+      "name": "Day 15 · 18 Nov (Wed) · Polished reel (our edit) · Abhi",
       "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/1lxDi34qTED0g6TPwoufZP-GdqG2lNT16",
-      "raw": "https://drive.google.com/drive/folders/1rggKPtRAGgIpC461fJM2CXP1mGvBWg6h",
-      "edited": "https://drive.google.com/drive/folders/1TBGfatutLjExkgutNUkevc6S5GpHDrXc"
+      "url": "https://drive.google.com/drive/folders/1UynV8LZ6F4iXt_TfyCw0nDnZ5yuAI8i8",
+      "raw": "https://drive.google.com/drive/folders/1VQ_5dit04wQknsrlBZ3fp5jeHtGZa-dV",
+      "edited": "https://drive.google.com/drive/folders/1eOOZQZ3Nyf1ql7BvpkVf8IruuBmyiKaI"
     },
     "16": {
-      "name": "Day 16 · 10 Nov (Tue) · Car-tip video · Abhi",
+      "name": "Day 16 · 20 Nov (Fri) · Creative (offer) · Abhi",
       "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/1Qa7dxdnq5hK3fmbxfd2SPp7IiQzzNfi4",
-      "raw": "https://drive.google.com/drive/folders/1BCByEJhnssLhGi8Ih35wsYYDRcBY6i-Z",
-      "edited": "https://drive.google.com/drive/folders/18D_ymPMVm02uJ6kVreUHbQCHcXzk_TEc"
+      "url": "https://drive.google.com/drive/folders/17E8-IU_E4Xh_DVR0ZszPTSeH9jyyj16Z",
+      "raw": "https://drive.google.com/drive/folders/1cwLBu7LwD7nGHCO0kEO5ldy4hvqebQl_",
+      "edited": "https://drive.google.com/drive/folders/11UlvkcZgLi-ZR7Fjo3iKl6hCXUVNJmvR"
     },
     "17": {
-      "name": "Day 17 · 11 Nov (Wed) · Festive post · Abhi",
-      "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/1vovIJDshjbC5juKhd1Cva4BwEPvZRXAP",
-      "raw": "https://drive.google.com/drive/folders/1x7QG0YAlp89dCJpYNvFbZJKQz1zBLLF_",
-      "edited": "https://drive.google.com/drive/folders/1YX7tmOADHuDX9EVpM6XsOD1wcR2FflGS"
+      "name": "Day 17 · 21 Nov (Sat) · Car-edit reel · Prafull",
+      "owner": "Prafull",
+      "url": "https://drive.google.com/drive/folders/1HU6xyuRLKjMG--A4VVj0di8CMAXnXjTf",
+      "raw": "https://drive.google.com/drive/folders/1hMbiE0UraE3FPJa5rYBK4dYc9pDDb4QB",
+      "edited": "https://drive.google.com/drive/folders/105zcrU5j9-eLD0HhRKrbMnnYQZc92NZO"
     },
     "18": {
-      "name": "Day 18 · 12 Nov (Thu) · Music-edit reel · Prafull",
-      "owner": "Prafull",
-      "url": "https://drive.google.com/drive/folders/1W9AZzPMJVa4gPH4v5epEsent064YHfgu",
-      "raw": "https://drive.google.com/drive/folders/1hVWG6aPdW0_P2OzY62emYhBPAruEs5_7",
-      "edited": "https://drive.google.com/drive/folders/1QBFGwmJO1rOeF3ZtVxWKB9rnG26qMQC7"
+      "name": "Day 18 · 24 Nov (Tue) · Creative · Abhi",
+      "owner": "Abhi",
+      "url": "https://drive.google.com/drive/folders/112Vm_VimlkA-R2pmM1eT7dC_ViMmGWh_",
+      "raw": "https://drive.google.com/drive/folders/18Zixsm2U3zO3aJLYHqFr4cVIFlcMHSe0",
+      "edited": "https://drive.google.com/drive/folders/1bqy2GFUDAq0N015Dci7xsJch4yjmXC2A"
     },
     "19": {
-      "name": "Day 19 · 13 Nov (Fri) · Customer video · Abhi",
+      "name": "Day 19 · 25 Nov (Wed) · Polished reel (our edit) · Abhi",
       "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/1Z51CSQ-awtOtrGh--VooXMVN2Ncxkeet",
-      "raw": "https://drive.google.com/drive/folders/1-iXNeXD8NIdE4f7EFAjxCN1o6N1mHgpl",
-      "edited": "https://drive.google.com/drive/folders/1ct7WFvP3DCqkKyi4kUXDTsXSbu2CQyot"
+      "url": "https://drive.google.com/drive/folders/1jnO1Zel2bPfhSLLPnXS61AsnhiNCg4Gw",
+      "raw": "https://drive.google.com/drive/folders/1GsGWuNPhJU23Qcso4-47rm-fkpKu_nJ9",
+      "edited": "https://drive.google.com/drive/folders/14QTbF9Ats5IIxgwjy1s2ujFILvyIFWsK"
     },
     "20": {
-      "name": "Day 20 · 14 Nov (Sat) · Music-edit reel · Prafull",
-      "owner": "Prafull",
-      "url": "https://drive.google.com/drive/folders/17WL9W1Z749go0nVr7V0zVuMHVTXEf6Dw",
-      "raw": "https://drive.google.com/drive/folders/1yeavoqZZtUom8QFf8sW75jtSIoxgQ9Q_",
-      "edited": "https://drive.google.com/drive/folders/15fZOeuBr78eLdTg8iwGI0ieY1JIbJKTh"
+      "name": "Day 20 · 27 Nov (Fri) · Creative · Abhi",
+      "owner": "Abhi",
+      "url": "https://drive.google.com/drive/folders/18pW_tDLgUIclVBqwAXDfwewNCavYVGx-",
+      "raw": "https://drive.google.com/drive/folders/1doeGwox_YbIY3VK9XL5qXd4o3fVRSGxY",
+      "edited": "https://drive.google.com/drive/folders/10vWdHtmv1Cp-rsfWo3WQ4-U5VQiCLhFw"
     },
     "21": {
-      "name": "Day 21 · 15 Nov (Sun) · Image creative · Abhi",
-      "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/1exiodbPaACpFn-iwUlt25gtoymqMNjFX",
-      "raw": "https://drive.google.com/drive/folders/198S-sh64te3HI0PB0FJpipA0FsSc_77d",
-      "edited": "https://drive.google.com/drive/folders/1tkcbtTtKtfRHZ76bzF5dyWplvdF8_bd2"
+      "name": "Day 21 · 28 Nov (Sat) · Car-edit reel · Prafull",
+      "owner": "Prafull",
+      "url": "https://drive.google.com/drive/folders/1nSZjT6dJk8n_TEyZ3Ld-d5sU0BBGJ6YP",
+      "raw": "https://drive.google.com/drive/folders/1YYiNxkHFIBsllyTLC6LJGEX0aUl_6PbS",
+      "edited": "https://drive.google.com/drive/folders/1NxiUj7jck4YsTkTwyvEQsnGZ44s7kG1m"
     },
     "22": {
-      "name": "Day 22 · 16 Nov (Mon) · Image creative · Abhi",
+      "name": "Day 22 · 01 Dec (Tue) · Creative · Abhi",
       "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/1p3uFMWm1WrJOrt93OHkqzFrzwgWd0vCF",
-      "raw": "https://drive.google.com/drive/folders/1XHoiEJKdi7i_GD7aHNBNPRr12jBcXKRX",
-      "edited": "https://drive.google.com/drive/folders/1Ua-4AMsqH-iMpGHCEL8cnAEB5_9HXUaH"
+      "url": "https://drive.google.com/drive/folders/1Z8K4ndAUa1QuK2SfQD04XoMnLUBoq8FG",
+      "raw": "https://drive.google.com/drive/folders/18Hmug27FenRpsAd3qCbtBeKe0A665Ws0",
+      "edited": "https://drive.google.com/drive/folders/1HmAlmgLKF5vNiqXWRGjxqYaoKJJzNdVd"
     },
     "23": {
-      "name": "Day 23 · 17 Nov (Tue) · Car-tip video · Abhi",
+      "name": "Day 23 · 04 Dec (Fri) · Creative · Abhi",
       "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/1Cq6Xdwkb55o6kvEWkYt169PA3tlkPjMG",
-      "raw": "https://drive.google.com/drive/folders/1wVfYouj-rdwwdYL95ysb35yV1NpIqu4p",
-      "edited": "https://drive.google.com/drive/folders/1uFhbE3-67PHyJ1ox_UOThiOoCwLCmynr"
+      "url": "https://drive.google.com/drive/folders/1X7S1nCxksogd2vd2vxYAib0n0Q07pfy3",
+      "raw": "https://drive.google.com/drive/folders/1mpY9UBWnFI6adIYU044IdW8j1F2h2j-R",
+      "edited": "https://drive.google.com/drive/folders/1ZDf_a4_s8iZLo72EANkD5HcjsOIxQaEx"
     },
     "24": {
-      "name": "Day 24 · 18 Nov (Wed) · Music-edit reel · Prafull",
-      "owner": "Prafull",
-      "url": "https://drive.google.com/drive/folders/146lUmm_u4RfPpk5Q7OK70qFrMklRCUAb",
-      "raw": "https://drive.google.com/drive/folders/1EKDTyvHGclWsGVfgsMyf3aGTHoPo2fM8",
-      "edited": "https://drive.google.com/drive/folders/1UihSGIad8wGUNW0gSz5Erq6f8b5TRrsT"
+      "name": "Day 24 · 08 Dec (Tue) · Creative · Abhi",
+      "owner": "Abhi",
+      "url": "https://drive.google.com/drive/folders/1ciHSQ-OvWS3l3n6PBOcEj9sXnub3oq2C",
+      "raw": "https://drive.google.com/drive/folders/1sXdLTMPNAr0QQPlf8B57XpuYVydHy6hA",
+      "edited": "https://drive.google.com/drive/folders/1cJw8QQAoAPIPKrL0wrInkZ3IKO5dDq_T"
     },
     "25": {
-      "name": "Day 25 · 19 Nov (Thu) · Carousel · Abhi",
+      "name": "Day 25 · 11 Dec (Fri) · Creative · Abhi",
       "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/13lv-8VF0Pl4b8wQgUnXXKNwHuW2-d7lb",
-      "raw": "https://drive.google.com/drive/folders/1ovPzy6pTFHKVU7dOgsj6r9m_MkOLC76h",
-      "edited": "https://drive.google.com/drive/folders/1j_Z-iBYazPmaW1reYTqXoTxAkQwlkU2D"
+      "url": "https://drive.google.com/drive/folders/1nGYeoz9hckpc9mWjb1SCDWUjVMuMjcyD",
+      "raw": "https://drive.google.com/drive/folders/1q9jmmeeWH-qmADOtdat4W9IMkKdzCFPt",
+      "edited": "https://drive.google.com/drive/folders/19duC6VtFMBKsjRqyG5yN_QBEP4kCKDvr"
     },
     "26": {
-      "name": "Day 26 · 20 Nov (Fri) · Customer video · Abhi",
+      "name": "Day 26 · 15 Dec (Tue) · Creative · Abhi",
       "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/18CY1-8prvfYfotocegfAhDXme_NQhBWF",
-      "raw": "https://drive.google.com/drive/folders/12vdu39BagrWWU8ytvXDTmFIrheZT1zXj",
-      "edited": "https://drive.google.com/drive/folders/1gYIpqCd29YyPD_cRs4sDZ17PfkRofz8-"
+      "url": "https://drive.google.com/drive/folders/1JaBYCE04a4DMhjBVy-p9J9447mfTyVlH",
+      "raw": "https://drive.google.com/drive/folders/1AN-MQvqlxYoZTiVSsL-DATitAzq8rCSc",
+      "edited": "https://drive.google.com/drive/folders/1fKLCHFXGE6ILJ_mSrVciHLRSVd6An52y"
     },
     "27": {
-      "name": "Day 27 · 21 Nov (Sat) · Festive post · Abhi",
+      "name": "Day 27 · 18 Dec (Fri) · Creative · Abhi",
       "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/1H03X0B5E-vnkINupA2bf59rvo4jzjpkM",
-      "raw": "https://drive.google.com/drive/folders/1gktC_WKc8G_lpKds4r69FtP7HdyYPhyF",
-      "edited": "https://drive.google.com/drive/folders/1KOqQWdGJIrvt-OZ2joyPSTOZGJuvfWwY"
+      "url": "https://drive.google.com/drive/folders/1IBM3sl7fsZ0qQVWVRJFaaTZVkEP1DEdQ",
+      "raw": "https://drive.google.com/drive/folders/1Czb_sqIXuf8K6lojUmtivDg_y09M-F_W",
+      "edited": "https://drive.google.com/drive/folders/1pMhQAagnxLBbOAR-APV5FtXi7RmMBzjU"
     },
     "28": {
-      "name": "Day 28 · 22 Nov (Sun) · Music-edit reel · Prafull",
-      "owner": "Prafull",
-      "url": "https://drive.google.com/drive/folders/1hSm1xsniqXFuxorZeaByG3XkrAlNEv30",
-      "raw": "https://drive.google.com/drive/folders/1vDT9o2qsWlr5bxrWLzFqKhwS5VSB7rN_",
-      "edited": "https://drive.google.com/drive/folders/1EMQBf5y8y8c6yWsvZNdoFXrRyGm8DODz"
+      "name": "Day 28 · 22 Dec (Tue) · Creative · Abhi",
+      "owner": "Abhi",
+      "url": "https://drive.google.com/drive/folders/1zyT7xWG9km28vBFDCRL_e3c8S1nwc7Mm",
+      "raw": "https://drive.google.com/drive/folders/1tHtWO2dZsr75KiqY8dP7Q3u0eG4JfwK5",
+      "edited": "https://drive.google.com/drive/folders/1hakKulQswwab1dFvA21vjLDP2mPMizQl"
     },
     "29": {
-      "name": "Day 29 · 23 Nov (Mon) · Image creative · Abhi",
+      "name": "Day 29 · 25 Dec (Fri) · Creative · Abhi",
       "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/1d8LSIa6qVIsJjkMnJ1R2hg0qVfwQaz6E",
-      "raw": "https://drive.google.com/drive/folders/1fBrA3iL4FCIiB5XcmNoo4zWV9xta7aXH",
-      "edited": "https://drive.google.com/drive/folders/1w_jsZJxUE093C_m-fsercrjGRO1KA7QZ"
+      "url": "https://drive.google.com/drive/folders/1zJJG9me2qUbF3a_wrEy0W6RnZFvWtuot",
+      "raw": "https://drive.google.com/drive/folders/1of3iZIhh6tKJ8Nq1eS-fOqBGMfo_PKvK",
+      "edited": "https://drive.google.com/drive/folders/1jOzxTRQEC3vVdnwOWfotoJhHz7K_kJ4X"
     },
     "30": {
-      "name": "Day 30 · 24 Nov (Tue) · Car-tip video · Abhi",
+      "name": "Day 30 · 29 Dec (Tue) · Creative · Abhi",
       "owner": "Abhi",
-      "url": "https://drive.google.com/drive/folders/1NZdkeYNthWzgPAlAjkHTYlUxvNLuReRY",
-      "raw": "https://drive.google.com/drive/folders/19PIc4qWVAMa9cGoeDZBwM2VwUwqF3aBa",
-      "edited": "https://drive.google.com/drive/folders/1WcRKHJQIh7bNHwNvDfT7W2aHl9DUiORB"
+      "url": "https://drive.google.com/drive/folders/1KuZYi_umZi8tUWdf3Q9IsS9QLmd8Owxn",
+      "raw": "https://drive.google.com/drive/folders/1BHTNdFkIY7c-SiOQ_B5-07A2GoznraAY",
+      "edited": "https://drive.google.com/drive/folders/1Zpj96XHEja9060-JWpRmKW0KsY_T-wFw"
     }
   }
 }

@@ -1,6 +1,6 @@
 // Creates this calendar's folders in the shared Google Drive folder (safe to run again: existing
 // folders are reused, nothing is deleted):
-//   <root>/2026-10-26 → 2026-11-24 · Month 1/
+//   <root>/2026-10-28 → 2026-12-29 · Content plan/
 //     Day 01 · 26 Oct (Mon) · Carousel · Abhi/
 //       1 Raw/                              raw clips/photos for editing (never posted)
 //       2 Edited (posts automatically)/     final .mp4 or .jpg — copying it here approves the post
@@ -23,13 +23,14 @@ const rootId = e.DRIVE_FOLDER_ID;
 if (!rootId) throw new Error("DRIVE_FOLDER_ID is not set");
 
 const { posts, period } = loadCalendar();
-// Prafull edits the music reels; Abhi makes everything else.
-const ownerOf = (p) => (p.format === "Music-edit reel" ? "Prafull" : "Abhi");
+// Prafull edits the music / car-edit reels; Abhi makes everything else.
+const ownerOf = (p) => (/^(Music|Car)-edit reel$/.test(p.format) ? "Prafull" : "Abhi");
 const fmtDay = (iso) => {
   const d = new Date(`${iso}T12:00:00+05:30`);
   return `${d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", timeZone: "Asia/Kolkata" })} (${d.toLocaleDateString("en-GB", { weekday: "short", timeZone: "Asia/Kolkata" })})`;
 };
-const monthName = `${posts[0].date} → ${posts.at(-1).date} · Month 1`;
+// Must start with the first post date: that is how src/sync-media.mjs finds this folder.
+const monthName = `${posts[0].date} → ${posts.at(-1).date} · Content plan`;
 const RAW = "1 Raw";
 const EDITED = "2 Edited (posts automatically)";
 
@@ -47,7 +48,7 @@ function brief(p, owner) {
       ? "One vertical video, 9:16 (1080×1920), .mp4, under 90 s. Optional cover image named cover.jpg."
       : p.type === "carousel"
         ? "2–10 images, .jpg, 1080×1350, named in order (1.jpg, 2.jpg …)."
-        : "One image, .jpg, 1080×1350.";
+        : "One image, .jpg, square 1080×1080 (or 1080×1350).";
   return [
     `Day ${p.day} · ${fmtDay(p.date)} · posts at ${p.time} IST`,
     `Owner: ${owner}`,

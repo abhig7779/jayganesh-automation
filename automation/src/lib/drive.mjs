@@ -73,7 +73,50 @@ export function drive({ clientId, clientSecret, refreshToken }) {
     return d;
   }
 
-  return { children, download, createFolder, createText };
+  async function call(url, init = {}) {
+    const res = await fetch(url, { ...init, headers: { Authorization: `Bearer ${await token()}`, ...(init.headers || {}) } });
+    const d = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(`Drive API: ${d.error?.message || res.statusText} (${res.status})`);
+    return d;
+  }
+
+  const rename = (fileId, name) =>
+    call(`https://www.googleapis.com/drive/v3/files/${fileId}?supportsAllDrives=true&fields=id,name`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name }),
+    });
+
+  // Server-side copy (no download/upload), e.g. a final video into another day folder.
+  const copy = (fileId, name, parentId) =>
+    call(`https://www.googleapis.com/drive/v3/files/${fileId}/copy?supportsAllDrives=true&fields=id,name`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, parents: [parentId] }),
+    });
+
+  const move = (fileId, fromId, toId) =>
+    call(`https://www.googleapis.com/drive/v3/files/${fileId}?supportsAllDrives=true&addParents=${toId}&removeParents=${fromId}&fields=id,name`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: "{}",
+    });
+
+  // Resumable upload, so large videos work too.
+  async function upload(name, parentId, bytes, mimeType) {
+    const res = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&supportsAllDrives=true", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${await token()}`, "Content-Type": "application/json", "X-Upload-Content-Type": mimeType },
+      body: JSON.stringify({ name, parents: [parentId] }),
+    });
+    if (!res.ok) throw new Error(`Drive upload "${name}" start failed (${res.status})`);
+    const put = await fetch(res.headers.get("location"), { method: "PUT", headers: { "Content-Type": mimeType }, body: bytes });
+    const d = await put.json();
+    if (!put.ok) throw new Error(`Drive upload "${name}": ${d.error?.message || put.statusText} (${put.status})`);
+    return d;
+  }
+
+  return { children, download, createFolder, createText, rename, copy, move, upload };
 }
 
 export const FOLDER = "application/vnd.google-apps.folder";
