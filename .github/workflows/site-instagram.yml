@@ -1,0 +1,50 @@
+name: Refresh website Instagram reels
+
+# Three times a day (08:30, 14:30, 20:30 IST). Pulls the newest work reels from Instagram into the
+# homepage "Watch our work" section (website/scripts/fetch-instagram-reels.mjs): category and title
+# from the caption, video re-encoded to 540p and self-hosted. The commit makes Vercel redeploy.
+# On any API problem nothing changes, so the site keeps its last good list.
+on:
+  schedule:
+    - cron: "0 3,9,15 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: site-instagram
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      META_TOKEN: ${{ secrets.META_TOKEN }}
+      IG_USER_ID: ${{ vars.IG_USER_ID }}
+      GRAPH_VERSION: ${{ vars.GRAPH_VERSION }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Make sure ffmpeg is installed
+        run: command -v ffmpeg || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
+
+      - name: Fetch the newest reels
+        run: node website/scripts/fetch-instagram-reels.mjs
+
+      - name: Commit if changed
+        run: |
+          if [[ -n "$(git status --porcelain website/lib/reels-instagram.json website/lib/image-sizes.json website/public/reels)" ]]; then
+            git config user.name "jayganesh-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -A website/lib/reels-instagram.json website/lib/image-sizes.json website/public/reels
+            git commit -m "Update Instagram reels on the website"
+            for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
+          else
+            echo "No new reels"
+          fi

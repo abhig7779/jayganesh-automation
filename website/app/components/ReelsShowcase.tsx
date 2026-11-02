@@ -15,6 +15,8 @@ const FILTERS: { key: Filter; label: string }[] = [
   { key: "ppf", label: categoryLabel.ppf },
   { key: "coating", label: categoryLabel.coating },
   { key: "interior", label: categoryLabel.interior },
+  { key: "lights", label: categoryLabel.lights },
+  { key: "accessories", label: categoryLabel.accessories },
 ];
 
 function InstagramGlyph({ size = 18 }: { size?: number }) {

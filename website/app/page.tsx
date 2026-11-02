@@ -123,7 +123,7 @@ export default function Home() {
       <section className="h-sec h-sec--deep" aria-labelledby="reels-title">
         <div className="wrap">
           <Reveal>
-            <Head id="reels-title" eyebrow="On Instagram" title="Watch our work" lead="Real cars, filmed in our studio: PPF, coatings and interiors." />
+            <Head id="reels-title" eyebrow="On Instagram" title="Watch our work" lead="Real cars from our shop and studio: PPF, coatings, lights, screens and interiors. New reels appear here automatically." />
             <ReelsShowcase />
           </Reveal>
         </div>

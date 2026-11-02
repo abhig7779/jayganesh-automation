@@ -1,6 +1,10 @@
 // Real reels from @jayganeshcar_accessories_pune, shown in the homepage
 // "Watch our work" section. Embed: https://www.instagram.com/reel/{id}/embed/
-export type ReelCategory = "ppf" | "coating" | "interior";
+// The newest reels come from Instagram automatically (scripts/fetch-instagram-reels.mjs →
+// lib/reels-instagram.json, refreshed daily); the hand-picked list below follows them.
+import instagramReels from "./reels-instagram.json";
+
+export type ReelCategory = "ppf" | "coating" | "interior" | "lights" | "accessories";
 
 export type Reel = {
   id: string;
@@ -21,9 +25,11 @@ export const categoryLabel: Record<ReelCategory, string> = {
   ppf: "PPF",
   coating: "Coating",
   interior: "Seat covers & interior",
+  lights: "Headlights & lights",
+  accessories: "Screens & styling",
 };
 
-export const reels: Reel[] = [
+const picked: Reel[] = [
   { id: "DS4zOLXCQ8B", title: "Mahindra BE 6 · full-body PPF", car: "Mahindra BE 6", category: "ppf", ...own("DS4zOLXCQ8B") },
   { id: "DdRI9cMoCte", title: "XUV 7XO · Garware PPF", car: "Mahindra XUV 7XO", category: "ppf", ...own("DdRI9cMoCte") },
   { id: "DdL6ewnpxar", title: "XUV 7XO · PPF, fifth one this colour", car: "Mahindra XUV 7XO", category: "ppf", ...own("DdL6ewnpxar") },
@@ -35,6 +41,17 @@ export const reels: Reel[] = [
   { id: "DeWqJomKc9U", title: "Mahindra Thar · graphene coating, part 2", car: "Mahindra Thar", category: "coating", ...own("DeWqJomKc9U") },
   { id: "DelJXxghV1r", title: "Ford Endeavour · Autoform seat covers", car: "Ford Endeavour", category: "interior", ...own("DelJXxghV1r") },
   { id: "Db2bzUAgUqO", title: "Renault Duster · PPF and interior change", car: "Renault Duster", category: "interior", ...own("Db2bzUAgUqO") },
+];
+
+type AutoReel = { id: string; title: string; car?: string; category: ReelCategory; video: boolean; timestamp: string };
+
+// Newest Instagram reels first; a hand-picked entry for the same reel keeps its own title.
+export const reels: Reel[] = [
+  ...(instagramReels as AutoReel[]).map((r): Reel => {
+    const own = picked.find((p) => p.id === r.id);
+    return own ?? { id: r.id, title: r.title, car: r.car, category: r.category, poster: `${reelBase}/${r.id}.jpg`, ...(r.video ? { video: `${reelBase}/${r.id}.mp4` } : {}) };
+  }),
+  ...picked.filter((p) => !(instagramReels as AutoReel[]).some((r) => r.id === p.id)),
 ];
 
 export const reelEmbedUrl = (id: string) => `https://www.instagram.com/reel/${id}/embed/`;
