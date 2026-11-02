@@ -102,6 +102,14 @@ export function drive({ clientId, clientSecret, refreshToken }) {
       body: "{}",
     });
 
+  // Moves to the Drive bin (restorable for 30 days), never a permanent delete.
+  const trash = (fileId) =>
+    call(`https://www.googleapis.com/drive/v3/files/${fileId}?supportsAllDrives=true&fields=id,name,trashed`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ trashed: true }),
+    });
+
   // Resumable upload, so large videos work too.
   async function upload(name, parentId, bytes, mimeType) {
     const res = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&supportsAllDrives=true", {
@@ -116,7 +124,7 @@ export function drive({ clientId, clientSecret, refreshToken }) {
     return d;
   }
 
-  return { children, download, createFolder, createText, rename, copy, move, upload };
+  return { children, download, createFolder, createText, rename, copy, move, trash, upload };
 }
 
 export const FOLDER = "application/vnd.google-apps.folder";
