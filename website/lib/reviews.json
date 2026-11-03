@@ -1,9 +1,45 @@
 {
   "rating": 4.9,
-  "count": 802,
-  "updatedAt": "2026-11-02",
+  "count": 806,
+  "updatedAt": "2026-11-03",
   "source": "google",
   "reviews": [
+    {
+      "id": "ajinath-more",
+      "name": "AJINATH MORE",
+      "stars": 5,
+      "text": "seat covers fitting was done fast and the quality is good. got some discount for my swift",
+      "when": "",
+      "publishTime": "2026-11-03T13:21:54.172272Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocJE8_VzR1GcKccIjTH830gkJvK25wFgJCPzjMhiSy65AqCQTFiT=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "sandeep-kadam",
+      "name": "Sandeep Kadam",
+      "stars": 5,
+      "text": "Swift floor mats look solid and the price was with decent discount. staff was helpful and fitting was done properly",
+      "when": "",
+      "publishTime": "2026-11-03T10:50:58.356833Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocLMupZwl02Qkkercjm2W0wDR9eAsQT22QgM15kF-uRmOHVdmA=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "rohit-haralkar",
+      "name": "Rohit Haralkar",
+      "stars": 5,
+      "text": "Sun film done for my Baleno. Quality was nice and price was also fair, got discount also.",
+      "when": "",
+      "publishTime": "2026-11-03T10:37:07.325648Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocIiB4Oyuw6sdQlwjz_yWxWs0Z1oGrksYF_zQMSwwtNEyAWTtg=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "laxman-more",
+      "name": "Laxman More",
+      "stars": 5,
+      "text": "Got seat covers for my Nexon. quality is really nice and they guided me properly, staff was helpful",
+      "when": "",
+      "publishTime": "2026-11-03T10:33:29.273874Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocKFBbdX8GFzdc8DLSyeEDYGXnpaOdl-zgrxtR4TOmCMKtUsEw=s120-c-rp-mo-br100"
+    },
     {
       "id": "bapusaheb-shinde",
       "name": "Bapusaheb shinde",
