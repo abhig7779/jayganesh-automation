@@ -64,7 +64,9 @@ const link = (u, label) => (u ? `=HYPERLINK("${q(u)}","${label}")` : "");
 
 const rows = [];
 const status = [];
-for (const p of posts) {
+// Rows in date order: day numbers are not always in date order (a post can be added between days).
+const byDate = [...posts].sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
+for (const p of byDate) {
   const log = state[dayKey(p.day)] || {};
   const targets = [...p.platforms, ...(p.gbp ? ["gbp"] : [])];
   const done = targets.filter((t) => log[t]?.url || log[t]?.id || log[t]?.name);
