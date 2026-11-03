@@ -1,11 +1,14 @@
 name: Reply to Google reviews
 
-# Every 10 minutes, 07:30–22:20 IST (public repo: free minutes). A review is answered 10+ minutes after it
-# arrives, so the reply feels human. 4–5★ reviews get a reply; 1–3★ reviews open an issue with a suggested
-# reply for a person to approve. See automation/REPLY-STYLE.md.
+# Every 2 hours, about 07:30–22:30 IST (owner's choice, 3 Nov 2026). GitHub's own timer proved unreliable
+# (a 10-minute schedule ran ~3 times a day, hours late), so each run waits 2 hours and then starts the next
+# one itself; the schedule below is only a backup that restarts the chain if it ever stops. A run that finds
+# another run already going exits at once, so there is only ever one chain.
+# A review is answered 10+ minutes after it arrives. 4–5★ reviews get a reply; 1–3★ reviews open an issue
+# with a suggested reply for a person to approve. See automation/REPLY-STYLE.md.
 on:
   schedule:
-    - cron: "*/10 2-16 * * *"
+    - cron: "0 2-16/2 * * *"
   workflow_dispatch:
     inputs:
       dry_run:
@@ -16,10 +19,7 @@ on:
 permissions:
   contents: write
   issues: write
-
-concurrency:
-  group: reviews
-  cancel-in-progress: false
+  actions: write
 
 jobs:
   reviews:
@@ -27,17 +27,34 @@ jobs:
     defaults:
       run:
         working-directory: automation
-    timeout-minutes: 15
+    timeout-minutes: 140
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
+      - name: Exit if another run is already going
+        id: guard
+        run: |
+          # A chained run is started by the previous one in its last seconds; let that one finish first.
+          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then sleep 90; fi
+          others=$(gh run list -R "$GITHUB_REPOSITORY" --workflow reviews.yml --json databaseId,status \
+            -q "[.[] | select((.status==\"in_progress\" or .status==\"queued\") and .databaseId != ${GITHUB_RUN_ID})] | length")
+          echo "Other runs going: $others"
+          if [[ "$others" != "0" ]]; then echo "skip=true" >> "$GITHUB_OUTPUT"; fi
+        working-directory: .
+
       - uses: actions/checkout@v4
+        if: steps.guard.outputs.skip != 'true'
       - uses: actions/setup-node@v4
+        if: steps.guard.outputs.skip != 'true'
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: automation/package-lock.json
       - run: npm ci --no-audit --no-fund
+        if: steps.guard.outputs.skip != 'true'
 
       - name: Reply to new reviews
+        if: steps.guard.outputs.skip != 'true'
         env:
           GBP_LOCATION: ${{ vars.GBP_LOCATION }}
           AUTO_REPLY_MIN_STARS: ${{ vars.AUTO_REPLY_MIN_STARS }}
@@ -55,7 +72,7 @@ jobs:
         run: node src/reviews.mjs
 
       - name: Save review log
-        if: always() && inputs.dry_run != true
+        if: always() && steps.guard.outputs.skip != 'true' && inputs.dry_run != true
         run: |
           if [[ -n "$(git status --porcelain state/)" ]]; then
             git config user.name "jayganesh-bot"
@@ -63,4 +80,18 @@ jobs:
             git add state/reviews.json
             git commit -m "Review log $(date -u +%Y-%m-%dT%H:%MZ)"
             for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
+          fi
+
+      - name: Wait 2 hours, then start the next run (shop hours only)
+        if: always() && steps.guard.outputs.skip != 'true' && inputs.dry_run != true
+        working-directory: .
+        run: |
+          # Next check is 2 hours from now; only chain while that falls before 22:30 IST.
+          next_ist=$(TZ=Asia/Kolkata date -d "+2 hours" +%H%M)
+          if [[ "$next_ist" > "0730" && "$next_ist" < "2230" ]]; then
+            sleep 7200
+            gh workflow run reviews.yml -R "$GITHUB_REPOSITORY" -f dry_run=false
+            echo "Next run started."
+          else
+            echo "Next check would be at $next_ist IST, outside shop hours. The morning schedule restarts the chain."
           fi
