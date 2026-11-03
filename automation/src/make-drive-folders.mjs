@@ -30,7 +30,8 @@ const fmtDay = (iso) => {
   return `${d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", timeZone: "Asia/Kolkata" })} (${d.toLocaleDateString("en-GB", { weekday: "short", timeZone: "Asia/Kolkata" })})`;
 };
 // Must start with the first post date: that is how src/sync-media.mjs finds this folder.
-const monthName = `${posts[0].date} → ${posts.at(-1).date} · Content plan`;
+const lastDate = posts.map((p) => p.date).sort().at(-1); // day numbers are not always in date order
+const monthName = `${posts[0].date} → ${lastDate} · Content plan`;
 const RAW = "1 Raw";
 const EDITED = "2 Edited (posts automatically)";
 
