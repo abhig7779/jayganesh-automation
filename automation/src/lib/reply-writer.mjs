@@ -5,7 +5,8 @@ import Anthropic from "@anthropic-ai/sdk";
 // model OPENAI_MODEL). When both are set and one fails (e.g. no credits), the other writes the reply.
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-5";
 // A reply that mixes scripts (Devanagari with Roman Marathi/Hindi) is rewritten once with OPENAI_FALLBACK_MODEL.
-// Since 4 Nov 2026: gpt-6.1-terra, falling back to gpt-6.1-sol (owner's choice after a 10-review test).
+// Since 4 Nov 2026: gpt-5.4, falling back to gpt-5.2. Both are inside the org's free daily tokens for traffic
+// shared with OpenAI (250K/day on the gpt-5.x tier), so replies cost nothing (owner's choice after a 10-review test).
 const OPENAI_FALLBACK_MODEL = process.env.OPENAI_FALLBACK_MODEL || "";
 
 // Devanagari mixed with Marathi/Hindi written in English letters, e.g. "khup anand zala ... आवडलं".
