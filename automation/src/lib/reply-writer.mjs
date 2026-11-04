@@ -4,8 +4,8 @@ import Anthropic from "@anthropic-ai/sdk";
 // Uses Claude when ANTHROPIC_API_KEY is set (owner's choice, 4 Nov 2026), otherwise OpenAI (OPENAI_API_KEY,
 // model OPENAI_MODEL). When both are set and one fails (e.g. no credits), the other writes the reply.
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-5";
-// gpt-5.4 is free under the org's data-sharing tokens but sometimes mixes scripts in Marathi replies;
-// such a reply is rewritten once with OPENAI_FALLBACK_MODEL (owner's choice after a 10-review test, 4 Nov 2026).
+// A reply that mixes scripts (Devanagari with Roman Marathi/Hindi) is rewritten once with OPENAI_FALLBACK_MODEL.
+// Since 4 Nov 2026: gpt-6.1-terra, falling back to gpt-6.1-sol (owner's choice after a 10-review test).
 const OPENAI_FALLBACK_MODEL = process.env.OPENAI_FALLBACK_MODEL || "";
 
 // Devanagari mixed with Marathi/Hindi written in English letters, e.g. "khup anand zala ... आवडलं".
