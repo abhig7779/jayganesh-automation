@@ -1,7 +1,8 @@
 // Writes an owner reply to a Google review with Claude.
 import Anthropic from "@anthropic-ai/sdk";
 
-// Uses OpenAI when OPENAI_API_KEY is set (model: OPENAI_MODEL), otherwise Claude (ANTHROPIC_API_KEY).
+// Uses Claude when ANTHROPIC_API_KEY is set (owner's choice, 4 Nov 2026), otherwise OpenAI (OPENAI_API_KEY,
+// model OPENAI_MODEL). When both are set and one fails (e.g. no credits), the other writes the reply.
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-5";
 
 const MODEL = process.env.CLAUDE_MODEL || "claude-opus-5-5";
@@ -26,7 +27,8 @@ How to reply:
 
 export function replyWriter({ apiKey, phone } = {}) {
   const openaiKey = process.env.OPENAI_API_KEY;
-  const client = openaiKey ? null : new Anthropic(apiKey ? { apiKey } : {});
+  const claudeKey = apiKey || process.env.ANTHROPIC_API_KEY;
+  const client = claudeKey ? new Anthropic({ apiKey: claudeKey }) : null;
 
   const userMessage = ({ name, stars, comment, recentReplies = [] }) => {
     const avoid = recentReplies.length
@@ -55,7 +57,7 @@ export function replyWriter({ apiKey, phone } = {}) {
   async function writeWithClaude(review) {
     const response = await client.beta.messages.create({
       model: MODEL,
-      max_tokens: 1024,
+      max_tokens: 4000, // thinking is always on for this model and counts toward the limit
       betas: ["server-side-fallback-2026-07-01"],
       fallbacks: "default",
       output_config: { effort: "low" },
@@ -67,7 +69,18 @@ export function replyWriter({ apiKey, phone } = {}) {
   }
 
   async function write(review) {
-    const text = openaiKey ? await writeWithOpenAI(review) : await writeWithClaude(review);
+    const order = [client && writeWithClaude, openaiKey && writeWithOpenAI].filter(Boolean);
+    if (!order.length) throw new Error("No AI key set (ANTHROPIC_API_KEY or OPENAI_API_KEY)");
+    let text, lastErr;
+    for (const attempt of order) {
+      try {
+        text = await attempt(review);
+        break;
+      } catch (err) {
+        lastErr = err;
+      }
+    }
+    if (text === undefined) throw lastErr;
     if (!text) throw new Error("The model returned an empty reply");
     if (text.length > 4000) throw new Error("Reply too long for Google (4,000 characters max)");
     return text;
