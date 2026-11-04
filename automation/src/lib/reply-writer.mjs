@@ -4,6 +4,14 @@ import Anthropic from "@anthropic-ai/sdk";
 // Uses Claude when ANTHROPIC_API_KEY is set (owner's choice, 4 Nov 2026), otherwise OpenAI (OPENAI_API_KEY,
 // model OPENAI_MODEL). When both are set and one fails (e.g. no credits), the other writes the reply.
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-5";
+// gpt-5.4 is free under the org's data-sharing tokens but sometimes mixes scripts in Marathi replies;
+// such a reply is rewritten once with OPENAI_FALLBACK_MODEL (owner's choice after a 10-review test, 4 Nov 2026).
+const OPENAI_FALLBACK_MODEL = process.env.OPENAI_FALLBACK_MODEL || "";
+
+// Devanagari mixed with Marathi/Hindi written in English letters, e.g. "khup anand zala ... आवडलं".
+// English product words inside a Devanagari reply ("fitting", "quality") are fine and don't count.
+const ROMAN_MR_HI = /\b(aahe|ahe|ani|khup|zala|zali|jhala|jhali|aikun|tumhala|tumchya|madhe|kela|keli|hai|aapki|aapka|bahut|accha|kiya|humein)\b/i;
+const mixedScript = (t) => /[\u0900-\u097F]/.test(t) && ROMAN_MR_HI.test(t);
 
 const MODEL = process.env.CLAUDE_MODEL || "claude-opus-5-5";
 
@@ -38,11 +46,17 @@ export function replyWriter({ apiKey, phone } = {}) {
   };
 
   async function writeWithOpenAI(review) {
+    const text = await openaiReply(review, OPENAI_MODEL);
+    if (OPENAI_FALLBACK_MODEL && mixedScript(text)) return openaiReply(review, OPENAI_FALLBACK_MODEL);
+    return text;
+  }
+
+  async function openaiReply(review, model) {
     const res = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${openaiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: OPENAI_MODEL,
+        model,
         max_completion_tokens: 2500,
         messages: [{ role: "system", content: system(phone) }, { role: "user", content: userMessage(review) }],
       }),
