@@ -1,9 +1,54 @@
 {
   "rating": 4.9,
-  "count": 806,
-  "updatedAt": "2026-11-03",
+  "count": 810,
+  "updatedAt": "2026-11-04",
   "source": "google",
   "reviews": [
+    {
+      "id": "rupchand-mohite",
+      "name": "Rupchand Mohite",
+      "stars": 5,
+      "text": "Mazi aura gadi aahe mast light padat aahe Dhc कंपनीचे 250W light taktli yekadam mast light aahr",
+      "when": "",
+      "publishTime": "2026-11-04T15:57:30.222068Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocIK9HziuBfFXxEQ-ajlhPLgKfPDghM9nt4kS6J6b_j8FR8ZXA=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "sachin-lahor",
+      "name": "Sachin Lahor",
+      "stars": 5,
+      "text": "Dhc nexora 250W led installed in venue. Superb night visibility with genuine brand.",
+      "when": "",
+      "publishTime": "2026-11-04T15:57:25.254301Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocJ9lhiDHeIL1Oe13XIVLV8sWXD2P9dDv_2a5XI5FJMzfd_SaZBt=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "rushikesh-mate",
+      "name": "Rushikesh Mate",
+      "stars": 5,
+      "text": "Best service and information provided for my car.",
+      "when": "",
+      "publishTime": "2026-11-04T13:11:03.620440Z",
+      "photo": "https://lh3.googleusercontent.com/a-/ALV-UjWfsEvZDOaMrG0k6wW1TV_L6pU_eIyK6Hx2zNFbI58nElogTqTOsg=s120-c-rp-mo-ba12-br100"
+    },
+    {
+      "id": "ganesh-sutar",
+      "name": "Ganesh Sutar",
+      "stars": 5,
+      "text": "Jbl spekar takale mast fiting zale aahet",
+      "when": "",
+      "publishTime": "2026-11-04T11:26:17.556449Z",
+      "photo": "https://lh3.googleusercontent.com/a-/ALV-UjVWvTg2TMdd4ftq_J2wN3hpiytAvRIa4rcD15YVVukJE9vXJzbV=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "umesh-jadhav",
+      "name": "UMESH JADHAV",
+      "stars": 5,
+      "text": "Very good quality and fitting",
+      "when": "",
+      "publishTime": "2026-11-04T10:31:29.251827Z",
+      "photo": "https://lh3.googleusercontent.com/a-/ALV-UjWsHvpZx39sWXJayNa5q5ktjvSFNxYqx6ZIdKYnyx1f8LrfDFc=s120-c-rp-mo-br100"
+    },
     {
       "id": "ajinath-more",
       "name": "AJINATH MORE",
