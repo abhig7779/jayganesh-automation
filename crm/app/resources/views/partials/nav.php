@@ -13,11 +13,13 @@ $items = [
     ['label' => 'Quotations', 'route' => 'quotations.index', 'icon' => 'doc', 'can' => 'quotations.view'],
     ['label' => 'Bills', 'route' => 'bills.index', 'icon' => 'receipt', 'can' => 'invoices.view', 'mobile' => true],
     ['label' => 'Stock', 'route' => 'products.index', 'icon' => 'box', 'can' => 'inventory.view'],
+    ['label' => 'Purchases', 'route' => 'purchases.index', 'icon' => 'archive', 'can' => 'purchases.manage'], // purchases module
     ['label' => 'Job cards', 'route' => 'jobcards.index', 'icon' => 'wrench', 'can' => 'jobcards.view'],
     ['label' => 'Finance', 'route' => 'finance.index', 'icon' => 'rupee', 'can' => 'finance.view'],
     ['label' => 'Leads', 'route' => 'leads.index', 'icon' => 'chat', 'can' => 'leads.manage'],
     ['label' => 'Reports', 'route' => 'reports.index', 'icon' => 'chart', 'can' => 'reports.view'],
     ['label' => 'Staff', 'route' => 'staff.index', 'icon' => 'id', 'can' => 'staff.manage'],
+    ['label' => 'Activity', 'route' => 'activity.index', 'icon' => 'history', 'can' => 'audit.view'], // activity log
     ['label' => 'Settings', 'route' => 'settings.edit', 'icon' => 'cog', 'can' => 'settings.manage'],
 ];
 
