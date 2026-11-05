@@ -256,7 +256,7 @@ it('filters the log and shows ticks with the read blue only on the tick', functi
         ->assertSee('+91 98000 00002')->assertDontSee('+91 98000 00003');
     $this->actingAs($owner)->get(route('whatsapp.messages.index', ['template' => 'payment_receipt']))
         ->assertSee('+91 98000 00003')->assertDontSee('+91 98000 00002');
-    $this->actingAs($owner)->get(route('whatsapp.messages.index', ['from' => now()->addDay()->toDateString()]))
+    $this->actingAs($owner)->get(route('whatsapp.messages.index', ['from' => now('Asia/Kolkata')->addDay()->toDateString()]))
         ->assertSee('No WhatsApp messages match these filters');
 });
 
