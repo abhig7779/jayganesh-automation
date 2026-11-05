@@ -3,6 +3,7 @@
 use App\Models\Branch;
 use App\Models\User;
 use App\Services\Quotations\QuotationService;
+use App\Services\Reminders\ReminderService;
 use App\Support\Ops\HealthCheck;
 use App\Support\Phone;
 use Database\Seeders\RolesAndPermissionsSeeder;
@@ -87,3 +88,13 @@ Artisan::command('quotations:expire', function (QuotationService $quotations) {
 })->purpose('Mark quotations past their valid-until date as expired');
 
 Schedule::command('quotations:expire')->dailyAt('00:30')->timezone('Asia/Kolkata');
+
+// --- reminders ---
+// Service check-ups and review requests whose day has come become "due" (Reminders today list).
+Artisan::command('reminders:due', function (ReminderService $reminders) {
+    $n = $reminders->markDue();
+    $this->info("{$n} reminder(s) marked due.");
+})->purpose('Mark service check-up and review reminders due today');
+
+Schedule::command('reminders:due')->dailyAt('07:00')->timezone('Asia/Kolkata');
+// --- end reminders ---

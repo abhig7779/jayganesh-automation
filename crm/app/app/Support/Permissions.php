@@ -22,6 +22,7 @@ final class Permissions
         'leads.manage', 'offers.manage',
         'reports.view', 'reports.margins', 'reports.all_staff',
         'settings.manage', 'staff.manage', 'audit.view',
+        'reminders.manage', // --- reminders module: service check-ups + Google review requests (owner, admin, marketing; not sales) ---
     ];
 
     public const ROLES = [
@@ -33,6 +34,7 @@ final class Permissions
             'jobcards.view', 'jobcards.manage', 'jobcards.create', 'finance.view',
             'leads.manage', 'offers.manage', 'reports.view', 'reports.all_staff',
             'staff.manage', 'audit.view',
+            'reminders.manage', // --- reminders module ---
         ],
         'finance' => [
             'customers.view', 'invoices.view', 'payments.collect',
@@ -49,12 +51,13 @@ final class Permissions
         // one person from Staff → Extra access.
         'marketing' => [
             'customers.view', 'quotations.view', 'leads.manage', 'offers.manage', 'reports.view',
+            'reminders.manage', // --- reminders module ---
         ],
         // Leads/marketing are given per person (owner rule, 5 Nov): a marketing role, or the
         // `leads.manage` permission switched on for one user directly.
-        'marketing' => ['customers.view', 'quotations.view', 'leads.manage', 'offers.manage', 'reports.view'],
+        'marketing' => ['customers.view', 'quotations.view', 'leads.manage', 'offers.manage', 'reports.view', 'reminders.manage'], // reminders module adds reminders.manage
         'technician' => ['jobcards.view', 'jobcards.manage'],
-        'marketing' => ['customers.view', 'quotations.view', 'leads.manage', 'offers.manage', 'reports.view'],
+        'marketing' => ['customers.view', 'quotations.view', 'leads.manage', 'offers.manage', 'reports.view', 'reminders.manage'], // reminders module adds reminders.manage
     ];
 
     public const ROLE_LABELS = [
@@ -74,6 +77,7 @@ final class Permissions
     public const EXTRA_ACCESS = [
         'leads.manage' => 'Ad & WhatsApp leads',
         'offers.manage' => 'Send offers to customers',
+        'reminders.manage' => 'Service reminders & review requests', // --- reminders module ---
         'reports.view' => 'Reports',
         'finance.view' => 'Finance (view)',
         'invoices.cancel' => 'Cancel bills',
