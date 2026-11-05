@@ -44,7 +44,7 @@ it('matches rules by name words, category and product, and keeps DIY products ou
     $washer = billProduct(['name' => 'Dishwasher tablets']);
     $wash = ReminderRule::query()->where('name', 'Wash / detailing')->firstOrFail();
 
-    $line = fn (Product $p) => new InvoiceItem(['name' => $p->name, 'product_id' => $p->id]);
+    $line = fn (Product $p) => (new InvoiceItem)->forceFill(['name' => $p->name, 'product_id' => $p->id]);
 
     expect($rule->matches($line($this->ceramic)->setRelation('product', $this->ceramic)))->toBeTrue()
         ->and($rule->matches($line($diy)->setRelation('product', $diy)))->toBeFalse()

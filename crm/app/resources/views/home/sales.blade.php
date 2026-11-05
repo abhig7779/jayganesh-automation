@@ -8,6 +8,9 @@
 <x-layouts.app title="Home">
     @include('home.partials.greeting')
     @include('home.partials.tiles')
+    @can('reminders.manage')
+        <x-reminders.home-block :user="$user" />
+    @endcan
 
     <div class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px] xl:grid-cols-[minmax(0,1fr)_360px]">
         <div class="min-w-0 space-y-5">

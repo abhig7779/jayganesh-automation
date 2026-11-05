@@ -6,11 +6,11 @@
     <x-ui.page-header title="Activity log" subtitle="Who changed what, and when. Nothing here can be edited." />
 
     <form method="GET" action="{{ route('activity.index') }}" class="mb-4 grid grid-cols-2 gap-2 lg:grid-cols-[1fr_1fr_150px_150px_auto_auto]">
-        <select name="user" class="input col-span-2 lg:col-span-1" aria-label="Who" onchange="this.form.submit()">
+        <select name="user" class="input col-span-2 lg:col-span-1" aria-label="Who" data-autosubmit>
             <option value="">Everyone</option>
             @foreach ($users as $u) <option value="{{ $u->id }}" @selected($filters['user'] === $u->id)>{{ $u->name }}</option> @endforeach
         </select>
-        <select name="type" class="input col-span-2 lg:col-span-1" aria-label="Type" onchange="this.form.submit()">
+        <select name="type" class="input col-span-2 lg:col-span-1" aria-label="Type" data-autosubmit>
             <option value="">All types</option>
             @foreach ($types as $t) <option value="{{ $t }}" @selected($filters['type'] === $t)>{{ ActivityPresenter::typeLabel($t) }}</option> @endforeach
         </select>

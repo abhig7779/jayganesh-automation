@@ -86,14 +86,17 @@ class SegmentBuilder
     {
         return $this->matching($filters)
             ->where('whatsapp_opt_in', true)
-            ->whereNull('opted_out_at');
+            ->whereNull('opted_out_at')
+            // Imported customers start with marketing_opt_in = false (no offers until they agree);
+            // null = never asked (counter customers), which follows the shop's existing practice.
+            ->where(fn (Builder $w) => $w->whereNull('marketing_opt_in')->orWhere('marketing_opt_in', true));
     }
 
     /** Matching customers who have opted out (shown so the owner knows they were excluded). */
     public function optedOutQuery(array $filters): Builder
     {
         return $this->matching($filters)->where(function (Builder $w) {
-            $w->where('whatsapp_opt_in', false)->orWhereNotNull('opted_out_at');
+            $w->where('whatsapp_opt_in', false)->orWhereNotNull('opted_out_at')->orWhere('marketing_opt_in', false);
         });
     }
 

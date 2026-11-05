@@ -5,6 +5,9 @@
 <x-layouts.app title="Home">
     @include('home.partials.greeting')
     @include('home.partials.tiles')
+    @can('reminders.manage')
+        <x-reminders.home-block :user="$user" />
+    @endcan
 
     {{-- Today's business strip --}}
     <section class="mb-5 rounded-xl border border-line bg-surface" aria-labelledby="biz-title">

@@ -19,7 +19,12 @@ class EnsureActiveSession
 
         // API calls with a bearer token have no session: only the on/off switch applies.
         if ($user && ! $request->hasSession()) {
-            abort_unless($user->is_active, 403, 'This login is switched off.');
+            // The "Website & ads (API)" service account is switched off for logins on purpose
+            // (no role, no screens); its keys may only create leads (crm/LEADS-API.md).
+            $token = method_exists($user, 'currentAccessToken') ? $user->currentAccessToken() : null;
+            $leadIntakeOnly = $token && method_exists($token, 'can') && $token->can('leads:create')
+                && ! $token->can('*') && $user->roles()->doesntExist();
+            abort_unless($user->is_active || $leadIntakeOnly, 403, 'This login is switched off.');
 
             return $next($request);
         }

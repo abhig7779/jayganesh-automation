@@ -24,7 +24,7 @@
     <form method="GET" action="{{ route('purchases.index') }}" class="mb-4 grid grid-cols-2 gap-2 lg:grid-cols-[1.4fr_1fr_150px_150px_auto]">
         @if ($filters['state']) <input type="hidden" name="state" value="{{ $filters['state'] }}"> @endif
         <input type="search" name="q" value="{{ $filters['q'] }}" class="input col-span-2 lg:col-span-1" placeholder="Search supplier, bill no. or item" aria-label="Search purchases">
-        <select name="supplier" class="input col-span-2 lg:col-span-1" aria-label="Supplier" onchange="this.form.submit()">
+        <select name="supplier" class="input col-span-2 lg:col-span-1" aria-label="Supplier" data-autosubmit>
             <option value="">All suppliers</option>
             @foreach ($suppliers as $s)
                 <option value="{{ $s->id }}" @selected($filters['supplier'] === $s->id)>{{ $s->name }}</option>
