@@ -15,7 +15,7 @@
     $nav = collect(require resource_path('views/partials/nav.php'))
         ->filter(fn ($i) => ($i['can'] === null || $user->can($i['can'])) && (! isset($i['when']) || ($i['when'])($user)))
         ->map(function ($i) use ($user) {
-            $i['children'] = array_values(array_filter($i['children'] ?? [], fn ($c) => $user->can($c['can'])));
+            $i['children'] = array_values(array_filter($i['children'] ?? [], fn ($c) => $user->can($c['can']) && (! isset($c['when']) || ($c['when'])($user))));
 
             return $i;
         })
@@ -126,6 +126,7 @@
                             <div class="text-[13px] font-semibold">{{ $user->name }}</div>
                             <div class="text-xs text-muted">{{ $user->roleLabel() }} · {{ \App\Support\Phone::pretty($user->phone) ?: $user->email }}</div>
                         </div>
+                        <a href="{{ route('profile.edit') }}" class="flex w-full items-center gap-2 px-4 py-2.5 text-sm font-medium text-ink hover:bg-sunken" role="menuitem"><x-icon name="id" class="size-4" /> My profile</a>{{-- profile module --}}
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button class="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-medium text-ink hover:bg-sunken" role="menuitem">
@@ -253,6 +254,7 @@
             <div class="min-w-0 flex-1 leading-tight">
                 <div class="truncate text-[15px] font-semibold">{{ $user->name }}</div>
                 <div class="truncate text-[13px] text-muted">{{ $user->roleLabel() }} · {{ \App\Support\Phone::pretty($user->phone) ?: $user->email }}</div>
+                <a href="{{ route('profile.edit') }}" class="mt-1 inline-flex min-h-8 items-center text-[13px] font-semibold text-ink underline underline-offset-4">My profile</a>{{-- profile module --}}
             </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf

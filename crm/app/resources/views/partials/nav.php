@@ -22,10 +22,14 @@ $items = [
         'when' => fn (User $u) => ! $seesBoard($u)],
     ['label' => 'New bill', 'route' => 'bills.create', 'icon' => 'plus', 'can' => 'invoices.create', 'mobile' => true, 'shortcut' => 'new-bill'],
     ['label' => 'Follow-ups', 'route' => 'followups.index', 'icon' => 'chat', 'can' => 'quotations.view', 'badge' => 'followups', 'active' => ['followups.*']],
-    ['label' => 'Customers', 'route' => 'customers.index', 'icon' => 'users', 'can' => 'customers.view', 'mobile' => true],
+    ['label' => 'Customers', 'route' => 'customers.index', 'icon' => 'users', 'can' => 'customers.view', 'mobile' => true, 'active' => ['customers.*'],
+        'children' => [
+            ['label' => 'Import customers', 'route' => 'customers.import', 'can' => 'customers.manage', 'when' => fn (User $u) => $u->hasAnyRole(['owner', 'admin']), 'active' => ['customers.import*']],
+        ]],
     ['label' => 'Quotations', 'route' => 'quotations.index', 'icon' => 'doc', 'can' => 'quotations.view'],
     ['label' => 'Bills', 'route' => 'bills.index', 'icon' => 'receipt', 'can' => 'invoices.view', 'mobile' => true],
     ['label' => 'Stock', 'route' => 'products.index', 'icon' => 'box', 'can' => 'inventory.view', 'active' => ['products.*', 'stock.*']],
+    ['label' => 'Purchases', 'route' => 'purchases.index', 'icon' => 'box', 'can' => 'purchases.manage', 'active' => ['purchases.*', 'suppliers.*']],
     ['label' => 'Job cards', 'route' => 'jobcards.index', 'icon' => 'wrench', 'can' => 'jobcards.view', 'when' => $seesBoard],
     ['label' => 'Finance', 'route' => 'finance.index', 'icon' => 'rupee', 'can' => 'finance.view', 'active' => ['finance.index'],
         'children' => [
@@ -33,11 +37,16 @@ $items = [
             ['label' => 'Cash close', 'route' => 'finance.cash-close', 'can' => 'finance.view', 'active' => ['finance.cash-close', 'finance.cash-close.*', 'finance.cash-closes.*']],
             ['label' => 'Dues', 'route' => 'finance.dues', 'can' => 'finance.view', 'active' => ['finance.dues']],
         ]],
+    ['label' => 'Reminders', 'route' => 'reminders.index', 'icon' => 'bell', 'can' => 'reminders.manage', 'active' => ['reminders.*']],
     ['label' => 'Leads', 'route' => 'leads.index', 'icon' => 'chat', 'can' => 'leads.manage'],
     ['label' => 'Offers', 'route' => 'offers.index', 'icon' => 'megaphone', 'can' => 'offers.manage', 'active' => ['offers.*', 'audiences.*']],
     ['label' => 'Reports', 'route' => 'reports.index', 'icon' => 'chart', 'can' => 'reports.view'],
     ['label' => 'Staff', 'route' => 'staff.index', 'icon' => 'id', 'can' => 'staff.manage'],
-    ['label' => 'Settings', 'route' => 'settings.edit', 'icon' => 'cog', 'can' => 'settings.manage'],
+    ['label' => 'Activity log', 'route' => 'activity.index', 'icon' => 'doc', 'can' => 'audit.view', 'active' => ['activity.*']],
+    ['label' => 'Settings', 'route' => 'settings.edit', 'icon' => 'cog', 'can' => 'settings.manage', 'active' => ['settings.*'],
+        'children' => [
+            ['label' => 'API keys', 'route' => 'api-tokens.index', 'can' => 'settings.manage', 'active' => ['api-tokens.*']],
+        ]],
 ];
 
 return array_map(function (array $i) {
