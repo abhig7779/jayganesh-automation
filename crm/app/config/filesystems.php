@@ -38,6 +38,14 @@ return [
             'report' => false,
         ],
 
+        // [devops] Nightly backup zips (config/backup.php). Never web-visible.
+        'backups' => [
+            'driver' => 'local',
+            'root' => storage_path('app/backups'),
+            'throw' => false,
+            'report' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
