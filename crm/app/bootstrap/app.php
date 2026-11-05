@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureActiveSession;
+use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -30,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Lets the web pages call /api/v1 with the normal login cookie (Sanctum SPA mode).
         // Requests from SANCTUM_STATEFUL_DOMAINS get session + CSRF; everyone else needs a token.
         $middleware->statefulApi();
+        $middleware->append(SecurityHeaders::class); // [devops] security headers + https redirect (crm/DEPLOY.md)
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // The API always answers in JSON (401/403/404/422), never with a redirect to /login.

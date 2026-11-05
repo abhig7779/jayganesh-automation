@@ -1,0 +1,216 @@
+name: CRM deploy
+
+# Deploys crm/app to MilesWeb (~/crm-app, document root ~/crm-app/public).
+# Normal use: Actions tab > "CRM deploy" > Run workflow. Owner guide: crm/DEPLOY.md.
+#
+# Needs (Settings > Secrets and variables > Actions):
+#   secrets   CRM_SSH_HOST, CRM_SSH_PORT, CRM_SSH_USER, CRM_SSH_KEY, (optional) CRM_SSH_KNOWN_HOSTS
+#   variables CRM_PHP_BIN      PHP on the server, e.g. php, php84 or /opt/alt/php84/usr/bin/php
+#                              (find it over SSH: `which php84 php`, then `php -v`). Default: php
+#             CRM_URL          default https://crm.jayganeshcaraccessories.com
+#             CRM_AUTO_DEPLOY  "true" = also deploy on every push to main that touches crm/app.
+#                              Off unless set.
+#
+# ROLLBACK (crm/DEPLOY.md "Undo a bad deploy"):
+#   1. Run this workflow again with "ref" = the last good commit SHA or tag. Same steps, older code.
+#   2. If that release added a migration that must be undone, over SSH:
+#        cd ~/crm-app && php artisan migrate:rollback --step=1 --force
+#      (only when the migration's down() is safe; otherwise restore the pre-deploy DB backup
+#       that this workflow takes, see crm/RESTORE.md).
+#   3. If the site is stuck on "being updated": ssh in and run `php artisan up`.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch, tag or commit to deploy (blank = the branch you picked above)"
+        required: false
+        default: ""
+      backup_first:
+        description: "Take a database backup before migrating"
+        type: boolean
+        default: true
+  push:
+    branches: [main]
+    paths: ["crm/app/**"]
+
+permissions:
+  contents: read
+
+# Never two deploys at once; a newer one waits for the running one.
+concurrency:
+  group: crm-deploy
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    if: github.event_name == 'workflow_dispatch' || vars.CRM_AUTO_DEPLOY == 'true'
+    uses: ./.github/workflows/crm-ci.yml
+
+  deploy:
+    needs: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: production
+      url: ${{ vars.CRM_URL || 'https://crm.jayganeshcaraccessories.com' }}
+    env:
+      APP_DIR: crm-app # relative to the SSH user's home folder
+      PHP_BIN: ${{ vars.CRM_PHP_BIN || 'php' }}
+      CRM_URL: ${{ vars.CRM_URL || 'https://crm.jayganeshcaraccessories.com' }}
+      SSH_PORT: ${{ secrets.CRM_SSH_PORT || '22' }}
+    defaults:
+      run:
+        working-directory: crm/app
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+
+      - name: Check the secrets are set
+        working-directory: .
+        env:
+          H: ${{ secrets.CRM_SSH_HOST }}
+          U: ${{ secrets.CRM_SSH_USER }}
+          K: ${{ secrets.CRM_SSH_KEY }}
+        run: |
+          missing=""
+          [ -n "$H" ] || missing="$missing CRM_SSH_HOST"
+          [ -n "$U" ] || missing="$missing CRM_SSH_USER"
+          [ -n "$K" ] || missing="$missing CRM_SSH_KEY"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing GitHub secrets:$missing (see crm/DEPLOY.md step 4)"; exit 1
+          fi
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: mbstring, intl, gd, zip, bcmath, fileinfo, curl
+          coverage: none
+          tools: composer:v2
+
+      # composer.json pins platform PHP 8.2, so this vendor/ also runs on PHP 8.2 to 8.4.
+      - name: Build PHP dependencies (no dev tools)
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-progress
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: crm/app/package-lock.json
+
+      - name: Build CSS/JS
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+          rm -rf node_modules
+
+      - name: Set up SSH
+        working-directory: .
+        env:
+          KEY: ${{ secrets.CRM_SSH_KEY }}
+          HOST: ${{ secrets.CRM_SSH_HOST }}
+          KNOWN: ${{ secrets.CRM_SSH_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/crm_deploy && chmod 600 ~/.ssh/crm_deploy
+          if [ -n "$KNOWN" ]; then
+            printf '%s\n' "$KNOWN" > ~/.ssh/known_hosts
+          else
+            ssh-keyscan -p "$SSH_PORT" -H "$HOST" > ~/.ssh/known_hosts 2>/dev/null
+          fi
+          cat > ~/.ssh/config <<EOF
+          Host crm
+            HostName $HOST
+            Port $SSH_PORT
+            User ${{ secrets.CRM_SSH_USER }}
+            IdentityFile ~/.ssh/crm_deploy
+            IdentitiesOnly yes
+            ServerAliveInterval 30
+          EOF
+          ssh crm 'echo "Connected to $(hostname)"'
+
+      - name: Maintenance mode on
+        working-directory: .
+        run: |
+          ssh crm "set -e; mkdir -p ~/$APP_DIR; cd ~/$APP_DIR
+            if [ -f artisan ] && [ -f .env ]; then $PHP_BIN artisan down --retry=15 --refresh=15 || true; else echo 'First deploy: nothing to take down'; fi"
+
+      # .env, storage/ and the SQLite file live only on the server and are never touched.
+      # --delete removes files that no longer exist in the repo (except the excluded ones).
+      - name: Upload code (rsync)
+        run: |
+          rsync -az --delete --stats \
+            --exclude='.env' \
+            --exclude='.env.backup' \
+            --exclude='/storage/' \
+            --exclude='/database/database.sqlite' \
+            --exclude='node_modules/' \
+            --exclude='/tests/' \
+            --exclude='/.deploy/' \
+            --exclude='/public/storage' \
+            --exclude='/public/hot' \
+            --exclude='/public/.well-known/' \
+            --exclude='.user.ini' \
+            --exclude='php.ini' \
+            --exclude='error_log' \
+            --exclude='.git*' \
+            --exclude='.phpunit*' \
+            ./ "crm:$APP_DIR/"
+
+      - name: Migrate, cache and bring the site back
+        id: remote
+        working-directory: .
+        env:
+          BACKUP_FIRST: ${{ github.event_name == 'workflow_dispatch' && inputs.backup_first == false && 'no' || 'yes' }}
+        run: |
+          set -o pipefail
+          ssh crm "BACKUP_FIRST=$BACKUP_FIRST PHP=$PHP_BIN APP_DIR=$APP_DIR bash -s" <<'REMOTE' | tee "$RUNNER_TEMP/remote.log"
+          set -euo pipefail
+          cd ~/"$APP_DIR"
+
+          # storage/ is never uploaded, so make sure its folders exist (first deploy).
+          mkdir -p storage/app/private storage/app/public storage/app/backups \
+                   storage/framework/cache/data storage/framework/sessions storage/framework/views \
+                   storage/logs bootstrap/cache
+          chmod -R u+rwX storage bootstrap/cache
+
+          # Some hosts write a PHP-version line into public/.htaccess; rsync replaced that file.
+          # Put the saved line back (crm/DEPLOY.md, step 2).
+          if [ -f .deploy/htaccess-prepend ]; then
+            cat .deploy/htaccess-prepend public/.htaccess > public/.htaccess.new && mv public/.htaccess.new public/.htaccess
+          fi
+
+          if [ ! -f .env ]; then
+            echo "::warning::Code uploaded, but ~/$APP_DIR/.env does not exist yet. Finish the first-time steps in crm/DEPLOY.md (step 6), then run this workflow again."
+            echo "CRM_NEEDS_ENV"
+            exit 0
+          fi
+
+          $PHP -r 'echo "Server PHP ", PHP_VERSION, PHP_EOL;'
+          if [ "$BACKUP_FIRST" = "yes" ]; then
+            $PHP artisan backup:run --only-db --filename="predeploy-$(date +%Y-%m-%d-%H-%M-%S).zip" --no-interaction || echo "::warning::Pre-deploy backup failed; continuing. Check /health."
+          fi
+          $PHP artisan migrate --force --no-interaction
+          $PHP artisan optimize
+          [ -L public/storage ] || $PHP artisan storage:link
+          $PHP artisan queue:restart
+          $PHP artisan up
+          $PHP artisan crm:health || echo "::warning::crm:health reported a problem (see above). The site is up."
+          REMOTE
+          if grep -q CRM_NEEDS_ENV "$RUNNER_TEMP/remote.log"; then echo "first_deploy=true" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Smoke test
+        if: steps.remote.outputs.first_deploy != 'true'
+        run: |
+          for i in 1 2 3 4 5; do
+            if curl -fsS --max-time 20 "$CRM_URL/up" > /dev/null; then echo "OK: $CRM_URL/up answered 200"; exit 0; fi
+            echo "Attempt $i failed, waiting…"; sleep 10
+          done
+          echo "::error::$CRM_URL/up did not answer 200. Check storage/logs on the server; see 'Undo a bad deploy' in crm/DEPLOY.md."
+          exit 1
+
+      - name: Remove the SSH key
+        if: always()
+        working-directory: .
+        run: rm -f ~/.ssh/crm_deploy

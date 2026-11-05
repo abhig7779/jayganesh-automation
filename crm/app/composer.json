@@ -13,6 +13,7 @@
         "laravel/tinker": "^2.10.1",
         "openspout/openspout": "^4.28",
         "spatie/laravel-activitylog": "^4.12",
+        "spatie/laravel-backup": "^9.0",
         "spatie/laravel-permission": "^6.25"
     },
     "require-dev": {

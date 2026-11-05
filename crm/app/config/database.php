@@ -62,6 +62,13 @@ return [
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
+            // [devops] Options for the nightly backup's mysqldump (config/backup.php).
+            // DB_DUMP_BINARY_PATH = the folder holding mysqldump, only if it is not on PATH.
+            'dump' => array_filter([
+                'dump_binary_path' => env('DB_DUMP_BINARY_PATH'),
+                'use_single_transaction' => true,
+                'timeout' => 300,
+            ]),
         ],
 
         'mariadb' => [

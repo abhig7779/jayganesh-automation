@@ -1,0 +1,117 @@
+name: CRM backup to Google Drive
+
+# Every night at 01:00 IST (19:30 UTC) copy the newest CRM backup zip from the server to
+# Google Drive and keep the newest 30 there. The server makes the zip at 23:30 IST.
+# Owner guide: crm/DEPLOY.md, "Backups to Google Drive". Restore drill: crm/RESTORE.md.
+#
+# Secrets: CRM_SSH_HOST, CRM_SSH_PORT, CRM_SSH_USER, CRM_SSH_KEY, (optional) CRM_SSH_KNOWN_HOSTS,
+#          GDRIVE_BACKUP_FOLDER_ID, and a Drive login: GDRIVE_SA_JSON (service account, folder in a
+#          Shared drive) or, as a fallback, the existing GBP_CLIENT_ID / GBP_CLIENT_SECRET /
+#          DRIVE_REFRESH_TOKEN Google login.
+#
+# THIS REPO IS PUBLIC: the zip is never uploaded as a workflow artifact and never printed.
+
+on:
+  schedule:
+    - cron: "30 19 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: crm-backup-pull
+  cancel-in-progress: false
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      BACKUP_DIR: crm-app/storage/app/backups/jayganesh-crm # relative to the SSH user's home
+      KEEP: "30"
+      MAX_AGE_HOURS: "30"
+      SSH_PORT: ${{ secrets.CRM_SSH_PORT || '22' }}
+    steps:
+      - name: Skip quietly until the server is set up
+        id: ready
+        env:
+          H: ${{ secrets.CRM_SSH_HOST }}
+          F: ${{ secrets.GDRIVE_BACKUP_FOLDER_ID }}
+        run: |
+          if [ -z "$H" ] || [ -z "$F" ]; then
+            echo "::notice::CRM_SSH_HOST or GDRIVE_BACKUP_FOLDER_ID is not set yet; nothing to do."
+            echo "go=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.ready.outputs.go == 'true'
+        with:
+          sparse-checkout: crm/ops
+
+      - name: Set up SSH
+        if: steps.ready.outputs.go == 'true'
+        env:
+          KEY: ${{ secrets.CRM_SSH_KEY }}
+          HOST: ${{ secrets.CRM_SSH_HOST }}
+          USER_: ${{ secrets.CRM_SSH_USER }}
+          KNOWN: ${{ secrets.CRM_SSH_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/crm_deploy && chmod 600 ~/.ssh/crm_deploy
+          if [ -n "$KNOWN" ]; then printf '%s\n' "$KNOWN" > ~/.ssh/known_hosts
+          else ssh-keyscan -p "$SSH_PORT" -H "$HOST" > ~/.ssh/known_hosts 2>/dev/null; fi
+          printf 'Host crm\n  HostName %s\n  Port %s\n  User %s\n  IdentityFile ~/.ssh/crm_deploy\n  IdentitiesOnly yes\n' \
+            "$HOST" "$SSH_PORT" "$USER_" > ~/.ssh/config
+
+      - name: Download the newest backup
+        if: steps.ready.outputs.go == 'true'
+        id: fetch
+        run: |
+          newest=$(ssh crm "ls -1t ~/$BACKUP_DIR/20[0-9][0-9]-*.zip 2>/dev/null | head -1")
+          if [ -z "$newest" ]; then
+            echo "::error::No backup zip found in ~/$BACKUP_DIR on the server. Is the cron line set up? Check /health."
+            exit 1
+          fi
+          age_h=$(ssh crm "echo \$(( (\$(date +%s) - \$(stat -c %Y '$newest')) / 3600 ))")
+          name=$(basename "$newest")
+          echo "Newest backup: $name ($age_h hours old)"
+          mkdir -p "$RUNNER_TEMP/backup"
+          scp -q -P "$SSH_PORT" -i ~/.ssh/crm_deploy "crm:$newest" "$RUNNER_TEMP/backup/$name"
+          unzip -tq "$RUNNER_TEMP/backup/$name" > /dev/null 2>&1 || zipinfo -1 "$RUNNER_TEMP/backup/$name" > /dev/null \
+            || { echo "::error::Downloaded zip looks damaged."; exit 1; }
+          echo "file=$RUNNER_TEMP/backup/$name" >> "$GITHUB_OUTPUT"
+          echo "age=$age_h" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-python@v5
+        if: steps.ready.outputs.go == 'true'
+        with:
+          python-version: "3.12"
+
+      - name: Upload to Google Drive and keep the newest ${{ env.KEEP }}
+        if: steps.ready.outputs.go == 'true'
+        env:
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_JSON }}
+          GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GBP_CLIENT_ID }}
+          GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GBP_CLIENT_SECRET }}
+          GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.DRIVE_REFRESH_TOKEN }}
+          FOLDER: ${{ secrets.GDRIVE_BACKUP_FOLDER_ID }}
+        run: |
+          pip install --quiet --disable-pip-version-check google-api-python-client==2.151.0 google-auth==2.36.0
+          python crm/ops/drive_backup_upload.py "${{ steps.fetch.outputs.file }}" --folder "$FOLDER" --keep "$KEEP"
+
+      # Fail (GitHub emails the repo owner) when the server's newest backup is stale,
+      # even though the copy above still ran.
+      - name: Check the backup is fresh
+        if: steps.ready.outputs.go == 'true'
+        run: |
+          if [ "${{ steps.fetch.outputs.age }}" -gt "$MAX_AGE_HOURS" ]; then
+            echo "::error::The newest backup on the server is ${{ steps.fetch.outputs.age }} hours old. The nightly backup is not running; check /health and storage/logs."
+            exit 1
+          fi
+
+      - name: Clean up
+        if: always()
+        run: rm -rf ~/.ssh/crm_deploy "$RUNNER_TEMP/backup"

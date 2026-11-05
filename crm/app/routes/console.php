@@ -2,6 +2,7 @@
 
 use App\Models\Branch;
 use App\Models\User;
+use App\Support\Ops\HealthCheck;
 use App\Support\Phone;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Database\Seeders\SettingsSeeder;
@@ -55,8 +56,25 @@ Artisan::command('crm:create-owner', function () {
     $this->info("Owner {$user->name} created. Sign in with ".Phone::pretty($phone).'.');
 })->purpose('Create an Owner login');
 
-// --- whatsapp --- (lead: keep one queue:work line if another module adds the same)
-// Shared hosting has no supervisor: cron runs schedule:run every minute, and this drains the
-// database queue (WhatsApp retries at 1, 5 and 15 min, ARCHITECTURE.md §2).
+// --- devops: scheduler (crm/DEPLOY.md, "Cron"). One cron line runs `schedule:run` every minute. ---
+// Times are India time; the app itself stores UTC.
+Schedule::call(fn () => HealthCheck::beat())
+    ->name('ops:heartbeat')->everyMinute();
+
+// Shared hosting has no supervisor, so the scheduler starts a short-lived worker every minute.
+// It exits when the queue is empty or after 50 s; withoutOverlapping stops two running at once.
 Schedule::command('queue:work --stop-when-empty --max-time=50')
     ->everyMinute()->withoutOverlapping(5);
+
+// Nightly backup at 23:30 IST: clean first (keeps 30 days), then back up. Monitor emails if stale.
+Schedule::command('backup:clean')
+    ->dailyAt('23:30')->timezone('Asia/Kolkata')->withoutOverlapping(60);
+Schedule::command('backup:run')
+    ->dailyAt('23:30')->timezone('Asia/Kolkata')->withoutOverlapping(60);
+Schedule::command('backup:monitor')
+    ->dailyAt('09:00')->timezone('Asia/Kolkata');
+
+// Daily email of yesterday's errors (skipped when there are none). ERROR_DIGEST_ENABLED toggles it.
+Schedule::command('crm:error-digest')
+    ->dailyAt('08:00')->timezone('Asia/Kolkata');
+// --- end devops ---
