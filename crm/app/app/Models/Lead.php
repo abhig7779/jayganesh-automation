@@ -30,6 +30,8 @@ class Lead extends Model
         'instagram' => 'Instagram',
         'website' => 'Website',
         'referral' => 'Referral',
+        'meta_lead_ad' => 'Meta lead ad', // [lead intake] website form + Meta lead ads (LEADS-API.md)
+        'other' => 'Other',               // [lead intake]
     ];
 
     public const NEW = 'new';
