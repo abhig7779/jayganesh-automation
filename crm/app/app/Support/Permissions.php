@@ -50,6 +50,7 @@ final class Permissions
             'customers.view', 'quotations.view', 'leads.manage', 'offers.manage', 'reports.view',
         ],
         'technician' => ['jobcards.view', 'jobcards.manage'],
+        'marketing' => ['customers.view', 'quotations.view', 'leads.manage', 'offers.manage', 'reports.view'],
     ];
 
     public const ROLE_LABELS = [

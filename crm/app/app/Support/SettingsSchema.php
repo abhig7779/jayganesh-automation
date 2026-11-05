@@ -42,6 +42,9 @@ final class SettingsSchema
             'whatsapp.template_followup' => ['group' => 'WhatsApp', 'label' => 'Follow-up reminder template name (marketing)', 'type' => 'text', 'rules' => 'nullable|alpha_dash|max:60', 'default' => 'followup_reminder'],
             'whatsapp.template_review' => ['group' => 'WhatsApp', 'label' => 'Review request template name (marketing)', 'type' => 'text', 'rules' => 'nullable|alpha_dash|max:60', 'default' => 'review_request'],
             'whatsapp.utility_respects_opt_out' => ['group' => 'WhatsApp', 'label' => 'Also stop bills and receipts to customers who opted out (sent STOP)', 'type' => 'checkbox', 'rules' => 'boolean', 'default' => true],
+
+            // Offers (marketing)
+            'offers.marketing_rate_paise' => ['group' => 'Offers', 'label' => 'WhatsApp marketing rate per message, in paise (88 = ₹0.88), for the cost estimate', 'type' => 'number', 'rules' => 'nullable|integer|min:0|max:10000', 'default' => 88],
         ];
     }
 
