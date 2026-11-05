@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use App\Models\CustomerCar;
+
 /**
  * Common cars on Pune roads, for the make/model picker on the customer and bill screens.
  * The picker searches this list as you type ("cret" → Hyundai Creta). A model that isn't here
@@ -80,7 +82,7 @@ final class CarModels
                 $rows["$make|$model"] = ['make' => $make, 'model' => $model, 'label' => "$make $model"];
             }
         }
-        foreach (\App\Models\CustomerCar::query()->select('make', 'model')->distinct()->limit(300)->get() as $c) {
+        foreach (CustomerCar::query()->select('make', 'model')->distinct()->limit(300)->get() as $c) {
             $rows["{$c->make}|{$c->model}"] ??= ['make' => $c->make, 'model' => $c->model, 'label' => trim("{$c->make} {$c->model}")];
         }
 
