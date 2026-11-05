@@ -41,7 +41,13 @@ final class Permissions
         'sales' => [
             'customers.view', 'customers.manage', 'quotations.view', 'quotations.manage',
             'invoices.view', 'invoices.create', 'payments.collect',
-            'inventory.view', 'jobcards.view', 'leads.manage',
+            'inventory.view', 'jobcards.view',
+        ],
+        // Marketing (owner, 5 Nov 2026): ad leads, offers and audiences live here, NOT on the
+        // counter. Give it to whoever handles marketing, or switch the same permissions on for
+        // one person from Staff → Extra access.
+        'marketing' => [
+            'customers.view', 'quotations.view', 'leads.manage', 'offers.manage', 'reports.view',
         ],
         'technician' => ['jobcards.view', 'jobcards.manage'],
     ];
@@ -52,5 +58,20 @@ final class Permissions
         'finance' => 'Finance',
         'sales' => 'Sales / Counter',
         'technician' => 'Technician',
+        'marketing' => 'Marketing',
+    ];
+
+    /**
+     * Extra access the Owner can switch on for one person on top of their role
+     * (Staff → Extra access). Keys are permissions; values are plain-English labels.
+     */
+    public const EXTRA_ACCESS = [
+        'leads.manage' => 'Ad & WhatsApp leads',
+        'offers.manage' => 'Send offers to customers',
+        'reports.view' => 'Reports',
+        'finance.view' => 'Finance (view)',
+        'invoices.cancel' => 'Cancel bills',
+        'prices.manage' => 'Change prices',
+        'inventory.manage' => 'Edit products & stock',
     ];
 }

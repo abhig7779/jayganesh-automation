@@ -11,7 +11,8 @@ This is what every page does, who sees it, and how each daily job flows from fir
 >    - `2*gleam` adds two;
 >    - the empty box shows Recent and Popular items;
 >    - after each add, the cursor stays in the box, ready for the next item.
-> 3. **Normal price vs our price.** Every product has a **Normal price (MRP)** and **Our price**. The bill shows:
+> 3. **Marketing stays off the counter.** Ad/WhatsApp leads, offers and audiences belong to a **Marketing** role, or the Owner switches them on per person (Staff → Extra access). Counter (Sales) accounts only see their own quotation follow-ups.
+> 4. **Normal price vs our price.** Every product has a **Normal price (MRP)** and **Our price**. The bill shows:
 >    - the MRP struck through next to our price;
 >    - **"You save ₹X"** on the POS, the bill PDF, the thermal print, quotations and the WhatsApp message.
 >    - GST is always on the actual selling price.
