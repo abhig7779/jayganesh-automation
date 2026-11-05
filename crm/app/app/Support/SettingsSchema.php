@@ -49,6 +49,31 @@ final class SettingsSchema
             // Finance (cash close)
             'finance.opening_float_paise' => ['group' => 'Finance', 'label' => 'Opening cash in the drawer each morning, in paise (₹2,000 = 200000)', 'type' => 'number', 'rules' => 'nullable|integer|min:0|max:100000000', 'default' => 200000],
             'finance.owner_whatsapp' => ['group' => 'Finance', 'label' => 'Owner WhatsApp number for the day-close summary', 'type' => 'text', 'rules' => 'nullable|string|max:20', 'default' => '+91 98231 07676'],
+
+            // --- quotations: follow-up engine (UX-FLOWS §3.2) ---
+            ...self::followUpFields(),
+        ];
+    }
+
+    /**
+     * Follow-up schedule and the WhatsApp texts staff send on each step. Placeholders:
+     * {name} {car} {items} {amount} {valid_until} {pdf_link} {shop} {savings} {savings_line}.
+     */
+    private static function followUpFields(): array
+    {
+        // Left empty, each one falls back to its default (FollowUpMessages::template).
+        $g = 'Quotations & follow-ups';
+        $msg = fn (string $label, string $default) => ['group' => $g, 'label' => $label, 'type' => 'textarea', 'rules' => 'nullable|string|max:1000', 'default' => $default];
+
+        return [
+            'followups.schedule_days' => ['group' => $g, 'label' => 'Follow-up days after a quotation (comma separated)', 'type' => 'text', 'rules' => ['nullable', 'string', 'max:40', 'regex:/^\s*\d{1,2}(\s*,\s*\d{1,2}){0,5}\s*$/'], 'default' => '1, 3, 6, 10'],
+            'followups.msg_day1' => $msg('WhatsApp message: 1st follow-up (soft check-in)', "Hello {name}, thank you for visiting {shop}. Here is the quotation for your {car}: {items}, total {amount} (incl. GST). {savings_line}\n\nView or download it here: {pdf_link}\n\nIt is valid until {valid_until}. If you have any question, just reply to this message."),
+            'followups.msg_day3' => $msg('WhatsApp message: 2nd follow-up (answer doubts)', "Hello {name}, just checking if you had any questions about the quotation for your {car} ({items}, {amount}). {savings_line}We are happy to share photos of similar work we have done, or you can drop by and see it.\n\nQuotation: {pdf_link}"),
+            'followups.msg_day6' => $msg('WhatsApp message: 3rd follow-up (expiring soon)', "Hello {name}, a gentle reminder that your quotation for the {car} ({amount}) is valid until {valid_until}. {savings_line}Reply here or call us and we will book a time that suits you.\n\nQuotation: {pdf_link}"),
+            'followups.msg_day10' => $msg('WhatsApp message: last follow-up', "Hello {name}, this is our last check on your quotation for the {car} ({items}, {amount}). If you are still interested, reply here and we will do our best for you.\n\nQuotation: {pdf_link}\n\nThank you, {shop}"),
+            'followups.msg_visit' => $msg('WhatsApp message: on the day of a booked visit', "Hello {name}, looking forward to seeing you today at {shop} for your {car}. Reply here if the time changes.\n\nQuotation: {pdf_link}"),
+            'followups.msg_lead' => $msg('WhatsApp message: enquiry / asked price', 'Hello {name}, thank you for asking about {items} at {shop}, Kawadipat Toll Naka. {amount_line}Would you like us to send a detailed quotation, or book a time to visit? Just reply here.'),
+            'quotations.terms' => ['group' => $g, 'label' => 'Terms printed on quotations', 'type' => 'textarea', 'rules' => 'nullable|string|max:1000', 'default' => "Prices include GST.\nFitting time is confirmed when you book.\nWarranty as per brand terms.\nPrices may change after the validity date."],
         ];
     }
 

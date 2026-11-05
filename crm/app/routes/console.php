@@ -3,6 +3,7 @@
 use App\Models\Branch;
 use App\Models\User;
 use App\Support\Ops\HealthCheck;
+use App\Services\Quotations\QuotationService;
 use App\Support\Phone;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Database\Seeders\SettingsSeeder;
@@ -78,3 +79,11 @@ Schedule::command('backup:monitor')
 Schedule::command('crm:error-digest')
     ->dailyAt('08:00')->timezone('Asia/Kolkata');
 // --- end devops ---
+// --- quotations ---
+// Quotes past their validity become Expired (the last planned follow-up is kept). Daily, shop time.
+Artisan::command('quotations:expire', function (QuotationService $quotations) {
+    $n = $quotations->expireDue();
+    $this->info("{$n} quotation(s) marked expired.");
+})->purpose('Mark quotations past their valid-until date as expired');
+
+Schedule::command('quotations:expire')->dailyAt('00:30')->timezone('Asia/Kolkata');
