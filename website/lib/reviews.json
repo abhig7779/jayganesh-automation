@@ -1,9 +1,18 @@
 {
   "rating": 4.9,
   "count": 810,
-  "updatedAt": "2026-11-04",
+  "updatedAt": "2026-11-05",
   "source": "google",
   "reviews": [
+    {
+      "id": "angad-pawar",
+      "name": "Angad pawar",
+      "stars": 5,
+      "text": "Mazi swift gadi aahe 250 w yekadm mast light padat aahe",
+      "when": "",
+      "publishTime": "2026-11-05T12:07:54.647700Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocKCCmGmygVL50f2SRWFz4zSyzxEar7q9rwUI0S5OKelHAax0w=s120-c-rp-mo-br100"
+    },
     {
       "id": "rupchand-mohite",
       "name": "Rupchand Mohite",
