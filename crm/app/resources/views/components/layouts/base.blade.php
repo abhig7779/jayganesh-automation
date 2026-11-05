@@ -11,9 +11,12 @@
     <link rel="icon" href="{{ asset('img/icon-192.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('img/icon-192.png') }}">
     <link rel="manifest" href="{{ asset('manifest.webmanifest') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-dvh bg-zinc-100 font-sans text-ink antialiased">
+<body {{ $attributes->merge(['class' => 'min-h-dvh bg-canvas font-sans text-ink antialiased']) }}>
     {{ $slot }}
 </body>
 </html>

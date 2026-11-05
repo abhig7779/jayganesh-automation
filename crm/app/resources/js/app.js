@@ -10,16 +10,72 @@ document.addEventListener('htmx:configRequest', (e) => {
     if (token) e.detail.headers['X-CSRF-TOKEN'] = token;
 });
 
-// Counter shortcuts. F2 = new bill (once billing ships), "/" = focus the page search box.
+const isVisible = (el) => !!el && el.offsetParent !== null;
+const typingIn = (el) => el && (['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName) || el.isContentEditable);
+
+/*
+ * Global search box (components/ui/search-input, global mode). htmx fills the results panel;
+ * this handles the keyboard: ↑ ↓ to move, Enter to open the highlighted or first result,
+ * Esc to close. With no results, Enter submits to the full search page.
+ */
+Alpine.data('searchBox', () => ({
+    open: false,
+    active: -1,
+    items() {
+        return Array.from(this.$refs.results.querySelectorAll('[data-search-result]'));
+    },
+    move(step) {
+        const items = this.items();
+        if (!items.length) return;
+        this.open = true;
+        this.active = (this.active + step + items.length) % items.length;
+        items.forEach((el, i) => el.setAttribute('aria-selected', i === this.active ? 'true' : 'false'));
+        items[this.active].scrollIntoView({ block: 'nearest' });
+    },
+    go() {
+        const items = this.items();
+        const target = items[this.active] ?? items[0];
+        if (target?.href && this.open) {
+            window.location = target.href;
+        } else {
+            this.$root.submit();
+        }
+    },
+    close() {
+        this.open = false;
+        this.active = -1;
+    },
+}));
+
+/*
+ * Counter shortcuts (UX-FLOWS §0.11): F2 = new bill, "/" = focus the search box,
+ * Esc inside a field = leave the field.
+ */
 document.addEventListener('keydown', (e) => {
-    const typing = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName);
-    if (e.key === '/' && !typing) {
-        const search = document.querySelector('[data-search]');
-        if (search) { e.preventDefault(); search.focus(); }
+    if (e.key === '/' && !typingIn(document.activeElement)) {
+        const search = Array.from(document.querySelectorAll('[data-search]')).find(isVisible);
+        if (search) {
+            e.preventDefault();
+            search.focus();
+            search.select?.();
+        }
     }
-    if (e.key === 'F2') {
-        const link = document.querySelector('[data-shortcut="new-bill"]');
-        if (link?.href) { e.preventDefault(); window.location = link.href; }
+    // F-keys: F2 new bill (from any page); on Home, the action tiles carry data-fkey (F4, F6–F9).
+    if (/^F\d+$/.test(e.key)) {
+        const selector = e.key === 'F2' ? '[data-shortcut="new-bill"], [data-fkey="F2"]' : `[data-fkey="${e.key}"]`;
+        const link = Array.from(document.querySelectorAll(selector)).find((a) => a.href);
+        if (link) {
+            e.preventDefault();
+            window.location = link.href;
+        }
+    }
+});
+
+// Table rows with data-href open on click (PC tables), without nesting links in every cell.
+document.addEventListener('click', (e) => {
+    const row = e.target.closest('tr[data-href]');
+    if (row && !e.target.closest('a, button, input, label')) {
+        window.location = row.dataset.href;
     }
 });
 

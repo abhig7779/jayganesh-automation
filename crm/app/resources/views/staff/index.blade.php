@@ -1,37 +1,45 @@
+@php use App\Support\Permissions; use App\Support\Phone; @endphp
 <x-layouts.app title="Staff">
-    <x-slot:header>
-        <div>
-            <h1 class="text-2xl font-bold">Staff logins</h1>
-            <p class="text-sm text-zinc-500">Everyone signs in with their own mobile number. Switch a login off when someone leaves.</p>
-        </div>
-        <a href="{{ route('staff.create') }}" class="btn-primary"><x-icon name="plus" /> Add staff</a>
-    </x-slot:header>
+    <x-ui.page-header title="Staff logins" subtitle="Everyone signs in with their own mobile number. Switch a login off when someone leaves.">
+        <x-slot:actions>
+            <a href="{{ route('staff.create') }}" class="btn-primary"><x-icon name="plus" class="size-5" /> Add staff</a>
+        </x-slot:actions>
+    </x-ui.page-header>
 
-    <div class="card overflow-hidden p-0 sm:p-0">
-        <table class="w-full text-left text-sm">
-            <thead class="hidden bg-zinc-50 text-xs uppercase tracking-wide text-zinc-500 sm:table-header-group">
-                <tr><th class="px-5 py-3">Name</th><th class="px-5 py-3">Mobile</th><th class="px-5 py-3">Role</th><th class="px-5 py-3">Last sign-in</th><th class="px-5 py-3">Status</th><th></th></tr>
-            </thead>
-            <tbody class="divide-y divide-zinc-100">
+    {{-- PC table --}}
+    <div class="hidden overflow-hidden rounded-xl border border-line bg-surface lg:block">
+        <table class="table-pc">
+            <thead><tr><th>Name</th><th>Mobile</th><th>Role</th><th>Extra access</th><th>Last sign-in</th><th>Status</th></tr></thead>
+            <tbody>
                 @foreach ($staff as $s)
-                    <tr class="block px-4 py-3 sm:table-row sm:p-0">
-                        <td class="block font-semibold sm:table-cell sm:px-5 sm:py-3">{{ $s->name }}<div class="text-xs font-normal text-zinc-500">{{ $s->email }}</div></td>
-                        <td class="block text-zinc-700 sm:table-cell sm:px-5 sm:py-3">{{ \App\Support\Phone::pretty($s->phone) }}</td>
-                        <td class="inline-block pr-2 sm:table-cell sm:px-5 sm:py-3"><span class="badge bg-zinc-100 text-zinc-800">{{ $s->roleLabel() }}</span></td>
-                        <td class="hidden text-zinc-500 sm:table-cell sm:px-5 sm:py-3">{{ $s->last_login_at?->timezone('Asia/Kolkata')->format('d M, h:i A') ?? 'Never' }}</td>
-                        <td class="inline-block sm:table-cell sm:px-5 sm:py-3">
-                            @if ($s->is_active)
-                                <span class="badge bg-emerald-50 text-emerald-700">Active</span>
-                            @else
-                                <span class="badge bg-red-50 text-red-700">Off</span>
-                            @endif
+                    <tr data-href="{{ route('staff.edit', $s) }}">
+                        <td>
+                            <a href="{{ route('staff.edit', $s) }}" class="flex items-center gap-3 py-1.5">
+                                <x-ui.avatar-initials :name="$s->name" size="sm" />
+                                <span class="min-w-0"><span class="block truncate font-semibold text-ink">{{ $s->name }}</span>@if ($s->email)<span class="block truncate text-xs text-muted">{{ $s->email }}</span>@endif</span>
+                            </a>
                         </td>
-                        <td class="block pt-2 sm:table-cell sm:px-5 sm:py-3 sm:text-right">
-                            <a href="{{ route('staff.edit', $s) }}" class="font-semibold text-ink underline decoration-brand-400 decoration-2 underline-offset-4">Edit</a>
+                        <td class="tnum whitespace-nowrap">{{ Phone::pretty($s->phone) }}</td>
+                        <td>{{ $s->roleLabel() }}</td>
+                        <td>
+                            @forelse ($s->getDirectPermissions() as $p)
+                                <x-ui.status-badge tone="ink">{{ Permissions::EXTRA_ACCESS[$p->name] ?? $p->name }}</x-ui.status-badge>
+                            @empty <span class="text-faint">—</span> @endforelse
                         </td>
+                        <td class="whitespace-nowrap text-muted">{{ $s->last_login_at?->timezone('Asia/Kolkata')->format('j M, h:i A') ?? 'Never' }}</td>
+                        <td><x-ui.status-badge :status="$s->is_active ? 'active' : 'off'" /></td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
+    </div>
+
+    {{-- Phone rows --}}
+    <div class="-mx-4 divide-y divide-line border-y border-line bg-surface lg:hidden">
+        @foreach ($staff as $s)
+            <x-ui.list-row :href="route('staff.edit', $s)" :avatar="$s->name" :title="$s->name" :subtitle="$s->roleLabel().' · '.Phone::pretty($s->phone)">
+                <x-slot:trailing><x-ui.status-badge :status="$s->is_active ? 'active' : 'off'" /></x-slot:trailing>
+            </x-ui.list-row>
+        @endforeach
     </div>
 </x-layouts.app>

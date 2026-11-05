@@ -42,6 +42,7 @@ class StaffController extends Controller
             'created_by' => $request->user()->id,
         ]);
         $user->syncRoles([$data['role']]);
+        $this->syncExtraAccess($request, $user);
 
         return redirect()->route('staff.index')->with('status', "{$user->name} can now sign in.");
     }
@@ -80,6 +81,7 @@ class StaffController extends Controller
 
         if (! $staff->is($request->user())) {
             $staff->syncRoles([$data['role']]);
+            $this->syncExtraAccess($request, $staff);
         }
 
         return redirect()->route('staff.index')->with('status', 'Saved.');
@@ -100,9 +102,31 @@ class StaffController extends Controller
             'branch_id' => ['required', 'exists:branches,id'],
             'password' => [$user ? 'nullable' : 'required', 'confirmed', Password::min(8)],
             'is_active' => ['nullable', 'boolean'],
+            'extra' => ['nullable', 'array'],
+            'extra.*' => ['string', Rule::in(array_keys(Permissions::EXTRA_ACCESS))],
         ], [
             'phone.regex' => 'Enter a 10-digit Indian mobile number.',
         ]);
+    }
+
+    /**
+     * Extra access (owner rule, 5 Nov 2026): the Owner can switch on single permissions for one
+     * person on top of their role, e.g. leads for one counter boy. Stored as spatie direct
+     * permissions. Only someone with settings.manage (the Owner) can change them; anyone else
+     * saving the form leaves them as they were. Permissions the role already has are not stored.
+     */
+    private function syncExtraAccess(Request $request, User $user): void
+    {
+        if (! $request->user()->can('settings.manage')) {
+            return;
+        }
+        $role = $user->roles()->first();
+        $fromRole = $role ? $role->permissions->pluck('name')->all() : [];
+        $wanted = array_values(array_diff(
+            array_intersect((array) $request->input('extra', []), array_keys(Permissions::EXTRA_ACCESS)),
+            $fromRole,
+        ));
+        $user->syncPermissions($wanted);
     }
 
     /** Only the Owner can create or edit Owners and Admins. */

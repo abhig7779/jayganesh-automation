@@ -1,47 +1,44 @@
 <x-layouts.app title="Settings">
-    <x-slot:header>
-        <div>
-            <h1 class="text-2xl font-bold">Settings</h1>
-            <p class="text-sm text-zinc-500">These details print on bills and quotations. Every change is recorded in the audit log.</p>
-        </div>
-    </x-slot:header>
+    <x-ui.page-header title="Settings" subtitle="These details print on bills and quotations. Every change is recorded in the activity log." />
 
-    <form method="POST" action="{{ route('settings.update') }}" class="space-y-5">
+    <form method="POST" action="{{ route('settings.update') }}" class="max-w-4xl">
         @csrf @method('PUT')
-        @foreach ($groups as $group => $fields)
-            <section class="card">
-                <h2 class="mb-4 text-base font-semibold">{{ $group }}</h2>
-                <div class="grid gap-4 sm:grid-cols-2">
-                    @foreach ($fields as $key => $f)
-                        @php $name = str_replace('.', '__', $key); $val = old($name, $values[$key]); @endphp
-                        <div @class(['sm:col-span-2' => in_array($f['type'], ['textarea', 'checkbox'])])>
-                            @if ($f['type'] === 'checkbox')
-                                <label class="flex items-center gap-2 text-sm font-medium">
-                                    <input type="hidden" name="{{ $name }}" value="0">
-                                    <input type="checkbox" name="{{ $name }}" value="1" class="size-4 rounded" @checked($val)> {{ $f['label'] }}
-                                </label>
-                            @else
-                                <label class="label" for="{{ $name }}">{{ $f['label'] }}</label>
-                                @if ($f['type'] === 'textarea')
-                                    <textarea class="input min-h-24 py-2" id="{{ $name }}" name="{{ $name }}" rows="3">{{ $val }}</textarea>
-                                @elseif ($f['type'] === 'select')
-                                    <select class="input" id="{{ $name }}" name="{{ $name }}">
-                                        @foreach ($f['options'] as $ov => $ol)
-                                            <option value="{{ $ov }}" @selected($val === $ov)>{{ $ol }}</option>
-                                        @endforeach
-                                    </select>
+        <div class="space-y-5">
+            @foreach ($groups as $group => $fields)
+                <x-ui.panel :title="$group">
+                    <div class="grid gap-x-5 gap-y-4 sm:grid-cols-2">
+                        @foreach ($fields as $key => $f)
+                            @php $name = str_replace('.', '__', $key); $val = old($name, $values[$key]); @endphp
+                            <div @class(['sm:col-span-2' => in_array($f['type'], ['textarea', 'checkbox'])])>
+                                @if ($f['type'] === 'checkbox')
+                                    <label class="flex min-h-11 items-center gap-3 text-[15px] font-medium lg:text-sm">
+                                        <input type="hidden" name="{{ $name }}" value="0">
+                                        <input type="checkbox" name="{{ $name }}" value="1" class="size-5 accent-ink" @checked($val)> {{ $f['label'] }}
+                                    </label>
                                 @else
-                                    <input class="input" id="{{ $name }}" name="{{ $name }}" type="{{ $f['type'] }}" value="{{ $val }}" @if($f['type'] === 'number') step="any" @endif>
+                                    <label class="label" for="{{ $name }}">{{ $f['label'] }}</label>
+                                    @if ($f['type'] === 'textarea')
+                                        <textarea class="input min-h-24 py-2.5" id="{{ $name }}" name="{{ $name }}" rows="3">{{ $val }}</textarea>
+                                    @elseif ($f['type'] === 'select')
+                                        <select class="input" id="{{ $name }}" name="{{ $name }}">
+                                            @foreach ($f['options'] as $ov => $ol)
+                                                <option value="{{ $ov }}" @selected($val === $ov)>{{ $ol }}</option>
+                                            @endforeach
+                                        </select>
+                                    @else
+                                        <input class="input" id="{{ $name }}" name="{{ $name }}" type="{{ $f['type'] }}" value="{{ $val }}" @if ($f['type'] === 'number') step="any" inputmode="decimal" @endif>
+                                    @endif
                                 @endif
-                            @endif
-                            @error($name) <p class="error">{{ $message }}</p> @enderror
-                        </div>
-                    @endforeach
-                </div>
-            </section>
-        @endforeach
-        <div class="sticky bottom-20 flex justify-end lg:bottom-4">
-            <button class="btn-primary shadow-lg">Save settings</button>
+                                @error($name) <p class="error">{{ $message }}</p> @enderror
+                            </div>
+                        @endforeach
+                    </div>
+                </x-ui.panel>
+            @endforeach
+        </div>
+        <div class="sticky bottom-[calc(env(safe-area-inset-bottom)+72px)] z-10 -mx-4 mt-5 border-t border-line bg-canvas px-4 py-3 lg:bottom-0 lg:mx-0 lg:flex lg:items-center lg:gap-3 lg:rounded-b-xl lg:px-0">
+            <button class="btn-primary w-full lg:w-auto">Save settings</button>
+            <span class="hidden text-xs text-muted lg:inline">Changes apply to new bills and quotations.</span>
         </div>
     </form>
 </x-layouts.app>
