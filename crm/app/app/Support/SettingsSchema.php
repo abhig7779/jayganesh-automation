@@ -35,6 +35,13 @@ final class SettingsSchema
             'whatsapp.template_invoice' => ['group' => 'WhatsApp', 'label' => 'Invoice template name', 'type' => 'text', 'rules' => 'nullable|alpha_dash|max:60', 'default' => 'invoice_ebill'],
             'whatsapp.template_quotation' => ['group' => 'WhatsApp', 'label' => 'Quotation template name', 'type' => 'text', 'rules' => 'nullable|alpha_dash|max:60', 'default' => 'quotation_send'],
             'whatsapp.auto_send_invoice' => ['group' => 'WhatsApp', 'label' => 'Send the e-bill automatically when a bill is saved', 'type' => 'checkbox', 'rules' => 'boolean', 'default' => true],
+            // --- whatsapp module (crm/WHATSAPP-TEMPLATES.md) ---
+            'whatsapp.template_language' => ['group' => 'WhatsApp', 'label' => 'Template language code (as approved in WhatsApp Manager)', 'type' => 'text', 'rules' => ['nullable', 'regex:/^[a-z]{2}(_[A-Z]{2})?$/'], 'default' => 'en'],
+            'whatsapp.template_payment_receipt' => ['group' => 'WhatsApp', 'label' => 'Payment receipt template name', 'type' => 'text', 'rules' => 'nullable|alpha_dash|max:60', 'default' => 'payment_receipt'],
+            'whatsapp.template_vehicle_ready' => ['group' => 'WhatsApp', 'label' => 'Vehicle ready template name', 'type' => 'text', 'rules' => 'nullable|alpha_dash|max:60', 'default' => 'vehicle_ready'],
+            'whatsapp.template_followup' => ['group' => 'WhatsApp', 'label' => 'Follow-up reminder template name (marketing)', 'type' => 'text', 'rules' => 'nullable|alpha_dash|max:60', 'default' => 'followup_reminder'],
+            'whatsapp.template_review' => ['group' => 'WhatsApp', 'label' => 'Review request template name (marketing)', 'type' => 'text', 'rules' => 'nullable|alpha_dash|max:60', 'default' => 'review_request'],
+            'whatsapp.utility_respects_opt_out' => ['group' => 'WhatsApp', 'label' => 'Also stop bills and receipts to customers who opted out (sent STOP)', 'type' => 'checkbox', 'rules' => 'boolean', 'default' => true],
         ];
     }
 
