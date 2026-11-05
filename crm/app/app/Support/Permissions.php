@@ -44,6 +44,7 @@ final class Permissions
             'inventory.view', 'jobcards.view', 'leads.manage',
         ],
         'technician' => ['jobcards.view', 'jobcards.manage'],
+        'marketing' => ['customers.view', 'quotations.view', 'leads.manage', 'offers.manage', 'reports.view'],
     ];
 
     public const ROLE_LABELS = [
@@ -52,5 +53,6 @@ final class Permissions
         'finance' => 'Finance',
         'sales' => 'Sales / Counter',
         'technician' => 'Technician',
+        'marketing' => 'Marketing',
     ];
 }

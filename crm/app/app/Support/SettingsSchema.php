@@ -35,6 +35,9 @@ final class SettingsSchema
             'whatsapp.template_invoice' => ['group' => 'WhatsApp', 'label' => 'Invoice template name', 'type' => 'text', 'rules' => 'nullable|alpha_dash|max:60', 'default' => 'invoice_ebill'],
             'whatsapp.template_quotation' => ['group' => 'WhatsApp', 'label' => 'Quotation template name', 'type' => 'text', 'rules' => 'nullable|alpha_dash|max:60', 'default' => 'quotation_send'],
             'whatsapp.auto_send_invoice' => ['group' => 'WhatsApp', 'label' => 'Send the e-bill automatically when a bill is saved', 'type' => 'checkbox', 'rules' => 'boolean', 'default' => true],
+
+            // Offers (marketing)
+            'offers.marketing_rate_paise' => ['group' => 'Offers', 'label' => 'WhatsApp marketing rate per message, in paise (88 = ₹0.88), for the cost estimate', 'type' => 'number', 'rules' => 'nullable|integer|min:0|max:10000', 'default' => 88],
         ];
     }
 
