@@ -1,5 +1,12 @@
 <?php
 
+use App\Models\Category;
+use App\Models\Invoice;
+use App\Models\Product;
+use App\Services\Billing\InvoiceService;
+
+require_once __DIR__.'/Billing/helpers.php';
+
 use App\Jobs\SendOfferMessage;
 use App\Models\AudienceExport;
 use App\Models\Branch;
@@ -15,11 +22,8 @@ use App\Services\Offers\WhatsAppBridge;
 use App\Support\Dashboard\Offers as OffersTile;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Database\Seeders\SettingsSeeder;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
-use Illuminate\Support\Facades\Schema;
 
 uses(RefreshDatabase::class);
 
@@ -85,30 +89,14 @@ function idsFor(array $filters): array
 }
 
 /** Test-only stand-in for the billing branch's tables. */
-function makeBillingTables(): void
+/** A real bill for the customer through InvoiceService (optionally cancelled again). */
+function billFor(Customer $c, Product $product, bool $cancel = false): Invoice
 {
-    if (! Schema::hasTable('invoices')) {
-        Schema::create('invoices', function (Blueprint $t) {
-            $t->id();
-            $t->foreignId('customer_id');
-            $t->string('status')->default('paid');
-            $t->timestamps();
-        });
-    }
-    if (! Schema::hasTable('invoice_items')) {
-        Schema::create('invoice_items', function (Blueprint $t) {
-            $t->id();
-            $t->foreignId('invoice_id');
-            $t->foreignId('product_id')->nullable();
-            $t->timestamps();
-        });
-    }
-}
+    $bill = makeBill(staff('sales'), [[$product]], [
+        'customer_id' => $c->id, 'payments' => payFull([[$product]]), 'send_whatsapp' => false,
+    ]);
 
-function billFor(Customer $c, int $productId, string $status = 'paid'): void
-{
-    $inv = DB::table('invoices')->insertGetId(['customer_id' => $c->id, 'status' => $status, 'created_at' => now(), 'updated_at' => now()]);
-    DB::table('invoice_items')->insert(['invoice_id' => $inv, 'product_id' => $productId, 'created_at' => now(), 'updated_at' => now()]);
+    return $cancel ? app(InvoiceService::class)->cancel($bill, 'Test cancel', staff('owner')) : $bill;
 }
 
 // ---------------------------------------------------------------- segment filters
@@ -191,29 +179,25 @@ it('updates the live count through the htmx endpoint', function () {
         ->assertSee('id="cost-estimate"', false);
 });
 
-it('filters by product or category bought, only when billing tables exist', function () {
+it('filters by product or category bought, ignoring cancelled bills', function () {
     $owner = staff('owner');
-    $this->actingAs($owner)->get(route('offers.create'))->assertOk()->assertDontSee('Bought a product');
-    expect(SegmentBuilder::supportsPurchases())->toBeFalse();
-
-    makeBillingTables();
-    $cat = DB::table('categories')->insertGetId(['name' => 'PPF', 'created_at' => now(), 'updated_at' => now()]);
-    $ppf = DB::table('products')->insertGetId(['name' => 'Garware PPF full body', 'category_id' => $cat, 'price_paise' => 6_500_000, 'created_at' => now(), 'updated_at' => now()]);
-    $led = DB::table('products')->insertGetId(['name' => 'DHC Gleam 2.0 LED', 'price_paise' => 499_900, 'created_at' => now(), 'updated_at' => now()]);
+    $cat = Category::create(['name' => 'PPF']);
+    $ppf = billProduct(['name' => 'Garware PPF full body', 'category_id' => $cat->id, 'price_paise' => 6_500_000]);
+    $led = billProduct(['name' => 'DHC Gleam 2.0 LED']);
 
     $a = offerCustomer();
     $b = offerCustomer();
     $cancelled = offerCustomer();
     billFor($a, $ppf);
     billFor($b, $led);
-    billFor($cancelled, $ppf, 'cancelled');
+    billFor($cancelled, $ppf, cancel: true);
 
     expect(SegmentBuilder::supportsPurchases())->toBeTrue()
-        ->and(idsFor(['bought_products' => [$led]]))->toBe([$b->id])
-        ->and(idsFor(['bought_categories' => [$cat]]))->toBe([$a->id])
-        ->and(idsFor(['bought_products' => [$led], 'bought_categories' => [$cat]]))->toBe([$a->id, $b->id]);
+        ->and(idsFor(['bought_products' => [$led->id]]))->toBe([$b->id])
+        ->and(idsFor(['bought_categories' => [$cat->id]]))->toBe([$a->id])
+        ->and(idsFor(['bought_products' => [$led->id], 'bought_categories' => [$cat->id]]))->toBe([$a->id, $b->id]);
 
-    $this->get(route('offers.create'))->assertSee('Bought a product')->assertSee('Garware PPF full body');
+    $this->actingAs($owner)->get(route('offers.create'))->assertSee('Bought a product')->assertSee('Garware PPF full body');
 });
 
 it('saves a segment and reuses it on a new offer', function () {

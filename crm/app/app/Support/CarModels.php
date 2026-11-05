@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use App\Models\CustomerCar;
+
 /**
  * Common cars on Pune roads, for the make/model picker on the customer and bill screens.
  * The picker searches this list as you type ("cret" → Hyundai Creta). A model that isn't here
@@ -64,5 +66,26 @@ final class CarModels
         $parts = explode(' ', $typed, 2);
 
         return count($parts) === 2 ? [$parts[0], $parts[1]] : ['Other', $typed];
+    }
+
+    /**
+     * Flat list for the New bill car picker: every common model plus models already saved on
+     * customers' cars (billing module).
+     *
+     * @return array<int, array{make:string, model:string, label:string}>
+     */
+    public static function list(): array
+    {
+        $rows = [];
+        foreach (self::LIST as $make => $models) {
+            foreach ($models as $model) {
+                $rows["$make|$model"] = ['make' => $make, 'model' => $model, 'label' => "$make $model"];
+            }
+        }
+        foreach (CustomerCar::query()->select('make', 'model')->distinct()->limit(300)->get() as $c) {
+            $rows["{$c->make}|{$c->model}"] ??= ['make' => $c->make, 'model' => $c->model, 'label' => trim("{$c->make} {$c->model}")];
+        }
+
+        return array_values($rows);
     }
 }

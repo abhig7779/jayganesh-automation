@@ -8,8 +8,8 @@ use App\Services\JobCards\JobCardService;
 
 /**
  * When billing saves a bill that started from a job card's "Make bill", store the bill id on the
- * job card. Auto-discovered by Laravel; it does nothing until billing (and InvoiceSaved) is merged.
- * Billing may also put job_card_id on the invoice itself; that wins over the session hint.
+ * job card. Auto-discovered by Laravel;.
+ * The "Make bill" button leaves the job card id in the session; the invoice itself carries no job card column.
  */
 class LinkInvoiceToJobCard
 {
@@ -17,18 +17,14 @@ class LinkInvoiceToJobCard
 
     public function handle(InvoiceSaved $event): void
     {
-        $invoice = $event->invoice ?? null;
-        if (! $invoice || ! isset($invoice->id)) {
-            return;
-        }
-
-        $cardId = $invoice->job_card_id ?? (app()->bound('session') ? session('jobcards.billing_job_card_id') : null);
+        $invoice = $event->invoice;
+        $cardId = app()->bound('session') ? session('jobcards.billing_job_card_id') : null;
         if (! $cardId) {
             return;
         }
 
         $card = JobCard::query()->find($cardId);
-        if (! $card || (int) $card->customer_id !== (int) ($invoice->customer_id ?? 0)) {
+        if (! $card || (int) $card->customer_id !== (int) $invoice->customer_id) {
             return; // the counter billed someone else in between: don't link the wrong bill
         }
 

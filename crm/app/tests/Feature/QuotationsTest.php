@@ -1,9 +1,9 @@
 <?php
 
-use App\Events\InvoiceSaved;
 use App\Models\Branch;
 use App\Models\Customer;
 use App\Models\FollowUp;
+use App\Models\Invoice;
 use App\Models\Lead;
 use App\Models\Product;
 use App\Models\Quotation;
@@ -20,6 +20,8 @@ use Database\Seeders\SettingsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
+
+require_once __DIR__.'/Billing/helpers.php';
 
 uses(RefreshDatabase::class);
 
@@ -48,6 +50,17 @@ function qtCustomer(string $mobile = '9823107676', string $name = 'Vikram Shinde
     }
 
     return $c->load('cars');
+}
+
+/** A real bill made through InvoiceService (fires InvoiceSaved like production). */
+function qtBill(Customer $customer, ?Quotation $quote = null): Invoice
+{
+    $product = billProduct(['name' => 'Bill test product '.uniqid()], 5);
+
+    return makeBill(staff('sales'), [[$product]], array_filter([
+        'customer_id' => $customer->id, 'quotation_id' => $quote?->id,
+        'payments' => payFull([[$product]]), 'send_whatsapp' => false,
+    ]));
 }
 
 function qtQuote($by = null, ?Customer $customer = null, ?array $items = null): Quotation
@@ -286,10 +299,10 @@ it('counts a follow-up as overdue only when pending and due before today (shop t
 it('marks the linked quotation won when a bill is saved', function () {
     $q = qtQuote();
     $other = qtQuote(customer: $q->customer);
-    InvoiceSaved::dispatch((object) ['id' => 501, 'customer_id' => $q->customer_id, 'quotation_id' => $q->id, 'total_paise' => 499900]);
+    $bill = qtBill($q->customer, $q);
 
     expect($q->fresh()->status)->toBe(Quotation::WON)
-        ->and($q->fresh()->won_invoice_id)->toBe(501)
+        ->and($q->fresh()->won_invoice_id)->toBe($bill->id)
         ->and($q->followUps()->pending()->count())->toBe(0)
         ->and($other->fresh()->status)->toBe(Quotation::OPEN);
 });
@@ -306,12 +319,12 @@ it('marks the same customer’s quotes and leads from the last 30 days won', fun
     app(QuotationService::class)->expireDue();
     expect($recent->fresh()->status)->toBe(Quotation::EXPIRED);
 
-    event(new InvoiceSaved((object) ['id' => 777, 'customer_id' => $c->id, 'quotation_id' => null, 'total_paise' => 100]));
+    $bill = qtBill($c);
 
     expect($recent->fresh()->status)->toBe(Quotation::WON)   // expired but within 30 days: still a win
         ->and($old->fresh()->status)->toBe(Quotation::EXPIRED)
         ->and($lead->fresh()->status)->toBe(Lead::WON)
-        ->and($lead->fresh()->won_invoice_id)->toBe(777)
+        ->and($lead->fresh()->won_invoice_id)->toBe($bill->id)
         ->and($stranger->fresh()->status)->not->toBe(Quotation::WON)
         ->and(FollowUp::query()->where('subject_id', $recent->id)->where('subject_type', Quotation::class)->pending()->count())->toBe(0);
 });
@@ -339,21 +352,35 @@ it('expires quotes past valid-until but keeps the last follow-up', function () {
 
 // ---------------------------------------------------------------- bill prefill
 
-it('hands the quote to billing in the exact bill_prefill shape', function () {
+it('converts a quote to a bill end to end: prefill, saved invoice, quote won', function () {
     $sales = staff('sales');
-    $p = qtProduct();
+    $p = billProduct(['name' => 'Quote LED', 'price_paise' => 499900, 'mrp_paise' => 650000], 10);
     $q = qtQuote($sales, items: [['product_id' => $p->id, 'qty' => 2]]);
 
-    $res = $this->actingAs($sales)->post(route('quotations.convert', $q));
-
+    $this->actingAs($sales)->post(route('quotations.convert', $q))->assertRedirect(route('bills.create'));
     expect(session('bill_prefill'))->toBe([
         'customer_id' => $q->customer_id,
         'customer_car_id' => $q->customer_car_id,
         'quotation_id' => $q->id,
         'items' => [['product_id' => $p->id, 'qty' => 2, 'unit_price_paise' => 499900]],
     ]);
-    // bills.create isn't on this branch yet, so it says so instead of a dead link.
-    $res->assertRedirect(route('quotations.show', $q))->assertSessionHas('status', fn ($s) => str_contains($s, 'Billing coming soon'));
+
+    $this->get(route('bills.create'))->assertOk()
+        ->assertViewHas('config', fn ($c) => $c['prefill']['quotation_id'] === $q->id
+            && $c['prefill']['items'] === [['product_id' => $p->id, 'qty' => 2, 'unit_price_paise' => 499900]]);
+    expect(session('bill_prefill'))->toBeNull();
+
+    $res = $this->postJson(route('bills.store'), [
+        'quotation_id' => $q->id, 'customer_id' => $q->customer_id, 'customer_car_id' => $q->customer_car_id,
+        'items' => [['product_id' => $p->id, 'qty' => 2, 'unit_price_paise' => 499900]],
+        'payments' => [['mode' => 'upi', 'amount_paise' => 999800]], 'send_whatsapp' => false,
+    ])->assertCreated();
+
+    $invoice = Invoice::findOrFail($res->json('id'));
+    expect($invoice->quotation_id)->toBe($q->id)
+        ->and($q->fresh()->status)->toBe(Quotation::WON)
+        ->and($q->fresh()->won_invoice_id)->toBe($invoice->id)
+        ->and($q->followUps()->pending()->count())->toBe(0);
 });
 
 // ---------------------------------------------------------------- messages

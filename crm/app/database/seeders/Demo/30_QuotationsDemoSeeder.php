@@ -4,13 +4,17 @@ namespace Database\Seeders\Demo;
 
 use App\Models\Branch;
 use App\Models\Customer;
+use App\Models\Invoice;
 use App\Models\Lead;
 use App\Models\Product;
 use App\Models\Quotation;
 use App\Models\User;
+use App\Services\Billing\GstCalculator;
+use App\Services\Billing\InvoiceService;
 use App\Services\Quotations\FollowUpScheduler;
 use App\Services\Quotations\LeadService;
 use App\Services\Quotations\QuotationService;
+use App\Services\Stock\StockService;
 use App\Support\Quotations\ShopClock;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
@@ -48,7 +52,6 @@ class QuotationsDemoSeeder extends Seeder
             [4, 'chased'], [3, 'overdue'], [3, 'price'], [2, 'chased'], [2, 'fresh'], [1, 'fresh'], [0, 'fresh'],
         ];
 
-        $invoiceNo = 9000;
         $realToday = ShopClock::now();
         foreach ($plan as $i => [$daysAgo, $fate]) {
             $customer = $customers[$i % $customers->count()];
@@ -90,7 +93,12 @@ class QuotationsDemoSeeder extends Seeder
                 }
                 if ($fate === 'won') {
                     Carbon::setTestNow($f->due_on->copy()->addDay()->setTime(16, 0));
-                    $quotes->autoWin(++$invoiceNo, $customer->id, $q->id);
+                    $q->load('items');
+                    // A real bill from the quote; InvoiceSaved then marks the quote Won.
+                    $this->paidBill(
+                        $q->items->map(fn ($it) => ['product_id' => $it->product_id, 'qty' => (int) $it->qty])->all(),
+                        $customer->id, $q->customer_car_id, $q->id, $owner,
+                    );
                     break;
                 }
                 if (in_array($fate, ['visit', 'lost'], true) && $q->fresh()->status !== Quotation::OPEN) {
@@ -139,6 +147,39 @@ class QuotationsDemoSeeder extends Seeder
 
         // Mark the demo notifications read except the latest, so the owner's home isn't noisy.
         $owner->notifications()->latest()->skip(1)->take(100)->get()->each->markAsRead();
+    }
+
+    /**
+     * A real, fully paid bill through InvoiceService (so numbers, stock, totals and InvoiceSaved
+     * are real). Restocks first when the demo shelf is short, so stock never goes negative.
+     *
+     * @param  list<array{product_id:?int, name?:string, qty:int, unit_price_paise?:int}>  $items
+     */
+    private function paidBill(array $items, int $customerId, ?int $carId, ?int $quotationId, User $by): Invoice
+    {
+        $stock = app(StockService::class);
+        $lines = [];
+        foreach ($items as $i) {
+            $p = ! empty($i['product_id']) ? Product::query()->find($i['product_id']) : null;
+            if ($p && $p->track_stock && $p->on_hand < $i['qty']) {
+                $stock->move($p, $i['qty'] + 3, 'opening', null, null, null, 'Demo restock');
+            }
+            $lines[] = $i + ['gst_rate' => 18];
+        }
+        $calc = GstCalculator::fromSettings();
+        $total = $calc->calculate(array_map(function ($l) {
+            $p = ! empty($l['product_id']) ? Product::query()->find($l['product_id']) : null;
+
+            return [
+                'qty' => $l['qty'], 'unit_price_paise' => $l['unit_price_paise'] ?? $p?->price_paise ?? 0,
+                'gst_rate' => $p?->gst_rate ?? 18, 'price_includes_gst' => $p?->price_includes_gst ?? true,
+            ];
+        }, $lines))['total_paise'];
+
+        return app(InvoiceService::class)->create([
+            'customer_id' => $customerId, 'customer_car_id' => $carId, 'quotation_id' => $quotationId,
+            'items' => $lines, 'payments' => [['mode' => 'upi', 'amount_paise' => $total]], 'send_whatsapp' => false,
+        ], $by);
     }
 
     private function products(Branch $branch)

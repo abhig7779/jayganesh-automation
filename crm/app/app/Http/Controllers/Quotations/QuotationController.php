@@ -23,7 +23,6 @@ use App\Support\RegNo;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
 
 class QuotationController extends Controller
@@ -178,7 +177,6 @@ class QuotationController extends Controller
             'tel' => FollowUpMessages::telLink($quotation->customer->mobile),
             'pdfLink' => FollowUpMessages::pdfLink($quotation),
             'staff' => Quotation::seesAll($request->user()) ? $this->assignableStaff() : collect(),
-            'billingReady' => Route::has('bills.create'),
             'timeline' => $this->timeline($quotation),
         ]);
     }
@@ -198,12 +196,7 @@ class QuotationController extends Controller
         $this->authorizeQuote($request->user(), $quotation);
         session(['bill_prefill' => $this->quotations->billPrefill($quotation)]);
 
-        if (Route::has('bills.create')) {
-            return redirect()->route('bills.create');
-        }
-
-        return redirect()->route('quotations.show', $quotation)
-            ->with('status', 'Billing coming soon. The items are kept ready for when the bill screen is switched on.');
+        return redirect()->route('bills.create');
     }
 
     public function lost(Request $request, Quotation $quotation): RedirectResponse

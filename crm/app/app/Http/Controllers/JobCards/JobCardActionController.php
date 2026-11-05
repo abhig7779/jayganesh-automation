@@ -13,7 +13,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -129,15 +128,11 @@ class JobCardActionController extends Controller
 
     /**
      * Delivered → Make bill. Puts the CONTRACTS.md §3 prefill in the session and opens New bill.
-     * Until billing is merged the button says "Billing coming soon" and this just goes back.
      */
     public function makeBill(Request $request, JobCard $jobCard): RedirectResponse
     {
         Gate::authorize('makeBill', $jobCard);
 
-        if (! Route::has('bills.create')) {
-            return back()->with('status', 'Billing coming soon. Make this bill on the counter for now.');
-        }
         if ($jobCard->invoice_id) {
             throw ValidationException::withMessages(['bill' => 'This job card already has a bill.']);
         }

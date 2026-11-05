@@ -21,6 +21,10 @@ class SendInvoiceOnWhatsApp
 
     public function handle(InvoiceSaved $event): void
     {
+        if (! $event->invoice->send_whatsapp) {
+            return; // the counter ticked "don't send" on the bill screen
+        }
+
         $this->send(InvoiceMessage::fromInvoice($event->invoice));
     }
 

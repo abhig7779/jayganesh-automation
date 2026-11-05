@@ -137,10 +137,10 @@ it('lets the admin look but not add, and keeps sales and technicians out', funct
 it('renders the finance pages for finance and owner', function () {
     foreach (['finance', 'owner'] as $role) {
         $u = staff($role);
-        $this->actingAs($u)->get(route('finance.index'))->assertOk()->assertSee('Money in today')->assertSee('Bills module not installed yet');
+        $this->actingAs($u)->get(route('finance.index'))->assertOk()->assertSee('Money in today')->assertDontSee('not installed yet');
         $this->actingAs($u)->get(route('finance.expenses.create'))->assertOk()->assertSee('Save expense');
         $this->actingAs($u)->get(route('finance.cash-close'))->assertOk()->assertSee('Save cash close');
         $this->actingAs($u)->get(route('finance.cash-closes.index'))->assertOk();
-        $this->actingAs($u)->get(route('finance.dues'))->assertOk()->assertSee('Bills module not installed yet');
+        $this->actingAs($u)->get(route('finance.dues'))->assertOk()->assertDontSee('not installed yet');
     }
 });

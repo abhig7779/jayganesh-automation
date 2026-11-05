@@ -28,6 +28,10 @@ final class SettingsSchema
             'billing.invoice_footer' => ['group' => 'Tax & billing', 'label' => 'Invoice footer note', 'type' => 'textarea', 'rules' => 'nullable|string|max:500', 'default' => 'Thank you for choosing Jay Ganesh Car Accessories! Warranty as per brand terms. Goods once sold will not be taken back without the original bill.'],
             'billing.upi_id' => ['group' => 'Tax & billing', 'label' => 'UPI ID (for the QR on bills)', 'type' => 'text', 'rules' => ['nullable', 'regex:/^[\w.\-]{2,}@[a-zA-Z]{2,}$/'], 'default' => null],
             'billing.upi_name' => ['group' => 'Tax & billing', 'label' => 'UPI payee name', 'type' => 'text', 'rules' => 'nullable|string|max:60', 'default' => 'Jay Ganesh Car Accessories'],
+            // --- billing module ---
+            'billing.due_limit_paise' => ['group' => 'Tax & billing', 'label' => 'Pay-later limit for Sales, in paise (200000 = ₹2,000; above it needs Admin/Owner)', 'type' => 'number', 'rules' => 'nullable|integer|min:0|max:100000000', 'default' => 200000],
+            'billing.max_discount_percent' => ['group' => 'Tax & billing', 'label' => 'Highest discount % Sales can give without approval', 'type' => 'number', 'rules' => 'nullable|numeric|min:0|max:100', 'default' => 10],
+            'billing.print_format' => ['group' => 'Tax & billing', 'label' => 'Print button prints', 'type' => 'select', 'options' => ['a4' => 'A4 bill (PDF)', 'thermal' => 'Thermal receipt 80 mm'], 'rules' => 'nullable|in:a4,thermal', 'default' => 'a4'],
 
             // WhatsApp
             'whatsapp.mode' => ['group' => 'WhatsApp', 'label' => 'Sending mode', 'type' => 'select', 'options' => ['manual' => 'Manual (opens WhatsApp with the message)', 'cloud_api' => 'Automatic (WhatsApp Cloud API)'], 'rules' => 'required|in:manual,cloud_api', 'default' => 'manual'],
