@@ -134,7 +134,7 @@
                 </thead>
                 <tbody class="divide-y divide-zinc-100">
                     @foreach ($bills as $b)
-                        <tr class="cursor-pointer hover:bg-[#FAFAFA]" onclick="if(!event.target.closest('a'))window.location='{{ route('bills.show', $b) }}'">
+                        <tr class="cursor-pointer hover:bg-[#FAFAFA]" data-href="{{ route('bills.show', $b) }}">
                             <td class="whitespace-nowrap px-4 py-2.5 font-semibold"><a href="{{ route('bills.show', $b) }}" class="hover:underline">{{ $b->number }}</a></td>
                             <td class="whitespace-nowrap px-3 py-2.5 text-zinc-600">{{ $b->created_at->timezone('Asia/Kolkata')->format($isToday ? 'g:i A' : 'j M, g:i A') }}</td>
                             <td class="px-3 py-2.5">

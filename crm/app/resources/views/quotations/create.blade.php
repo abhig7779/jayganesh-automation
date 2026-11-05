@@ -225,7 +225,7 @@
 </div>
 
 @include('quotations._product-search-js')
-<script>
+<script nonce="{{ Vite::cspNonce() }}">
 window.quoteBuilder = function (cfg) {
     const p = cfg.prefill || {};
     let keySeq = 1;
@@ -245,6 +245,8 @@ window.quoteBuilder = function (cfg) {
         canEditPrice: cfg.canEditPrice,
         revisedFrom: p.revised_from_number || null,
         errors: {}, formError: '', saving: false,
+        // Same key for every retry from this screen, so a save that timed out isn't made twice.
+        clientKey: (window.crypto?.randomUUID?.() ?? (Date.now().toString(36) + Math.random().toString(36).slice(2))),
 
         init() {
             this.loadProducts();
@@ -322,6 +324,7 @@ window.quoteBuilder = function (cfg) {
                 items: this.lines.map((l) => ({ product_id: l.product_id, name: l.name, qty: l.qty, unit_price_paise: this.canEditPrice ? l.unit_price_paise : null })),
                 valid_days: this.validDays, notes: this.notes, send: send ? 1 : 0,
                 lead_id: p.lead_id || null, revised_from_id: p.revised_from_id || null,
+                client_key: this.clientKey,
             };
             try {
                 const r = await fetch(cfg.storeUrl, {

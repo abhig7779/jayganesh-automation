@@ -119,10 +119,10 @@ class FollowUpMessages
         return 'tel:'.Phone::normalize($mobile);
     }
 
-    /** Signed link to the quotation PDF, valid 60 days past the quote's validity. */
+    /** Signed link to the quotation PDF, valid 14 days past the quote's validity (audit L18). */
     public static function pdfLink(Quotation $q): string
     {
-        $until = Carbon::parse($q->valid_until ?? now())->addDays(60)->endOfDay();
+        $until = Carbon::parse($q->valid_until ?? now())->addDays(14)->endOfDay();
 
         return URL::temporarySignedRoute('quotations.public-pdf', $until, ['quotation' => $q->id]);
     }

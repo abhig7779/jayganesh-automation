@@ -9,7 +9,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /** A partial return against a bill (UX-FLOWS §3.7). */
 class CreditNote extends Model
 {
-    protected $guarded = ['id'];
+    /**
+     * Nothing is mass assignable (audit L16): money, totals and status are written only by the
+     * billing services with forceCreate / forceFill, so a future update($request->validated())
+     * can't set paid_paise or status.
+     */
+    protected $guarded = ['*'];
 
     protected $casts = [
         'subtotal_paise' => 'integer', 'cgst_paise' => 'integer', 'sgst_paise' => 'integer',

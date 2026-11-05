@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Setting;
 use App\Models\User;
+use App\Services\Billing\GstCalculator;
 use App\Services\Stock\StockService;
 use App\Support\Money;
 use App\Support\SearchText;
@@ -41,7 +42,7 @@ class PriceListImporter
         'warranty' => ['Warranty', ['warranty', 'guarantee']],
     ];
 
-    public const GST_RATES = [0, 5, 12, 18, 28];
+    public const GST_RATES = GstCalculator::RATES;
 
     public function __construct(private StockService $stock) {}
 

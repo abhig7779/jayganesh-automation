@@ -58,11 +58,13 @@
         @endif
     @else
         <form method="POST" action="{{ route('payments.collect.store') }}" class="max-w-xl pb-44 lg:pb-0"
+              @submit="busy = true"
               x-data="{
+                busy: false,
                 bills: @js($billRows),
                 ticked: @js($bills->pluck('id')->values()),
-                amount: '{{ old('amount', $totalDue % 100 ? number_format($totalDue / 100, 2, '.', '') : intdiv($totalDue, 100)) }}',
-                mode: '{{ old('mode', 'cash') }}',
+                amount: @js((string) old('amount', $totalDue % 100 ? number_format($totalDue / 100, 2, '.', '') : intdiv($totalDue, 100))),
+                mode: @js((string) old('mode', 'cash')),
                 money(p) { const r = Math.floor(Math.abs(p) / 100), f = Math.abs(p) % 100; return '₹' + r.toLocaleString('en-IN') + (f ? '.' + String(f).padStart(2, '0') : ''); },
                 get paise() { const s = String(this.amount).replace(/[,₹\s]/g, ''); if (!/^\d+(\.\d{1,2})?$/.test(s)) return 0; const [w, f = ''] = s.split('.'); return parseInt(w, 10) * 100 + parseInt((f + '00').slice(0, 2), 10); },
                 get dueTicked() { return this.bills.filter(b => this.ticked.includes(b.id)).reduce((s, b) => s + b.due, 0); },
@@ -72,6 +74,8 @@
               }">
             @csrf
             <input type="hidden" name="customer_id" value="{{ $customer->id }}">
+            {{-- One key per screen: a double click or a resend returns the first payment (audit M4). --}}
+            <input type="hidden" name="client_key" value="{{ old('client_key', \App\Support\ClientKey::make()) }}">
             <div class="flex items-center justify-between rounded-lg border border-zinc-200 bg-white px-4 py-3 text-[15px]">
                 <span><span class="font-semibold">{{ $customer->name }}</span> <span class="text-zinc-600">· {{ Phone::pretty($customer->mobile) }}</span></span>
                 <a href="{{ route('payments.collect') }}" class="text-[13px] font-semibold underline">Change</a>
@@ -133,7 +137,7 @@
                 <p class="mt-4 text-[13px] text-zinc-700">Applied to the oldest ticked bills first. Balance after: <span class="font-semibold" :class="balanceAfter > 0 ? 'text-red-600' : 'text-green-700'" x-text="money(balanceAfter)"></span></p>
 
                 <div class="fixed inset-x-0 bottom-[calc(3.5rem+env(safe-area-inset-bottom))] z-20 border-t border-zinc-200 bg-white px-4 pt-3 pb-3 lg:static lg:mt-5 lg:border-0 lg:bg-transparent lg:p-0">
-                    <button class="flex h-14 w-full items-center justify-center rounded-lg bg-brand-400 text-[17px] font-semibold text-ink hover:bg-[#F2C800] disabled:opacity-50" :disabled="paise <= 0 || over || !ticked.length">
+                    <button class="flex h-14 w-full items-center justify-center rounded-lg bg-brand-400 text-[17px] font-semibold text-ink hover:bg-[#F2C800] disabled:opacity-50" :disabled="busy || paise <= 0 || over || !ticked.length">
                         <span x-text="'Collect ' + money(paise) + ' & send receipt'"></span>
                     </button>
                 </div>

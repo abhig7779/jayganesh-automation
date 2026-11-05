@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\WhatsApp;
 
 use App\Http\Controllers\Controller;
+use App\Models\Invoice;
 use App\Models\MessageLog;
 use App\Services\WhatsApp\WebhookProcessor;
 use App\Services\WhatsApp\WhatsApp;
@@ -11,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class MessageLogController extends Controller
@@ -48,9 +50,10 @@ class MessageLogController extends Controller
         return view('whatsapp.messages.index', compact('messages', 'templates', 'filters', 'setup'));
     }
 
-    public function resend(MessageLog $log): RedirectResponse
+    public function resend(Request $request, MessageLog $log): RedirectResponse
     {
         abort_unless($log->isOutgoing(), 404);
+        $this->authorizeLog($request, $log);
 
         $new = $this->whatsApp->resend($log);
 
@@ -65,9 +68,10 @@ class MessageLogController extends Controller
     }
 
     /** Manual mode: note that staff opened it, then open WhatsApp with the message typed in. */
-    public function manual(MessageLog $log): RedirectResponse
+    public function manual(Request $request, MessageLog $log): RedirectResponse
     {
         abort_unless($log->isOutgoing() && $log->isManual(), 404);
+        $this->authorizeLog($request, $log);
 
         return $this->openManual($log);
     }
@@ -99,6 +103,22 @@ class MessageLogController extends Controller
         return $log->isFailed()
             ? back()->withInput()->with('error', 'Test not sent: '.$log->reason())
             : back()->with('status', 'Test template sent to '.Phone::pretty($to).'. Watch for the ticks below.');
+    }
+
+    /**
+     * Owner/Admin may act on any message. Counter staff only on a bill message (utility) for a
+     * bill they may open: not offers, not other staff's bills (audit M3). Opt-out is checked
+     * again when the new message is logged (WhatsApp::newLog).
+     */
+    private function authorizeLog(Request $request, MessageLog $log): void
+    {
+        $user = $request->user();
+        if ($user->hasAnyRole(['owner', 'admin'])) {
+            return;
+        }
+
+        $related = $log->related;
+        abort_unless($log->category === 'utility' && $related instanceof Invoice && Gate::forUser($user)->allows('view', $related), 403);
     }
 
     private function openManual(MessageLog $log): RedirectResponse

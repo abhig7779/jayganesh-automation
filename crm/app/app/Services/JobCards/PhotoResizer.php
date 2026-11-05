@@ -30,7 +30,14 @@ class PhotoResizer
 
     private function withImagick(string $path, int $max, int $quality): array
     {
+        // Read only photo formats, never PDF/SVG/PS etc. by sniffing (audit L18), and cap memory.
+        $magic = (string) @file_get_contents($path, false, null, 0, 16);
+        if (! self::looksLikePhoto($magic)) {
+            throw new RuntimeException('This file is not a photo we can read.');
+        }
         $img = new \Imagick;
+        $img->setResourceLimit(\Imagick::RESOURCETYPE_MEMORY, 256 * 1024 * 1024);
+        $img->setResourceLimit(\Imagick::RESOURCETYPE_AREA, 128 * 1024 * 1024);
         $img->readImage($path);
         if ($img->getNumberImages() > 1) {
             $img = $img->coalesceImages();
@@ -54,6 +61,16 @@ class PhotoResizer
         $img->clear();
 
         return $out;
+    }
+
+    /** JPEG, PNG, WebP, GIF or HEIC/HEIF, by the first bytes of the file. */
+    public static function looksLikePhoto(string $head): bool
+    {
+        return str_starts_with($head, "\xFF\xD8\xFF")
+            || str_starts_with($head, "\x89PNG")
+            || str_starts_with($head, 'GIF8')
+            || (str_starts_with($head, 'RIFF') && substr($head, 8, 4) === 'WEBP')
+            || (substr($head, 4, 4) === 'ftyp' && in_array(substr($head, 8, 4), ['heic', 'heix', 'hevc', 'heim', 'heis', 'mif1', 'msf1', 'avif'], true));
     }
 
     private function orientImagick(\Imagick $img): void

@@ -15,7 +15,7 @@
     </x-slot:header>
 
     <form method="POST" action="{{ route('offers.store') }}" id="offer-form"
-          x-data="{ step: {{ $errors->hasAny(['title', 'message']) ? 2 : ($errors->hasAny(['method', 'template_name', 'confirm_cost']) ? 3 : max(1, min(3, request()->integer('step', 1)))) }}, method: '{{ old('method', 'broadcast') }}', message: @js(old('message', $defaultMessage)) }">
+          x-data="{ step: {{ $errors->hasAny(['title', 'message']) ? 2 : ($errors->hasAny(['method', 'template_name', 'confirm_cost']) ? 3 : max(1, min(3, request()->integer('step', 1)))) }}, method: @js((string) old('method', 'broadcast')), message: @js(old('message', $defaultMessage)) }">
         @csrf
         @if ($segment) <input type="hidden" name="segment_id" value="{{ $segment->id }}"> @endif
 

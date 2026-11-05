@@ -10,6 +10,7 @@ use App\Models\Quotation;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\Customers\CustomerService;
+use App\Support\ClientKey;
 use App\Support\Quotations\ShopClock;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -36,8 +37,10 @@ class QuotationService
     public function create(array $data, User $by): Quotation
     {
         $items = $this->resolveItems($data['items'] ?? [], $by);
+        $key = $data['client_key'] ?? null;
 
-        return DB::transaction(function () use ($data, $by, $items) {
+        // A retried save (slow network, double tap) returns the first quotation (audit L2).
+        return ClientKey::once(Quotation::class, $by->branch_id, $key, fn () => DB::transaction(function () use ($data, $by, $items, $key) {
             $customer = ! empty($data['customer_id'])
                 ? Customer::query()->findOrFail($data['customer_id'])
                 : $this->customers->findOrCreateByMobile((string) ($data['mobile'] ?? ''), ['name' => $data['name'] ?? null, 'source' => $data['customer_source'] ?? 'walk_in'], $by);
@@ -78,6 +81,7 @@ class QuotationService
                 'source' => $data['source'] ?? ($data['lead_id'] ?? null ? 'lead' : 'walk_in'),
                 'notes' => $data['notes'] ?? null,
                 'sent_at' => ! empty($data['sent']) ? now() : null,
+                'client_key' => $key ?: null,
             ]);
 
             foreach ($items as $i => $line) {
@@ -101,7 +105,7 @@ class QuotationService
             }
 
             return $q->load('items', 'customer', 'car');
-        });
+        }));
     }
 
     /** Recorded when staff press "Send on WhatsApp". */

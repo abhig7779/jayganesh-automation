@@ -14,7 +14,7 @@
             @include('finance.expenses._form', ['expense' => $expense, 'prefix' => 'edit'])
         </div>
         <form method="POST" action="{{ route('finance.expenses.cancel', $expense) }}" class="card flex flex-wrap items-center justify-between gap-3"
-              onsubmit="return confirm('Cancel this expense? It will stop counting in totals and the cash close.')">
+              data-confirm="Cancel this expense? It will stop counting in totals and the cash close.">
             @csrf
             <p class="text-sm text-zinc-700">Entered by mistake? Cancel it. It stays in the history but stops counting.</p>
             <button class="btn border border-red-600 bg-white text-red-600 hover:bg-red-50">Cancel expense</button>

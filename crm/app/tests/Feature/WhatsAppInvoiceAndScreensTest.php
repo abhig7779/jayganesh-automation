@@ -238,7 +238,9 @@ it('resends a failed message as a new log row', function () {
     Bus::fake();
     $failed = waLogRow(['status' => 'failed', 'error_code' => '131026']);
 
-    $this->actingAs(staff('sales'))->post(route('whatsapp.resend', $failed))->assertRedirect();
+    // Audit M3: a log with no bill of theirs behind it is Owner/Admin only.
+    $this->actingAs(staff('sales'))->post(route('whatsapp.resend', $failed))->assertForbidden();
+    $this->actingAs(staff('admin'))->post(route('whatsapp.resend', $failed))->assertRedirect();
 
     $new = MessageLog::latest('id')->first();
     expect($new->id)->not->toBe($failed->id)
@@ -253,7 +255,8 @@ it('opens WhatsApp with the message in manual mode', function () {
     Setting::put('whatsapp.mode', 'manual');
     $log = waLogRow(['channel' => 'manual', 'status' => 'queued', 'wa_message_id' => null]);
 
-    $this->actingAs(staff('sales'))->post(route('whatsapp.manual', $log))
+    $this->actingAs(staff('sales'))->post(route('whatsapp.manual', $log))->assertForbidden();
+    $this->actingAs(staff('admin'))->post(route('whatsapp.manual', $log))
         ->assertRedirect()
         ->assertRedirectContains('https://wa.me/919823107676?text=Hi%20Rahul');
 

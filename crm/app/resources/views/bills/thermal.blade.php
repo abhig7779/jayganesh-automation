@@ -46,7 +46,7 @@
 </head>
 <body>
 <div class="noprint">
-    <button class="primary" onclick="window.print()">Print receipt</button>
+    <button class="primary" type="button" data-print>Print receipt</button>
     <a href="{{ route('bills.show', $i) }}">Back to bill</a>
 </div>
 <div class="roll">
@@ -111,8 +111,11 @@
     <div class="c sm" style="margin-top:4px;">Computer-generated bill · Billed by {{ \Illuminate\Support\Str::before(trim((string) $i->creator?->name), ' ') }}</div>
     <div class="c sm">Thank you. Visit again!</div>
 </div>
-@unless (request()->boolean('preview'))
-    <script>window.addEventListener('load', () => setTimeout(() => window.print(), 300));</script>
-@endunless
+<script nonce="{{ Vite::cspNonce() }}">
+    document.querySelector('[data-print]')?.addEventListener('click', () => window.print());
+    @unless (request()->boolean('preview'))
+    window.addEventListener('load', () => setTimeout(() => window.print(), 300));
+    @endunless
+</script>
 </body>
 </html>

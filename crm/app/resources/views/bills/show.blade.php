@@ -8,7 +8,7 @@
     $tax = $i->isTaxInvoice();
 @endphp
 <x-layouts.app title="Bill {{ $i->number }}">
-<div x-data="{ menu: false, sheet: null, reason: '{{ old('reason') }}' }" @keydown.escape.window="menu = false; sheet = null">
+<div x-data="{ menu: false, sheet: null, reason: @js((string) old('reason', '')) }" @keydown.escape.window="menu = false; sheet = null">
     <div class="mb-5 flex flex-wrap items-start justify-between gap-3">
         <div>
             <a href="{{ route('bills.index') }}" class="mb-1 inline-flex items-center gap-1 text-[13px] font-semibold text-zinc-600 hover:text-ink"><x-bills.icon name="chevron-left" class="size-4" />Bills</a>

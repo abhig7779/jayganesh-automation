@@ -23,11 +23,16 @@ final class ReportBuilder
         'ca' => 'CA / Tally export',
     ];
 
-    /** Which reports this person may open. */
+    /**
+     * Which reports this person may open. Shop-wide sales and the tax/CA reports need more than
+     * `reports.view` (audit H4): Marketing has `reports.view` for product trends only.
+     */
     public static function available(User $u): array
     {
         return array_filter(self::REPORTS, fn ($label, $key) => match ($key) {
+            'daily' => $u->can('reports.all_staff') || $u->can('finance.view'),
             'staff' => $u->can('reports.all_staff'),
+            'gst', 'ca' => $u->can('finance.view'),
             'pnl' => $u->can('reports.margins'),       // owner only by default
             default => true,
         }, ARRAY_FILTER_USE_BOTH);

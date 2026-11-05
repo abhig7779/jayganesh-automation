@@ -44,7 +44,10 @@ class JobCardController extends Controller
                     ->orWhere('promised_at', '<', $end)
                     ->orWhere('status', JobCard::DELIVERED));
             })
-            ->with(['car', 'customer', 'technician', 'items', 'photos'])
+            // Only the columns the board card shows (audit L15): item names/ticks, photo ids for the thumb.
+            ->with(['car', 'customer', 'technician',
+                'items:id,job_card_id,description,qty,price_paise,done,position',
+                'photos:id,job_card_id,stage'])
             ->orderByRaw('promised_at IS NULL')->orderBy('promised_at')->orderBy('id')
             ->get();
 

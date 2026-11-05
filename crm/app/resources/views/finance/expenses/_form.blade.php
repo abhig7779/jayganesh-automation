@@ -10,7 +10,9 @@
       action="{{ $isEdit ? route('finance.expenses.update', $expense) : route('finance.expenses.store') }}"
       class="space-y-5" x-data="{ busy: false }" @submit="busy = true">
     @csrf
-    @if ($isEdit) @method('PUT') @endif
+    @if ($isEdit) @method('PUT') @else
+        <input type="hidden" name="client_key" value="{{ old('client_key', \App\Support\ClientKey::make()) }}">
+    @endif
 
     <div>
         <label class="label" for="{{ $prefix }}-amount">Amount</label>

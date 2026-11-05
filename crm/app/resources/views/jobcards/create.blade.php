@@ -34,10 +34,11 @@
         </div>
     </x-slot:header>
 
-    <script>
+    <script nonce="{{ Vite::cspNonce() }}">
         document.addEventListener('alpine:init', () => {
             Alpine.data('carIn', (init) => ({
                 ...init,
+                busy: false,
                 looking: false,
                 lookupError: '',
                 notFound: false,
@@ -113,8 +114,9 @@
         });
     </script>
 
-    <form method="POST" action="{{ route('jobcards.store') }}" x-data="carIn(@js($initial))" class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]" @keydown.ctrl.enter="$el.requestSubmit()">
+    <form method="POST" action="{{ route('jobcards.store') }}" x-data="carIn(@js($initial))" class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]" @keydown.ctrl.enter="$el.requestSubmit()" @submit="busy = true">
         @csrf
+        <input type="hidden" name="client_key" value="{{ old('client_key', \App\Support\ClientKey::make()) }}">
         <input type="hidden" name="customer_id" :value="customer ? customer.id : ''">
 
         <div class="space-y-4">
@@ -297,7 +299,7 @@
                     <span class="text-2xl font-bold tabular-nums" x-text="rupees(total())">₹0</span>
                 </div>
                 <button class="inline-flex h-12 w-full items-center justify-center rounded-lg bg-[#FFD51C] text-[17px] font-semibold text-ink hover:bg-[#F2C800] disabled:opacity-50"
-                        :disabled="!items.length || (!customer && mobileDigits().length !== 10)">
+                        :disabled="busy || !items.length || (!customer && mobileDigits().length !== 10)">
                     Open job card
                 </button>
                 <p class="mt-2 text-center text-xs text-zinc-500">Ctrl + Enter saves. Take before photos on the next screen.</p>

@@ -14,7 +14,7 @@
                        placeholder="glea, creta mat, ppf…"
                        class="block h-14 w-full rounded-xl border border-zinc-300 bg-white pl-12 pr-12 text-[17px] text-ink placeholder:text-zinc-500 focus:border-ink focus:outline-none focus:ring-2 focus:ring-brand-400"
                        aria-label="Search stock">
-                <button type="button" onclick="const i = document.getElementById('stock-q'); i.value = ''; i.dispatchEvent(new Event('input', { bubbles: true })); i.focus();"
+                <button type="button" data-clear-input="stock-q"
                         class="absolute right-2 top-1/2 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-100" aria-label="Clear search">
                     <x-icon name="x" />
                 </button>
@@ -28,7 +28,7 @@
 
     <x-products.panel />
 
-    <script>
+    <script nonce="{{ Vite::cspNonce() }}">
         document.getElementById('stock-q')?.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') { e.preventDefault(); document.querySelector('#stock-results [data-row]')?.click(); }
         });

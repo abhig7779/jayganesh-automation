@@ -15,6 +15,7 @@ use App\Services\Quotations\LeadService;
 use App\Services\Quotations\LeakReport;
 use App\Services\Quotations\QuotationService;
 use App\Services\Quotations\QuoteTotals;
+use App\Support\ClientKey;
 use App\Support\Dashboard\FollowUps;
 use App\Support\Money;
 use App\Support\Phone;
@@ -126,6 +127,7 @@ class QuotationController extends Controller
             'lead_id' => ['nullable', 'integer', 'exists:leads,id'],
             'revised_from_id' => ['nullable', 'integer', 'exists:quotations,id'],
             'send' => ['nullable', 'boolean'],
+            'client_key' => ClientKey::RULE,
         ], [
             'mobile.required_without' => 'Enter the customer’s mobile number. Without it we can’t follow up.',
             'items.required' => 'Add at least one item to the quotation.',

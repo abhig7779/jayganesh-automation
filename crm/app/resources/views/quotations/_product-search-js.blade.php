@@ -1,4 +1,4 @@
-<script>
+<script nonce="{{ Vite::cspNonce() }}">
 /*
  * Item search: ONE boundary the quotation screens call.
  *   jgProductSearch.load(url)          → Promise (fetches the JSON list once)

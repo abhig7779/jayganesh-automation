@@ -113,7 +113,7 @@
                 <div>
                     <label class="label" for="gst_rate">GST</label>
                     <select class="input" id="gst_rate" name="gst_rate" @disabled(! $canPrice)>
-                        @foreach ([0, 5, 12, 18, 28] as $rate)
+                        @foreach (\App\Services\Billing\GstCalculator::RATES as $rate)
                             <option value="{{ $rate }}" @selected($gst === (string) $rate)>{{ $rate }}%</option>
                         @endforeach
                     </select>

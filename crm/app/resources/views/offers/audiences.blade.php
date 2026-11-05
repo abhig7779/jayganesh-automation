@@ -9,7 +9,7 @@
     </x-slot:header>
 
     <div class="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
-        <form method="POST" action="{{ route('audiences.download') }}" class="card min-w-0 space-y-5" x-data="{ seg: '{{ old('segment_id', $choices->first()['id']) }}' }">
+        <form method="POST" action="{{ route('audiences.download') }}" class="card min-w-0 space-y-5" x-data="{ seg: @js((string) old('segment_id', $choices->first()['id'])) }">
             @csrf
             <div>
                 <h2 class="text-base font-semibold">1. Which customers</h2>

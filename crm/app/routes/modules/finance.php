@@ -34,6 +34,8 @@ Route::middleware('permission:finance.view')->prefix('finance')->name('finance.'
 Route::middleware('permission:reports.view')->prefix('reports')->name('reports.')->group(function () {
     Route::get('/', [ReportController::class, 'index'])->name('index');
     Route::get('/export', [ReportController::class, 'export'])->name('export');
+    // Every customer's mobile and total: finance only, never Marketing (audit H4).
     Route::get('/register/{type}', [ReportController::class, 'register'])
+        ->middleware('permission:finance.view')
         ->whereIn('type', ['sales', 'expenses'])->name('register');
 });

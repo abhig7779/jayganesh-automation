@@ -13,6 +13,8 @@ use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\Payment;
 use App\Models\Product;
+use App\Models\Quotation;
+use App\Models\QuotationItem;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\Customers\CustomerService;
@@ -61,8 +63,10 @@ class InvoiceService
         }
 
         $calc = GstCalculator::fromSettings($branchId);
-        [$lines, $listValue] = $this->buildLines($data['items'] ?? [], $by, $calc);
-        $totals = $calc->calculate($lines, (int) ($data['bill_discount_paise'] ?? 0), $data['place_of_supply'] ?? null);
+        [$lines, $listValue] = $this->buildLines($data['items'] ?? [], $by, $calc, $this->quotedPrices($data['quotation_id'] ?? null, $by));
+        // A B2B buyer's state is the first two digits of their GSTIN unless the counter picked one.
+        $placeOfSupply = $data['place_of_supply'] ?? (! empty($data['customer_gstin']) ? substr((string) $data['customer_gstin'], 0, 2) : null);
+        $totals = $calc->calculate($lines, (int) ($data['bill_discount_paise'] ?? 0), $placeOfSupply);
         $mrpSavings = array_sum(array_map(fn ($l) => self::mrpSaving($l['mrp_paise'] ?? null, $l['qty'], $l['gross_paise']), $totals['lines']));
 
         $this->checkDiscount($totals, $listValue, $by);
@@ -80,7 +84,14 @@ class InvoiceService
                 [$customer, $car] = $this->resolveCustomer($data, $by);
                 $num = $this->series->next($branchId, NumberSeries::TYPE_INVOICE);
 
-                $invoice = Invoice::create([
+                // Lock the stocked products in id order before any stock move, so two bills (or a
+                // bill and a stock adjustment) always lock rows in the same order (audit L3).
+                $productIds = collect($totals['lines'])->pluck('product_id')->filter()->unique()->sort()->values();
+                if ($productIds->isNotEmpty()) {
+                    Product::query()->whereIn('id', $productIds)->orderBy('id')->lockForUpdate()->get(['id']);
+                }
+
+                $invoice = Invoice::forceCreate([
                     'branch_id' => $branchId,
                     'number' => $num['number'],
                     'financial_year' => $num['financial_year'],
@@ -114,7 +125,7 @@ class InvoiceService
                 ]);
 
                 foreach ($totals['lines'] as $pos => $l) {
-                    $invoice->items()->create([
+                    $invoice->items()->forceCreate([
                         'product_id' => $l['product_id'],
                         'name' => $l['name'],
                         'hsn' => $l['hsn'],
@@ -145,7 +156,7 @@ class InvoiceService
                 }
 
                 foreach ($payments as $p) {
-                    $payment = Payment::create([
+                    $payment = Payment::forceCreate([
                         'branch_id' => $branchId,
                         'invoice_id' => $invoice->id,
                         'customer_id' => $customer?->id,
@@ -155,14 +166,12 @@ class InvoiceService
                         'reference' => $p['reference'],
                         'received_by' => $by->id,
                     ]);
-                    $payment->allocations()->create(['invoice_id' => $invoice->id, 'amount_paise' => $p['amount_paise']]);
+                    $payment->allocations()->forceCreate(['invoice_id' => $invoice->id, 'amount_paise' => $p['amount_paise']]);
                 }
 
                 if ($customer) {
-                    $customer->forceFill([
-                        'last_visit_at' => now(),
-                        'total_spent_paise' => $customer->total_spent_paise + $totals['total_paise'],
-                    ])->saveQuietly();
+                    // One atomic UPDATE, so two bills at once can't lose each other's total (audit L4).
+                    Customer::query()->whereKey($customer->id)->increment('total_spent_paise', $totals['total_paise'], ['last_visit_at' => now()]);
                 }
 
                 BillDraft::query()->where('user_id', $by->id)->where('draft_key', $draftKey)->delete();
@@ -278,7 +287,7 @@ class InvoiceService
             }
 
             $num = $this->series->next($invoice->branch_id, NumberSeries::TYPE_CREDIT_NOTE);
-            $note = CreditNote::create([
+            $note = CreditNote::forceCreate([
                 'branch_id' => $invoice->branch_id,
                 'number' => $num['number'],
                 'invoice_id' => $invoice->id,
@@ -295,7 +304,7 @@ class InvoiceService
                     throw ValidationException::withMessages(['items' => "Only {$item->returnableQty()} of {$item->name} can be returned."]);
                 }
                 $values = $this->creditValues($item, $qty);
-                $note->items()->create(['invoice_item_id' => $item->id, 'qty' => $qty] + $values);
+                $note->items()->forceCreate(['invoice_item_id' => $item->id, 'qty' => $qty] + $values);
                 foreach ($sum as $k => $v) {
                     $sum[$k] = $v + $values[$k];
                 }
@@ -315,11 +324,11 @@ class InvoiceService
                 $this->recordRefund($invoice, $refund, $by, "Credit note {$note->number}", $refundMode);
             }
 
-            $note->update([
+            $note->forceFill([
                 'subtotal_paise' => $sum['taxable_paise'], 'cgst_paise' => $sum['cgst_paise'],
                 'sgst_paise' => $sum['sgst_paise'], 'igst_paise' => $sum['igst_paise'],
                 'total_paise' => $credit, 'refund_paise' => $refund,
-            ]);
+            ])->save();
 
             $due = $invoice->due_paise - $clearsDue;
             $invoice->forceFill([
@@ -383,9 +392,29 @@ class InvoiceService
         return Invoice::query()->where('branch_id', $branchId)->where('draft_key', $key)->with('items')->first();
     }
 
-    /** @return array{0: array<int,array>, 1: int} lines for the calculator, and the list value incl. GST */
-    private function buildLines(array $items, User $by, GstCalculator $calc): array
+    /**
+     * Unit prices on the quotation being billed, by product id. A quote may carry a price the
+     * Owner agreed, so the counter may bill that price without prices.manage.
+     *
+     * @return array<int, int[]>
+     */
+    private function quotedPrices(mixed $quotationId, User $by): array
     {
+        if (! $quotationId || ! Quotation::query()->visibleTo($by)->whereKey((int) $quotationId)->exists()) {
+            return [];
+        }
+
+        return QuotationItem::query()->where('quotation_id', (int) $quotationId)->whereNotNull('product_id')
+            ->get(['product_id', 'unit_price_paise'])
+            ->groupBy('product_id')
+            ->map(fn ($rows) => $rows->pluck('unit_price_paise')->map(fn ($v) => (int) $v)->all())
+            ->all();
+    }
+
+    /** @return array{0: array<int,array>, 1: int} lines for the calculator, and the list value incl. GST */
+    private function buildLines(array $items, User $by, GstCalculator $calc, array $quoted = []): array
+    {
+        $canReprice = $by->can('prices.manage');
         if ($items === []) {
             throw ValidationException::withMessages(['items' => 'Add at least one item.']);
         }
@@ -408,6 +437,11 @@ class InvoiceService
                     throw ValidationException::withMessages(["items.$i.product_id" => 'This product is no longer for sale. Remove it and search again.']);
                 }
                 $unit = isset($item['unit_price_paise']) ? (int) $item['unit_price_paise'] : $p->price_paise;
+                // Without prices.manage only the catalogue price (or the price on the quotation being
+                // billed) is accepted; discounts go in discount_paise / bill_discount_paise (audit M8).
+                if (! $canReprice && $unit !== $p->price_paise && ! in_array($unit, $quoted[$p->id] ?? [], true)) {
+                    throw ValidationException::withMessages(["items.$i.unit_price_paise" => 'Changing the price of '.$p->name.' needs the Owner (Change prices). Give a discount instead.']);
+                }
                 if ($unit < 0) {
                     throw ValidationException::withMessages(["items.$i.unit_price_paise" => 'The price cannot be negative.']);
                 }
@@ -575,7 +609,7 @@ class InvoiceService
     {
         $mode ??= collect($invoice->paidByMode())->sortDesc()->keys()->first() ?? 'cash';
 
-        $refund = Payment::create([
+        $refund = Payment::forceCreate([
             'branch_id' => $invoice->branch_id,
             'invoice_id' => $invoice->id,
             'customer_id' => $invoice->customer_id,
@@ -585,7 +619,7 @@ class InvoiceService
             'note' => $note,
             'received_by' => $by->id,
         ]);
-        $refund->allocations()->create(['invoice_id' => $invoice->id, 'amount_paise' => -$amount]);
+        $refund->allocations()->forceCreate(['invoice_id' => $invoice->id, 'amount_paise' => -$amount]);
 
         return $refund;
     }

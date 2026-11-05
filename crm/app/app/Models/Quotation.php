@@ -55,7 +55,7 @@ class Quotation extends Model
         'number', 'branch_id', 'customer_id', 'customer_car_id', 'lead_id', 'assigned_to', 'created_by',
         'status', 'valid_until', 'visit_on', 'taxable_paise', 'gst_paise', 'total_paise', 'savings_paise', 'version',
         'revised_from_id', 'revised_to_id', 'won_invoice_id', 'won_at', 'lost_reason', 'lost_note',
-        'lost_at', 'expired_at', 'sent_at', 'source', 'notes',
+        'lost_at', 'expired_at', 'sent_at', 'source', 'notes', 'client_key',
     ];
 
     protected $attributes = ['status' => self::OPEN, 'version' => 1];
@@ -163,9 +163,10 @@ class Quotation extends Model
             ->where('status', FollowUp::PENDING)->whereDate('due_on', '<', ShopClock::today()));
     }
 
+    /** Same rule as bills and Home: `reports.all_staff` sees everyone's work (audit L12). */
     public static function seesAll(User $user): bool
     {
-        return $user->hasAnyRole(['owner', 'admin']);
+        return $user->can('reports.all_staff');
     }
 
     public function getActivitylogOptions(): LogOptions

@@ -78,6 +78,15 @@ Schedule::command('backup:monitor')
 // Daily email of yesterday's errors (skipped when there are none). ERROR_DIGEST_ENABLED toggles it.
 Schedule::command('crm:error-digest')
     ->dailyAt('08:00')->timezone('Asia/Kolkata');
+
+// Housekeeping (audit L17): the activity log grows with every stock move, failed jobs and
+// expired API tokens pile up. Bills, payments and stock moves themselves are never pruned.
+Schedule::command('activitylog:clean --days=400 --force')
+    ->dailyAt('03:10')->timezone('Asia/Kolkata')->withoutOverlapping(30);
+Schedule::command('queue:prune-failed --hours=720')
+    ->dailyAt('03:20')->timezone('Asia/Kolkata');
+Schedule::command('sanctum:prune-expired --hours=24')
+    ->dailyAt('03:30')->timezone('Asia/Kolkata');
 // --- end devops ---
 // --- quotations ---
 // Quotes past their validity become Expired (the last planned follow-up is kept). Daily, shop time.

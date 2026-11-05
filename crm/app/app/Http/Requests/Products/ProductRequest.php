@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Products;
 
 use App\Models\Product;
+use App\Services\Billing\GstCalculator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -45,7 +46,7 @@ class ProductRequest extends FormRequest
             'price' => $product ? $money : ['required', 'regex:/^\d{1,9}(\.\d{1,2})?$/'],
             'mrp' => $money,
             'cost' => $money,
-            'gst_rate' => ['required', Rule::in(['0', '5', '12', '18', '28'])],
+            'gst_rate' => ['required', Rule::in(array_map('strval', GstCalculator::RATES))],
             'price_includes_gst' => ['nullable', 'boolean'],
             'hsn' => ['nullable', 'digits_between:4,8'],
             'unit' => ['nullable', 'string', 'max:10'],

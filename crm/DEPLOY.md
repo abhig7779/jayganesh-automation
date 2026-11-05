@@ -82,6 +82,8 @@ nano .env
 ```
 In the editor fill in `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` (step 1), `MAIL_PASSWORD` (the mailbox you create in mPanel → Email for `crm@jayganeshcaraccessories.com`), `BACKUP_NOTIFY_EMAIL` (your email) and `BACKUP_ARCHIVE_PASSWORD` (a new long password; **save it in your password manager**, old backups can't be opened without it). Save with `Ctrl+O`, `Enter`, `Ctrl+X`.
 
+Leave `TRUSTED_PROXIES=127.0.0.1,::1` as it is (see "Trusted proxies" below). The WhatsApp lines (`WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_WABA_ID`, `WHATSAPP_APP_SECRET`, `WHATSAPP_VERIFY_TOKEN`) can stay empty until the number is connected; the names are the ones `config/whatsapp.php` reads. Lines that start with `#` use the built-in default and need no change.
+
 ```bash
 chmod 600 .env
 php artisan key:generate --force
@@ -193,6 +195,14 @@ Restore steps and the monthly drill: `crm/RESTORE.md`.
 
 ---
 
+## Trusted proxies (real client IP)
+
+The login limit (5 tries per login + IP, and 10 per login from any IP in 15 minutes) and every request limit use the client's IP. A client can send a fake `X-Forwarded-For` header, so the app believes that header **only** when the request comes from an IP listed in `TRUSTED_PROXIES` (`config/trustedproxy.php`). Empty means nobody is trusted. `*` is ignored on purpose.
+
+**MilesWeb value: `TRUSTED_PROXIES=127.0.0.1,::1`.** On MilesWeb shared hosting PHP runs under the host's own LiteSpeed/Apache, so `REMOTE_ADDR` is normally the visitor's real IP and this setting changes nothing. If the host ever puts a local proxy in front of PHP, that proxy talks from `127.0.0.1`/`::1`, and this value lets the app read the real IP and the https flag from it. Nobody outside the server can come from those addresses, so trusting them is safe.
+
+Check it once after going live: ask MilesWeb support *"Is there a reverse proxy in front of PHP for crm.jayganeshcaraccessories.com, and from which IP address does it connect to PHP?"* If the answer is "none" or `127.0.0.1`, keep the default. If they give another address or range (some hosts proxy from a private network such as `10.x.x.x`), add exactly that to `TRUSTED_PROXIES` (comma-separated, CIDR allowed, e.g. `127.0.0.1,::1,10.0.0.0/8`), then `php artisan config:cache`. A sign that the proxy is not trusted yet: https pages redirect in a loop. Never use `*`.
+
 ## Security headers (for developers)
 
 `app/Http/Middleware/SecurityHeaders.php` adds to every response: HSTS (1 year), `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, a `Permissions-Policy`, and a Content-Security-Policy:
@@ -203,6 +213,6 @@ img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; object-sr
 base-uri 'self'; form-action 'self'; frame-ancestors 'none'; manifest-src 'self'; upgrade-insecure-requests
 ```
 
-**Decision:** we keep the normal Alpine build, so `'unsafe-eval'` stays (Alpine evaluates `x-data`/`@click` with `new Function`, and htmx's `hx-on` does the same). The CSP build of Alpine would remove it, but every inline Alpine expression in every module would then have to move into `Alpine.data()`. For a staff-only app behind a login, with Blade escaping all output, that trade is not worth it now. Inline `<script>` tags **are** blocked: put code in `resources/js`, or add `nonce="{{ Vite::cspNonce() }}"` to the tag. No CDNs: everything is bundled by Vite.
+**Decision:** we keep the normal Alpine build, so `'unsafe-eval'` stays (Alpine evaluates `x-data`/`@click` with `new Function`, and htmx's `hx-on` does the same). The CSP build of Alpine would remove it, but every inline Alpine expression in every module would then have to move into `Alpine.data()`. For a staff-only app behind a login, with Blade escaping all output, that trade is not worth it now. Inline `<script>` tags **are** blocked: put code in `resources/js`, or add `nonce="{{ Vite::cspNonce() }}"` to the tag. Inline handlers (`onclick="…"`, `onchange="…"`, `onsubmit="…"`) are blocked even with a nonce: use Alpine (`@click`) or the data attributes in `resources/js/app.js` (`data-print`, `data-autosubmit`, `data-confirm="…"`, `data-clear-input`, `tr[data-href]`). `tests/Feature/Security/CspCrawlTest.php` fails the build if a page breaks this rule. No CDNs: everything is bundled by Vite.
 
 If a new screen breaks because of the policy, set `SECURITY_CSP=report-only` in `.env` (then `php artisan config:cache`), read the browser console, fix, and set it back to `enforce`.

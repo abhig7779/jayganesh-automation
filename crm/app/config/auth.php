@@ -41,6 +41,8 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
+            // "Keep me signed in" lasts 30 days, not Laravel's default of 5 years (audit L1).
+            'remember' => 60 * 24 * 30,
         ],
     ],
 

@@ -26,8 +26,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->redirectGuestsTo(fn () => route('login'));
         $middleware->redirectUsersTo(fn () => route('dashboard'));
-        // MilesWeb sits behind a proxy; trust it so HTTPS URLs are generated correctly.
-        $middleware->trustProxies(at: '*');
+        // Trusted proxies come from config/trustedproxy.php (TRUSTED_PROXIES in .env). The default
+        // is none, so a client can't fake its IP with X-Forwarded-For (audit H2, crm/DEPLOY.md).
         // Lets the web pages call /api/v1 with the normal login cookie (Sanctum SPA mode).
         // Requests from SANCTUM_STATEFUL_DOMAINS get session + CSRF; everyone else needs a token.
         $middleware->statefulApi();

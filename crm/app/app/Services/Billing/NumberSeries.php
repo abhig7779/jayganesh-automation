@@ -22,9 +22,10 @@ class NumberSeries
 
     public const TYPE_CREDIT_NOTE = 'credit_note';
 
-    /** 5 Nov 2026 → "2627"; 15 Mar 2026 → "2526". */
+    /** 5 Nov 2026 → "2627"; 15 Mar 2026 → "2526". Worked out in India time (audit L5). */
     public static function financialYear(CarbonInterface $date): string
     {
+        $date = $date->copy()->setTimezone('Asia/Kolkata');
         $start = $date->month >= 4 ? $date->year : $date->year - 1;
 
         return sprintf('%02d%02d', $start % 100, ($start + 1) % 100);

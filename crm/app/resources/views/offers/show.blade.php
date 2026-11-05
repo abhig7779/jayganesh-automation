@@ -47,7 +47,7 @@
 
             {{-- What to do next, per method --}}
             @if (! $offer->send_method)
-                <form method="POST" action="{{ route('offers.start', $offer) }}" class="card space-y-4" x-data="{ method: '{{ old('method', 'broadcast') }}' }">
+                <form method="POST" action="{{ route('offers.start', $offer) }}" class="card space-y-4" x-data="{ method: @js((string) old('method', 'broadcast')) }">
                     @csrf
                     <div>
                         <h2 class="text-lg font-semibold">How to send</h2>

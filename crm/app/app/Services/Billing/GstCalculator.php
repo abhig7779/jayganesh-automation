@@ -23,6 +23,12 @@ use InvalidArgumentException;
  */
 final class GstCalculator
 {
+    /**
+     * GST slabs a product or bill line may use (audit L6). 40% is the post-Sept-2025 slab;
+     * 12 and 28 stay so older products and bills still validate. Check with the CA.
+     */
+    public const RATES = [0, 5, 12, 18, 28, 40];
+
     public function __construct(
         private readonly bool $registered = true,
         private readonly string $shopStateCode = '27',

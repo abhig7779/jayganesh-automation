@@ -1,4 +1,4 @@
-<script>
+<script nonce="{{ Vite::cspNonce() }}">
 /*
  * Follow-ups work queue (Alpine). PC: list left, selected customer right, keyboard driven.
  * Phone: rows with big buttons and a Log result bottom sheet. Saving goes through htmx

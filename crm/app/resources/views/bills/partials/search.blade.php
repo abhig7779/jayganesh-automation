@@ -80,7 +80,7 @@
                     <input class="input" x-model="custom.name" placeholder="Item name" aria-label="Custom item name">
                     <input class="input text-right tabular-nums" x-ref="customPrice{{ $pc ? 'Pc' : 'Phone' }}" x-model="custom.price" inputmode="decimal" placeholder="₹ price" aria-label="Price incl. GST" @keydown.enter.prevent="addCustom()">
                     <select class="input" x-model="custom.gst" aria-label="GST rate">
-                        <template x-for="r in [0,5,12,18,28]" :key="r"><option :value="r" x-text="r + '% GST'" :selected="r == custom.gst"></option></template>
+                        <template x-for="r in @js(\App\Services\Billing\GstCalculator::RATES)" :key="r"><option :value="r" x-text="r + '% GST'" :selected="r == custom.gst"></option></template>
                     </select>
                     <button type="button" class="btn-primary" @click="addCustom()">Add</button>
                 </div>

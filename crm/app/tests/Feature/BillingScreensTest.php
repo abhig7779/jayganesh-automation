@@ -168,11 +168,13 @@ it('pre-fills New bill from a quotation (bill_prefill) and forgets it', function
             && $c['prefill']['customer_car_id'] === $car->id
             && $c['prefill']['items'] === [['product_id' => $this->product->id, 'qty' => 2, 'unit_price_paise' => 480000]]);
 
-    // …and the saved bill keeps the quotation id.
+    // …and the saved bill keeps the quotation id. (Quotation 77 doesn't exist, so Sales can't
+    // use its price: audit M8 accepts only the list price or a price on a quote they can see.)
+    $price = $this->product->price_paise;
     $r = $this->actingAs($sales)->postJson(route('bills.store'), [
         'quotation_id' => 77, 'customer_id' => $this->customer->id,
-        'items' => [['product_id' => $this->product->id, 'qty' => 1, 'unit_price_paise' => 480000]],
-        'payments' => [['mode' => 'cash', 'amount_paise' => 480000]],
+        'items' => [['product_id' => $this->product->id, 'qty' => 1, 'unit_price_paise' => $price]],
+        'payments' => [['mode' => 'cash', 'amount_paise' => $price]],
     ])->assertCreated();
     expect(Invoice::find($r->json('id'))->quotation_id)->toBe(77);
 });

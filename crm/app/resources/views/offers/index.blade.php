@@ -56,7 +56,7 @@
                 <div class="card">
                     <div class="flex items-start justify-between gap-2">
                         <div class="font-semibold">{{ $s->name }}</div>
-                        <form method="POST" action="{{ route('segments.destroy', $s) }}" onsubmit="return confirm('Remove the saved list “{{ e($s->name) }}”? Offers already sent keep their own list.')">
+                        <form method="POST" action="{{ route('segments.destroy', $s) }}" data-confirm="Remove the saved list “{{ $s->name }}”? Offers already sent keep their own list.">
                             @csrf @method('DELETE')
                             <button class="text-xs font-medium text-zinc-600 hover:text-red-600" aria-label="Remove {{ $s->name }}">Remove</button>
                         </form>

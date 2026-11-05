@@ -50,7 +50,8 @@ return [
     |
     */
 
-    'expiration' => null,
+    // API tokens expire after 30 days (audit L11); `sanctum:prune-expired` runs daily.
+    'expiration' => 60 * 24 * 30,
 
     /*
     |--------------------------------------------------------------------------

@@ -7,6 +7,7 @@ use App\Http\Requests\Finance\ExpenseRequest;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Services\Finance\Period;
+use App\Support\ClientKey;
 use App\Support\Money;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -69,14 +70,23 @@ class ExpenseController extends Controller
 
     public function store(ExpenseRequest $request): RedirectResponse
     {
-        $expense = new Expense($request->expenseData() + [
-            'branch_id' => $request->user()->branch_id,
-            'created_by' => $request->user()->id,
-        ]);
-        if ($request->hasFile('receipt')) {
-            $expense->receipt_path = $request->file('receipt')->store('expenses/'.now()->format('Y/m'), 'local');
-        }
-        $expense->save();
+        $branchId = $request->user()->branch_id;
+        $key = $request->validated('client_key');
+
+        // A double tap on Save returns the first expense instead of adding it twice (audit L2).
+        $expense = ClientKey::once(Expense::class, $branchId, $key, function () use ($request, $branchId, $key) {
+            $expense = new Expense($request->expenseData() + [
+                'branch_id' => $branchId,
+                'created_by' => $request->user()->id,
+            ]);
+            $expense->client_key = $key ?: null;
+            if ($request->hasFile('receipt')) {
+                $expense->receipt_path = $request->file('receipt')->store('expenses/'.now()->format('Y/m'), 'local');
+            }
+            $expense->save();
+
+            return $expense;
+        });
 
         return redirect()->route('finance.expenses.index', ['preset' => 'this_month'])
             ->with('status', 'Expense saved: '.Money::format($expense->amount_paise).' for '.$expense->category->name.'.');

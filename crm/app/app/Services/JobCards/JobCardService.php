@@ -12,6 +12,7 @@ use App\Models\JobCardPhoto;
 use App\Models\Product;
 use App\Models\User;
 use App\Services\Customers\CustomerService;
+use App\Support\ClientKey;
 use App\Support\Phone;
 use App\Support\RegNo;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -88,7 +89,10 @@ class JobCardService
      */
     public function create(array $data, User $by): JobCard
     {
-        return DB::transaction(function () use ($data, $by) {
+        $key = $data['client_key'] ?? null;
+
+        // A double submit of the Car-in form returns the first card (audit L2).
+        return ClientKey::once(JobCard::class, $by->branch_id, $key, fn () => DB::transaction(function () use ($data, $by, $key) {
             $customer = $this->resolveCustomer($data, $by);
             $car = $this->resolveCar($customer, $data, $by);
             $branchId = $by->branch_id ?? $customer->branch_id ?? Branch::query()->value('id');
@@ -101,6 +105,7 @@ class JobCardService
             ]);
             $card->number = $this->nextNumber($branchId);
             $card->status = JobCard::WAITING;
+            $card->client_key = $key ?: null;
             $card->save();
 
             foreach (array_values($data['items'] ?? []) as $i => $item) {
@@ -114,7 +119,7 @@ class JobCardService
             $customer->forceFill(['last_visit_at' => now()])->saveQuietly();
 
             return $card->load('items');
-        });
+        }));
     }
 
     public function addItem(JobCard $card, array $item, User $by, ?int $position = null, bool $log = true): JobCardItem

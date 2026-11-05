@@ -7,7 +7,7 @@
         </div>
         @if (! $blocked && $key !== 'ca')
             <div class="flex gap-2 print:hidden">
-                <button type="button" onclick="window.print()" class="btn-ghost min-h-10"><x-finance.icon name="print" /> Print</button>
+                <button type="button" data-print class="btn-ghost min-h-10"><x-finance.icon name="print" /> Print</button>
                 <a href="{{ route('reports.export', array_merge(['report' => $key], $period->query())) }}" class="btn-ghost min-h-10"><x-finance.icon name="download" /> Export to Excel</a>
             </div>
         @endif

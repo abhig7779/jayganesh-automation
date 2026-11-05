@@ -79,6 +79,41 @@ document.addEventListener('click', (e) => {
     }
 });
 
+/*
+ * Small behaviours as data attributes, because the CSP blocks inline on*= handlers (audit H3):
+ *  - [data-print]                 click prints the page
+ *  - [data-autosubmit]            change submits its form (filters, the import mapping)
+ *  - form[data-confirm="…"]       asks before submitting; the text is plain, Blade-escaped data
+ *  - [data-clear-input="id"]      empties that input, tells htmx/Alpine it changed, focuses it
+ */
+document.addEventListener('click', (e) => {
+    if (e.target.closest('[data-print]')) {
+        e.preventDefault();
+        window.print();
+        return;
+    }
+    const clear = e.target.closest('[data-clear-input]');
+    if (clear) {
+        const input = document.getElementById(clear.dataset.clearInput);
+        if (input) {
+            input.value = '';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.focus();
+        }
+    }
+});
+document.addEventListener('change', (e) => {
+    const el = e.target.closest('[data-autosubmit]');
+    if (el?.form) el.form.submit();
+});
+document.addEventListener('submit', (e) => {
+    const form = e.target.closest('form[data-confirm]');
+    if (form && !window.confirm(form.dataset.confirm)) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+    }
+}, true);
+
 // Module scripts (resources/js/modules/*.js) register their Alpine components on 'alpine:init',
 // so a module adds JS without editing this file.
 import.meta.glob('./modules/*.js', { eager: true });

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\JobCards;
 
 use App\Models\JobCard;
+use App\Support\ClientKey;
 use App\Support\Money;
 use App\Support\Phone;
 use Illuminate\Foundation\Http\FormRequest;
@@ -50,6 +51,7 @@ class StoreJobCardRequest extends FormRequest
             'items.*.description' => ['nullable', 'string', 'max:200'],
             'items.*.qty' => ['nullable', 'integer', 'min:1', 'max:999'],
             'items.*.price' => ['nullable', 'regex:/^\s*(₹\s*)?[\d,]+(\.\d{1,2})?\s*$/u'],
+            'client_key' => ClientKey::RULE,
         ];
     }
 

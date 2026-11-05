@@ -4,6 +4,7 @@ namespace App\Http\Requests\Finance;
 
 use App\Models\Expense;
 use App\Services\Finance\Period;
+use App\Support\ClientKey;
 use App\Support\Money;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
@@ -40,6 +41,7 @@ class ExpenseRequest extends FormRequest
             'note' => ['nullable', 'string', 'max:500'],
             'receipt' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp,heic,heif,pdf', 'max:8192'],
             'remove_receipt' => ['nullable', 'boolean'],
+            'client_key' => ClientKey::RULE,
         ];
     }
 

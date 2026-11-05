@@ -42,9 +42,10 @@ class ReportController extends Controller
         return XlsxExport::download($report, 'jay-ganesh-'.$key.'-'.$period->fileStamp().'.xlsx');
     }
 
-    /** Tally / CA registers: sales register and expense register. */
+    /** Tally / CA registers: sales register and expense register (finance.view, see routes). */
     public function register(Request $request, string $type)
     {
+        abort_unless($request->user()->can('finance.view'), 403);
         $period = Period::fromRequest($request, 'last_month');
         if ($type === 'sales' && ! SalesQueries::installed()) {
             return back()->withErrors(['register' => 'Bills module not installed yet, so there is no sales register.']);
@@ -57,9 +58,10 @@ class ReportController extends Controller
     /** @return array{0:string, 1:Period} */
     private function resolve(Request $request): array
     {
-        $key = (string) $request->query('report', 'daily');
+        $available = ReportBuilder::available($request->user());
+        $key = (string) $request->query('report', array_key_first($available) ?? 'daily');
         abort_unless(array_key_exists($key, ReportBuilder::REPORTS), 404);
-        abort_unless(array_key_exists($key, ReportBuilder::available($request->user())), 403);
+        abort_unless(array_key_exists($key, $available), 403);
 
         return [$key, Period::fromRequest($request, self::DEFAULT_PERIOD[$key] ?? 'today')];
     }

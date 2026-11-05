@@ -8,14 +8,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
-})->middleware('auth:sanctum');
+})->middleware(['auth:sanctum', 'active']);
 
 /*
 | JSON API (ARCHITECTURE.md §4). `auth:sanctum` accepts a bearer token (mobile app, tools) or,
 | because statefulApi() is on in bootstrap/app.php, the normal web login cookie when the call
 | comes from the CRM's own domain (SANCTUM_STATEFUL_DOMAINS). Policies check every action.
 */
-Route::prefix('v1')->name('api.v1.')->middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
+// `active`: a switched-off login loses API access at once, token or cookie (audit L11).
+Route::prefix('v1')->name('api.v1.')->middleware(['auth:sanctum', 'active', 'throttle:120,1'])->group(function () {
     Route::get('customers/lookup', [CustomerController::class, 'lookup'])->name('customers.lookup');
     Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
     Route::post('customers', [CustomerController::class, 'store'])->name('customers.store');

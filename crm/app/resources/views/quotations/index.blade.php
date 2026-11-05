@@ -89,7 +89,7 @@
                 <tbody class="divide-y divide-zinc-200">
                     @foreach ($quotes as $q)
                         @php $next = $q->followUps->first(); $late = $next && $next->isOverdue(); @endphp
-                        <tr class="cursor-pointer hover:bg-[#FAFAFA]" onclick="if (!event.target.closest('a')) location = '{{ route('quotations.show', $q) }}'">
+                        <tr class="cursor-pointer hover:bg-[#FAFAFA]" data-href="{{ route('quotations.show', $q) }}">
                             <td class="px-4 py-3 align-top">
                                 <a href="{{ route('quotations.show', $q) }}" class="whitespace-nowrap font-semibold tabular-nums hover:underline">{{ $q->number }}</a>
                                 <div class="text-xs text-zinc-600">{{ $q->created_at->timezone('Asia/Kolkata')->format('j M') }}@if ($q->version > 1) · v{{ $q->version }}@endif</div>

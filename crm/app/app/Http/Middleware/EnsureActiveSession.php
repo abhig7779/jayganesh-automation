@@ -17,6 +17,13 @@ class EnsureActiveSession
     {
         $user = $request->user();
 
+        // API calls with a bearer token have no session: only the on/off switch applies.
+        if ($user && ! $request->hasSession()) {
+            abort_unless($user->is_active, 403, 'This login is switched off.');
+
+            return $next($request);
+        }
+
         if ($user) {
             $lastSeen = (int) $request->session()->get('last_seen_at', now()->timestamp);
             $idleTooLong = now()->timestamp - $lastSeen > $user->idleTimeoutMinutes() * 60;

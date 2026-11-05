@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\User;
+use App\Support\ClientKey;
 use App\Support\Money;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -51,8 +52,9 @@ class PaymentService
 
     /**
      * @param  int[]|null  $invoiceIds  bills staff left ticked (null = all unpaid bills)
+     * @param  ?string  $clientKey  the form's idempotency key: a double submit returns the first payment
      */
-    public function collect(Customer $customer, int $amount, string $mode, ?string $reference, ?array $invoiceIds, User $by): Payment
+    public function collect(Customer $customer, int $amount, string $mode, ?string $reference, ?array $invoiceIds, User $by, ?string $clientKey = null): Payment
     {
         if (! in_array($mode, Payment::MODES, true)) {
             throw ValidationException::withMessages(['mode' => 'Pick Cash, UPI, Card or Bank.']);
@@ -61,7 +63,9 @@ class PaymentService
             throw ValidationException::withMessages(['amount' => 'Enter the amount received.']);
         }
 
-        return DB::transaction(function () use ($customer, $amount, $mode, $reference, $invoiceIds, $by) {
+        $branchId = $by->branch_id;
+
+        return ClientKey::once(Payment::class, $branchId, $clientKey, fn () => DB::transaction(function () use ($customer, $amount, $mode, $reference, $invoiceIds, $by, $clientKey) {
             $bills = Invoice::query()->where('customer_id', $customer->id)->unpaid()
                 ->when($invoiceIds !== null, fn ($q) => $q->whereIn('id', $invoiceIds))
                 ->orderBy('created_at')->orderBy('id')
@@ -76,7 +80,7 @@ class PaymentService
             }
 
             $split = self::allocateOldestFirst($amount, $bills);
-            $payment = Payment::create([
+            $payment = Payment::forceCreate([
                 'branch_id' => $by->branch_id ?? $bills->first()->branch_id,
                 'invoice_id' => count($split) === 1 ? array_key_first($split) : null,
                 'customer_id' => $customer->id,
@@ -86,6 +90,7 @@ class PaymentService
                 'reference' => $reference ? mb_substr($reference, 0, 80) : null,
                 'note' => 'Due collected',
                 'received_by' => $by->id,
+                'client_key' => $clientKey ?: null,
             ]);
 
             foreach ($bills as $bill) {
@@ -93,7 +98,7 @@ class PaymentService
                 if ($take <= 0) {
                     continue;
                 }
-                $payment->allocations()->create(['invoice_id' => $bill->id, 'amount_paise' => $take]);
+                $payment->allocations()->forceCreate(['invoice_id' => $bill->id, 'amount_paise' => $take]);
                 $paid = $bill->paid_paise + $take;
                 $left = $bill->due_paise - $take;
                 $bill->forceFill(['paid_paise' => $paid, 'due_paise' => $left, 'status' => InvoiceService::statusFor($paid, $left)])->save();
@@ -107,6 +112,6 @@ class PaymentService
             event(new PaymentCollected($payment, $balance));
 
             return $payment->load('allocations.invoice');
-        });
+        }));
     }
 }

@@ -49,7 +49,8 @@ class InvoicePdf
             'defaultFont' => 'Noto Sans',
             'fontDir' => storage_path('fonts'),
             'fontCache' => storage_path('fonts'),
-            'chroot' => [base_path()],
+            // Only the folders a PDF may read from, never base_path() (it holds .env): audit L9.
+            'chroot' => [resource_path('fonts'), storage_path('fonts'), public_path('img')],
             'isRemoteEnabled' => false,
             'isFontSubsettingEnabled' => true,
         ];

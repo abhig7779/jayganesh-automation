@@ -163,6 +163,9 @@
                         </table>
                     </div>
                 @endif
+                @if (($hiddenHistory ?? 0) > 0)
+                    <p class="mt-2 text-xs font-medium text-muted">{{ $hiddenHistory }} more {{ $hiddenHistory === 1 ? 'bill or quote' : 'bills or quotes' }} by other staff not shown.</p>
+                @endif
             </div>
 
             {{-- Cars --}}

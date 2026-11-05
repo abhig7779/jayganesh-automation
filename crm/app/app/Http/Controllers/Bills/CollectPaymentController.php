@@ -8,6 +8,7 @@ use App\Models\Invoice;
 use App\Models\Payment;
 use App\Services\Billing\PaymentService;
 use App\Services\Billing\UpiQr;
+use App\Support\ClientKey;
 use App\Support\Money;
 use App\Support\Phone;
 use Illuminate\Http\RedirectResponse;
@@ -40,8 +41,9 @@ class CollectPaymentController extends Controller
         // Customers with the biggest dues, so the page is useful before anyone types.
         $topDues = $customer || $q !== '' ? collect() : Invoice::query()->unpaid()->whereNotNull('customer_id')
             ->selectRaw('customer_id, SUM(due_paise) as due, COUNT(*) as bills, MIN(created_at) as oldest')
-            ->groupBy('customer_id')->orderByDesc('due')->limit(15)->get()
-            ->each(fn ($r) => $r->customer = Customer::query()->find($r->customer_id));
+            ->groupBy('customer_id')->orderByDesc('due')->limit(15)->get();
+        $dueCustomers = Customer::query()->whereIn('id', $topDues->pluck('customer_id'))->get()->keyBy('id');
+        $topDues->each(fn ($r) => $r->customer = $dueCustomers->get($r->customer_id));
 
         $bills = $customer ? $this->payments->unpaidBills($customer) : collect();
 
@@ -65,6 +67,7 @@ class CollectPaymentController extends Controller
             'reference' => ['nullable', 'string', 'max:80'],
             'invoices' => ['required', 'array', 'min:1'],
             'invoices.*' => ['integer'],
+            'client_key' => ClientKey::RULE,
         ], ['invoices.required' => 'Tick at least one unpaid bill.']);
 
         try {
@@ -74,14 +77,16 @@ class CollectPaymentController extends Controller
         }
 
         $customer = Customer::query()->findOrFail($data['customer_id']);
-        $payment = $this->payments->collect($customer, $amount, $data['mode'], $data['reference'] ?? null, array_map('intval', $data['invoices']), $request->user());
+        $payment = $this->payments->collect($customer, $amount, $data['mode'], $data['reference'] ?? null, array_map('intval', $data['invoices']), $request->user(), $data['client_key'] ?? null);
 
         return redirect()->route('payments.receipt', $payment);
     }
 
     public function receipt(Request $request, Payment $payment): View
     {
-        abort_unless($request->user()->can('payments.collect') || $request->user()->can('reports.all_staff'), 403);
+        // Only the person who took the money, or someone who sees every staff member's work (audit M2).
+        $user = $request->user();
+        abort_unless(($user->can('payments.collect') && $payment->received_by === $user->id) || $user->can('reports.all_staff'), 403);
         $payment->load(['allocations.invoice', 'customer', 'receiver']);
         $balance = $payment->customer_id ? PaymentService::customerDuePaise($payment->customer_id) : 0;
 
