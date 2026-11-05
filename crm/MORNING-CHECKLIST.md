@@ -8,7 +8,7 @@ Times are rough. Do the sections in order.
 
 ## A. MilesWeb (hosting)
 
-- [ ] **Database user.** ✅ Database `jayganes1_crm` (MariaDB) was created on 6 Nov. Still to do: mPanel → Databases → Users → Add User. Username `crm` (becomes `jayganes1_crm`), click the 🔑 key icon to generate the password, **save it in your password manager**, tick `jayganes1_crm`, then Create Database User.
+- [x] **Database + user.** ✅ Done 6 Nov: database `jayganes1_crm` (MariaDB) with user `jayganes1_crm`. Keep the password safe; it is typed once into the server `.env` at first deploy.
   *Why:* the CRM stores every bill and customer here. *Time:* 10 minutes.
 - [x] **PHP version.** No change needed: the CRM is built and tested for PHP 8.2 (MilesWeb's current version). On this plan the PHP version appears to be account-wide, and changing it could affect the `api.` and `media.` subdomains. Leave it on 8.2.
   *Why:* the app will not start on an older PHP. *Time:* 5 minutes.
@@ -81,3 +81,9 @@ Until this is done, the CRM works in **Manual** WhatsApp mode (staff press Send 
   *Why:* proves everything works before paper bills stop. *Time:* 30 minutes.
 - [ ] **Check `/health`** is green (the Last backup line turns green after the first 23:30 run).
   *Why:* proves backups and the scheduler are running. *Time:* 2 minutes.
+
+## Decisions waiting for you (added overnight, 6 Nov)
+
+- [ ] **AI auto-reply for ad chats: choose the provider.** It's built and **off** by default. Claude (paid, chats stay private) or OpenAI free tier (chats shared with OpenAI). Settings → WhatsApp → AI auto-reply: off / ads-only / all.
+- [ ] **Meta App Review: pick what to submit.** Open `crm/WHATSAPP-APP-REVIEW.md`; each permission is marked Used / Built / Planned / No use. Only items you approve get submitted. Nothing has been deleted or submitted.
+- [x] **Meta app settings:** policy, terms and data-deletion URLs now point to jayganeshcaraccessories.com; app domain and icon set; the "WA coexistence - CRM" Embedded Signup config was created.
