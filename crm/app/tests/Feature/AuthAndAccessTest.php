@@ -15,22 +15,6 @@ beforeEach(function () {
     $this->branch = Branch::create(['name' => 'Main', 'code' => 'JG']);
 });
 
-function staff(string $role, array $attrs = []): User
-{
-    static $n = 0;
-    $n++;
-    $u = User::create(array_merge([
-        'name' => ucfirst($role)." $n",
-        'phone' => '+9198765'.str_pad((string) $n, 5, '0', STR_PAD_LEFT),
-        'password' => 'secret-pass',
-        'branch_id' => Branch::first()->id,
-        'is_active' => true,
-    ], $attrs));
-    $u->syncRoles([$role]);
-
-    return $u;
-}
-
 it('redirects guests to the login page', function () {
     $this->get('/')->assertRedirect(route('login'));
 });

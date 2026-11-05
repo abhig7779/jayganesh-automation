@@ -24,4 +24,16 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::get('/settings', [SettingsController::class, 'edit'])->name('settings.edit');
         Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
     });
+
+    // Each module owns one file in routes/modules/ (customers.php, products.php, bills.php,
+    // quotations.php, whatsapp.php …). They load here, already inside auth + active, so
+    // modules never edit this file. See crm/CONTRACTS.md.
+    foreach (glob(__DIR__.'/modules/*.php') as $moduleRoutes) {
+        require $moduleRoutes;
+    }
 });
+
+// Public, unauthenticated module routes (e.g. the WhatsApp webhook, signed PDF links).
+foreach (glob(__DIR__.'/public/*.php') as $publicRoutes) {
+    require $publicRoutes;
+}

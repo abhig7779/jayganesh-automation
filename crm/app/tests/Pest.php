@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Branch;
+use App\Models\User;
 use Tests\TestCase;
 
 /*
@@ -43,7 +45,19 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+/** A staff login with one role, on the first branch (the test must create a branch first). */
+function staff(string $role, array $attrs = []): User
 {
-    // ..
+    static $n = 0;
+    $n++;
+    $u = User::create(array_merge([
+        'name' => ucfirst($role)." $n",
+        'phone' => '+9198765'.str_pad((string) $n, 5, '0', STR_PAD_LEFT),
+        'password' => 'secret-pass',
+        'branch_id' => Branch::first()->id,
+        'is_active' => true,
+    ], $attrs));
+    $u->syncRoles([$role]);
+
+    return $u;
 }

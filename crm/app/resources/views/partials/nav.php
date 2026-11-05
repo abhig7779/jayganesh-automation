@@ -1,18 +1,28 @@
 <?php
 
-// Menu for the app shell. 'soon' items are modules from later build steps; they show as
-// disabled so staff can see what is coming. 'can' is the permission needed to see the item.
-return [
+use Illuminate\Support\Facades\Route;
+
+// Menu for the app shell. An item switches on by itself as soon as its module registers the
+// route name (routes/modules/*.php); until then it shows as "Soon". 'can' is the permission
+// needed to see it. Route names are fixed in crm/CONTRACTS.md, so modules never edit this file.
+$items = [
     ['label' => 'Home', 'route' => 'dashboard', 'icon' => 'home', 'can' => null, 'mobile' => true],
-    ['label' => 'New bill', 'route' => null, 'icon' => 'plus', 'can' => 'invoices.create', 'soon' => true, 'mobile' => true, 'shortcut' => 'new-bill'],
-    ['label' => 'Customers', 'route' => null, 'icon' => 'users', 'can' => 'customers.view', 'soon' => true, 'mobile' => true],
-    ['label' => 'Quotations', 'route' => null, 'icon' => 'doc', 'can' => 'quotations.view', 'soon' => true],
-    ['label' => 'Bills', 'route' => null, 'icon' => 'receipt', 'can' => 'invoices.view', 'soon' => true],
-    ['label' => 'Stock', 'route' => null, 'icon' => 'box', 'can' => 'inventory.view', 'soon' => true, 'mobile' => true],
-    ['label' => 'Job cards', 'route' => null, 'icon' => 'wrench', 'can' => 'jobcards.view', 'soon' => true],
-    ['label' => 'Finance', 'route' => null, 'icon' => 'rupee', 'can' => 'finance.view', 'soon' => true],
-    ['label' => 'Leads', 'route' => null, 'icon' => 'chat', 'can' => 'leads.manage', 'soon' => true],
-    ['label' => 'Reports', 'route' => null, 'icon' => 'chart', 'can' => 'reports.view', 'soon' => true],
+    ['label' => 'New bill', 'route' => 'bills.create', 'icon' => 'plus', 'can' => 'invoices.create', 'mobile' => true, 'shortcut' => 'new-bill'],
+    ['label' => 'Follow-ups', 'route' => 'followups.index', 'icon' => 'chat', 'can' => 'quotations.view'],
+    ['label' => 'Customers', 'route' => 'customers.index', 'icon' => 'users', 'can' => 'customers.view', 'mobile' => true],
+    ['label' => 'Quotations', 'route' => 'quotations.index', 'icon' => 'doc', 'can' => 'quotations.view'],
+    ['label' => 'Bills', 'route' => 'bills.index', 'icon' => 'receipt', 'can' => 'invoices.view', 'mobile' => true],
+    ['label' => 'Stock', 'route' => 'products.index', 'icon' => 'box', 'can' => 'inventory.view'],
+    ['label' => 'Job cards', 'route' => 'jobcards.index', 'icon' => 'wrench', 'can' => 'jobcards.view'],
+    ['label' => 'Finance', 'route' => 'finance.index', 'icon' => 'rupee', 'can' => 'finance.view'],
+    ['label' => 'Leads', 'route' => 'leads.index', 'icon' => 'chat', 'can' => 'leads.manage'],
+    ['label' => 'Reports', 'route' => 'reports.index', 'icon' => 'chart', 'can' => 'reports.view'],
     ['label' => 'Staff', 'route' => 'staff.index', 'icon' => 'id', 'can' => 'staff.manage'],
     ['label' => 'Settings', 'route' => 'settings.edit', 'icon' => 'cog', 'can' => 'settings.manage'],
 ];
+
+return array_map(function (array $i) {
+    $i['soon'] = ! Route::has($i['route']);
+
+    return $i;
+}, $items);
