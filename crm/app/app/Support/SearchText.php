@@ -10,13 +10,50 @@ use Illuminate\Support\HtmlString;
  */
 final class SearchText
 {
-    /** "DHC Gleam-2.0 (H4)" → "dhc gleam 2 0 h4" */
+    /**
+     * Same rules as resources/js/product-search.js (keep both in step):
+     * lowercase; dots dropped ("l.e.d" = "led", "2.0" = "20"); a hyphen/apostrophe inside a word is
+     * dropped ("h-4" = "h4"); other punctuation is a space; "7 d" = "7d" and "h 4" = "h4".
+     *
+     * @return string[]
+     */
+    public static function tokens(?string $text): array
+    {
+        $s = mb_strtolower((string) $text);
+        $s = str_replace('.', '', $s);
+        $s = preg_replace('/(?<=[\p{L}\p{N}])[\-\'’](?=[\p{L}\p{N}])/u', '', $s);
+        $s = preg_replace('/[^\p{L}\p{N}]+/u', ' ', $s);
+        $raw = preg_split('/\s+/', trim($s), -1, PREG_SPLIT_NO_EMPTY);
+
+        $out = [];
+        for ($i = 0; $i < count($raw); $i++) {
+            $t = $raw[$i];
+            $next = $raw[$i + 1] ?? null;
+            if ($next !== null && (
+                (ctype_digit($t) && preg_match('/^\p{L}$/u', $next)) ||
+                (preg_match('/^\p{L}$/u', $t) && ctype_digit($next))
+            )) {
+                $out[] = $t.$next;
+                $i++;
+
+                continue;
+            }
+            $out[] = $t;
+        }
+
+        return $out;
+    }
+
+    /** "DHC Gleam-2.0 (H4)" → "dhc gleam 20 h4" */
     public static function normalize(?string $text): string
     {
-        $text = mb_strtolower((string) $text);
-        $text = preg_replace('/[^\p{L}\p{N}]+/u', ' ', $text);
+        return implode(' ', self::tokens($text));
+    }
 
-        return trim(preg_replace('/\s+/', ' ', $text));
+    /** SKU / barcode compare key: lowercase letters and digits only. */
+    public static function code(?string $text): string
+    {
+        return preg_replace('/[^a-z0-9]/', '', mb_strtolower((string) $text));
     }
 
     /**

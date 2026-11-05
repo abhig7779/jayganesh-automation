@@ -2,18 +2,19 @@
 
 namespace App\Events;
 
+use App\Models\Invoice;
+use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
 /**
- * STUB from the WhatsApp branch. The billing branch owns the real event
- * (`InvoiceSaved(Invoice $invoice)`, fired after the bill transaction commits).
- * LEAD: when merging, keep billing's version of this file and delete this stub. The WhatsApp
- * listener only reads the public `$invoice` property, so both versions work with it.
+ * Fired once a new bill has been committed (crm/CONTRACTS.md hand-off 1).
+ * WhatsApp listens to send the e-bill (check $invoice->send_whatsapp); quotations listens to
+ * mark quotes/leads won (by $invoice->quotation_id or the same customer within 30 days).
  */
-class InvoiceSaved
+class InvoiceSaved implements ShouldDispatchAfterCommit
 {
     use Dispatchable, SerializesModels;
 
-    public function __construct(public object $invoice) {}
+    public function __construct(public Invoice $invoice) {}
 }

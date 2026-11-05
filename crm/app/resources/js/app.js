@@ -79,6 +79,10 @@ document.addEventListener('click', (e) => {
     }
 });
 
+// Module scripts (resources/js/modules/*.js) register their Alpine components on 'alpine:init',
+// so a module adds JS without editing this file.
+import.meta.glob('./modules/*.js', { eager: true });
+
 Alpine.start();
 
 // Job cards module: board drag, ticks and photo uploads, loaded only where needed.
