@@ -41,8 +41,11 @@ final class Permissions
         'sales' => [
             'customers.view', 'customers.manage', 'quotations.view', 'quotations.manage',
             'invoices.view', 'invoices.create', 'payments.collect',
-            'inventory.view', 'jobcards.view', 'leads.manage',
+            'inventory.view', 'jobcards.view',
         ],
+        // Leads/marketing are given per person (owner rule, 5 Nov): a marketing role, or the
+        // `leads.manage` permission switched on for one user directly.
+        'marketing' => ['customers.view', 'quotations.view', 'leads.manage', 'offers.manage', 'reports.view'],
         'technician' => ['jobcards.view', 'jobcards.manage'],
     ];
 
@@ -51,6 +54,7 @@ final class Permissions
         'admin' => 'Admin',
         'finance' => 'Finance',
         'sales' => 'Sales / Counter',
+        'marketing' => 'Marketing',
         'technician' => 'Technician',
     ];
 }
