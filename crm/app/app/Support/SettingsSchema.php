@@ -35,6 +35,10 @@ final class SettingsSchema
             'whatsapp.template_invoice' => ['group' => 'WhatsApp', 'label' => 'Invoice template name', 'type' => 'text', 'rules' => 'nullable|alpha_dash|max:60', 'default' => 'invoice_ebill'],
             'whatsapp.template_quotation' => ['group' => 'WhatsApp', 'label' => 'Quotation template name', 'type' => 'text', 'rules' => 'nullable|alpha_dash|max:60', 'default' => 'quotation_send'],
             'whatsapp.auto_send_invoice' => ['group' => 'WhatsApp', 'label' => 'Send the e-bill automatically when a bill is saved', 'type' => 'checkbox', 'rules' => 'boolean', 'default' => true],
+
+            // Finance (cash close)
+            'finance.opening_float_paise' => ['group' => 'Finance', 'label' => 'Opening cash in the drawer each morning, in paise (₹2,000 = 200000)', 'type' => 'number', 'rules' => 'nullable|integer|min:0|max:100000000', 'default' => 200000],
+            'finance.owner_whatsapp' => ['group' => 'Finance', 'label' => 'Owner WhatsApp number for the day-close summary', 'type' => 'text', 'rules' => 'nullable|string|max:20', 'default' => '+91 98231 07676'],
         ];
     }
 
