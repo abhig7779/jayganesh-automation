@@ -262,7 +262,7 @@ it('scopes search: Sales find only their own bills and quotes unless they see al
     $other = staff('sales');
     $branch = Branch::first();
 
-    $bill = Invoice::query()->create([
+    $bill = Invoice::query()->forceCreate([
         'branch_id' => $branch->id, 'number' => 'JG-TEST-7777', 'financial_year' => '2627', 'place_of_supply' => '27',
         'total_paise' => 99900, 'paid_paise' => 99900, 'status' => 'paid', 'created_by' => $other->id,
     ]);
