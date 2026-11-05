@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use App\Services\Reminders\ReminderService;
+
 /**
  * Every editable setting, with its label, form type, validation and default.
  * Add a field here and it appears on the Settings page; nothing else to change.
@@ -53,6 +55,14 @@ final class SettingsSchema
             // Finance (cash close)
             'finance.opening_float_paise' => ['group' => 'Finance', 'label' => 'Opening cash in the drawer each morning, in paise (₹2,000 = 200000)', 'type' => 'number', 'rules' => 'nullable|integer|min:0|max:100000000', 'default' => 200000],
             'finance.owner_whatsapp' => ['group' => 'Finance', 'label' => 'Owner WhatsApp number for the day-close summary', 'type' => 'text', 'rules' => 'nullable|string|max:20', 'default' => '+91 98231 07676'],
+
+            // --- reminders module: service check-ups + Google review requests ---
+            'reviews.enabled' => ['group' => 'Reminders & reviews', 'label' => 'Ask for a Google review after a paid bill (at most once per customer every 90 days)', 'type' => 'checkbox', 'rules' => 'boolean', 'default' => true],
+            'reviews.delay_days' => ['group' => 'Reminders & reviews', 'label' => 'Days after the bill to ask for the review', 'type' => 'number', 'rules' => 'nullable|integer|min:0|max:30', 'default' => 1],
+            'reviews.google_link' => ['group' => 'Reminders & reviews', 'label' => 'Google review link (from Google Business Profile, "Ask for reviews")', 'type' => 'url', 'rules' => 'nullable|url|max:300', 'default' => ''],
+            'reviews.message' => ['group' => 'Reminders & reviews', 'label' => 'Review request message. Use {name} {car} {shop} {link}', 'type' => 'textarea', 'rules' => 'nullable|string|max:1000', 'default' => ReminderService::DEFAULT_REVIEW_MESSAGE],
+            'reminders.template_service' => ['group' => 'Reminders & reviews', 'label' => 'Service reminder template name (Cloud API; body: name, car, service, date)', 'type' => 'text', 'rules' => 'nullable|alpha_dash|max:60', 'default' => 'service_reminder'],
+            // --- end reminders ---
 
             // --- quotations: follow-up engine (UX-FLOWS §3.2) ---
             ...self::followUpFields(),
