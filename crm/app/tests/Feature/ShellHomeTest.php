@@ -29,8 +29,8 @@ it('renders a Home for every role without errors', function (string $role, array
 })->with([
     'owner' => ['owner', ["Today's business", 'Needs attention', 'Send offer', 'New customers', 'Follow-ups today'], []],
     'admin' => ['admin', ["Today's business", 'Needs attention'], ['Shop settings']],
-    'finance' => ['finance', ['collections', 'Dues ageing', 'Payables to suppliers', 'Add expense', 'Cash close', 'Money today'], ['New bill</span>']],
-    'sales' => ['sales', ['Follow-ups today', 'My today', 'Add customer', 'New quotation', 'Car in', 'Check price'], ["Today's business", 'Send offer', 'Leads']],
+    'finance' => ['finance', ['collections', 'Dues ageing', 'Payables to suppliers', 'Add expense', 'Cash close', 'Money today', 'Collect payment'], ['New bill</span>']],
+    'sales' => ['sales', ['Follow-ups today', 'My today', 'New bill', 'Add customer', 'New quotation', 'Collect payment', 'Car in', 'Check price', 'Recent bills'], ["Today's business", 'Send offer', 'Leads']],
     'technician' => ['technician', ['My job cards'], ['Collect payment', '₹', 'My today']],
     'marketing' => ['marketing', ['Send offer', 'Leads'], ['Collect payment', 'My today']],
 ]);
@@ -39,10 +39,11 @@ it('shows real customer numbers on the owner home', function () {
     Customer::factory()->count(4)->create();
     $data = (new HomeData(staff('owner')))->toArray();
     expect($data['business']['newCustomers'])->toBe(4)
-        ->and($data['business']['billing'])->toBeFalse()
+        ->and($data['business']['billing'])->toBeTrue()
+        ->and($data['business']['salesPaise'])->toBe(0)
         ->and($data['month']['newCustomers'])->toBe(4)
-        ->and($data['recentBills'])->toBeNull()
-        ->and($data['staffToday'])->toBeNull();
+        ->and($data['recentBills'])->toBe([])
+        ->and($data['staffToday'])->toBe([]);
 });
 
 it('lists low stock on the owner home', function () {
@@ -54,7 +55,10 @@ it('lists low stock on the owner home', function () {
 it('links tiles only to routes that exist and hides the rest', function () {
     $tiles = collect((new HomeData(staff('sales')))->tiles())->keyBy('key');
     expect($tiles['customer']['url'])->toBe(route('customers.create'))
-        ->and($tiles->has('new-bill'))->toBe(Route::has('bills.create'))
+        ->and($tiles['new-bill']['url'])->toBe(route('bills.create'))
+        ->and($tiles['new-bill']['primary'])->toBeTrue()
+        ->and($tiles['new-bill']['shortcut'])->toBe('F2')
+        ->and($tiles['collect']['url'])->toBe(route('payments.collect'))
         ->and($tiles['car-in']['url'])->toBe(route('jobcards.create'))
         ->and($tiles['customer']['shortcut'])->toBe('F7')
         ->and($tiles->has('offer'))->toBeFalse()

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\CustomerCar;
+use App\Models\Invoice;
 use App\Models\JobCard;
 use App\Models\Product;
 use App\Models\Quotation;
@@ -14,7 +15,6 @@ use App\Support\RegNo;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -88,16 +88,17 @@ class SearchController extends Controller
             }
         }
 
-        // Bills by number (guarded until billing merges). WIRE: invoices.number
-        $invoice = 'App\\Models\\Invoice';
-        if ($user->can('invoices.view') && class_exists($invoice) && Schema::hasTable('invoices')) {
-            $items = $this->safe(fn () => $invoice::query()->where('number', 'like', '%'.str_replace(['%', '_'], '', $q).'%')
-                ->with('customer')->latest()->limit(self::PER_GROUP)->get()
-                ->map(fn ($i) => [
+        // Bills by number ("JG-2627-0142", "0142"). Sales see only their own bills unless they
+        // have reports.all_staff (Invoice::visibleTo), the same rule as the Bills list.
+        $term = str_replace(['%', '_'], '', $q);
+        if ($user->can('invoices.view') && Schema::hasTable('invoices') && preg_match('/\d/', $term)) {
+            $items = $this->safe(fn () => Invoice::query()->visibleTo($user)->where('number', 'like', '%'.$term.'%')
+                ->with('customer')->latest('id')->limit(self::PER_GROUP)->get()
+                ->map(fn (Invoice $i) => [
                     'title' => $i->number,
-                    'subtitle' => ($i->customer?->name ?? 'Walk-in').' · '.$i->created_at?->timezone('Asia/Kolkata')->format('j M'),
+                    'subtitle' => ($i->customer?->name ?? ($i->customer_name ?: 'Walk-in')).' · '.$i->statusLabel().' · '.$i->created_at?->timezone('Asia/Kolkata')->format('j M'),
                     'meta' => Money::format((int) $i->total_paise),
-                    'url' => Route::has('bills.show') ? route('bills.show', $i) : null,
+                    'url' => route('bills.show', $i),
                     'icon' => 'receipt',
                 ])->all());
             if ($items) {
@@ -105,10 +106,12 @@ class SearchController extends Controller
             }
         }
 
-        // Quotations by number ("Q-2627-0012", "0012"): Sales see their own, Owner/Admin all.
-        $term = str_replace(['%', '_'], '', $q);
+        // Quotations by number ("Q-2627-0012", "0012"): only your own unless you see all staff
+        // (reports.all_staff) and may open anyone's quote (Owner/Admin).
         if ($user->can('quotations.view') && Schema::hasTable('quotations') && preg_match('/\d/', $term)) {
-            $items = $this->safe(fn () => Quotation::query()->visibleTo($user)->where('number', 'like', '%'.$term.'%')
+            $seesAll = $user->can('reports.all_staff') && Quotation::seesAll($user);
+            $items = $this->safe(fn () => Quotation::query()->when(! $seesAll, fn ($w) => $w->where('assigned_to', $user->id))
+                ->where('number', 'like', '%'.$term.'%')
                 ->with('customer')->latest('id')->limit(self::PER_GROUP)->get()
                 ->map(fn (Quotation $x) => [
                     'title' => $x->number,

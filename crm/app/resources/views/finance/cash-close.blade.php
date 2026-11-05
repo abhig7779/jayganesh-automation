@@ -127,7 +127,7 @@
         </section>
     </div>
 
-    <script>
+    <script nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
         function cashClose(expected, initial) {
             return {
                 expected, counted: initial || '',

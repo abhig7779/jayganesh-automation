@@ -87,7 +87,7 @@
         </x-products.panel>
     </div>
 
-    <script>
+    <script nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
         (() => {
             const desktop = () => window.matchMedia('(min-width: 1024px)').matches;
             const rows = () => [...document.querySelectorAll('#product-results [data-row]')].filter((r) => r.offsetParent !== null);

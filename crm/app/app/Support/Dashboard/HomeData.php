@@ -2,18 +2,23 @@
 
 namespace App\Support\Dashboard;
 
+use App\Models\BillDraft;
 use App\Models\Customer;
+use App\Models\Invoice;
 use App\Models\JobCard;
 use App\Models\Lead;
+use App\Models\MessageLog;
+use App\Models\Payment;
 use App\Models\Quotation;
 use App\Models\User;
 use App\Support\Money;
-use App\Support\RegNo;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 /**
  * Everything the role-aware Home shows (UX-FLOWS §2, DESIGN §7), in one place.
@@ -24,15 +29,11 @@ use Illuminate\Support\Facades\Schema;
  *
  * Quotations / follow-ups, job cards, products, finance and offers are merged: their sections call
  * the modules' own helpers (Dashboard\FollowUps, Workshop, LowStock, FinanceHome, FinanceAlerts,
- * Offers). Billing (invoices / payments) is still to come: the remaining "WIRE:" comments mark
- * those guarded queries. Check their column names against the billing migrations when it merges.
+ * Offers) and billing (invoices, payments, bill_drafts; e-bill WhatsApp status from message_log).
+ * Queries still run through safe(), so a bad column logs an error instead of a 500 at the counter.
  */
 class HomeData
 {
-    public const INVOICE = 'App\\Models\\Invoice';
-
-    public const PAYMENT = 'App\\Models\\Payment';
-
     public const QUOTATION = 'App\\Models\\Quotation';
 
     public const FOLLOW_UP = 'App\\Models\\FollowUp';
@@ -201,37 +202,29 @@ class HomeData
 
     // ---------------------------------------------------------------- sales / counter
 
-    /** My bills, my sales, cash I collected today, plus new customers I added (real). */
+    /** My bills, my sales, what I collected today by mode, plus new customers I added. */
     public function myToday(): array
     {
         $out = ['newCustomers' => $this->newCustomersToday($this->user), 'billing' => false];
-
-        if ($this->hasInvoices()) {
-            // WIRE: invoices(created_by, total_paise, status, created_at); payments(received_by, mode, amount_paise).
-            $out = $this->safe(function () use ($out) {
-                $mine = $this->invoicesToday()->where('created_by', $this->user->id);
-                $lastWeek = $this->invoiceQuery()->where('status', '!=', 'cancelled')->where('created_by', $this->user->id)
-                    ->whereBetween('created_at', [$this->today->subWeek(), $this->today->subWeek()->endOfDay()]);
-                $cash = $this->hasPayments()
-                    ? (int) (self::PAYMENT)::query()->where('received_by', $this->user->id)->where('mode', 'cash')
-                        ->where('created_at', '>=', $this->today)->sum('amount_paise')
-                    : null;
-
-                return $out + [
-                    'billing' => true,
-                    'bills' => (clone $mine)->count(),
-                    'salesPaise' => (int) (clone $mine)->sum('total_paise'),
-                    'lastWeekPaise' => (int) $lastWeek->sum('total_paise'),
-                    'cashPaise' => $cash,
-                    'modes' => $this->hasPayments()
-                        ? (self::PAYMENT)::query()->where('received_by', $this->user->id)->where('created_at', '>=', $this->today)
-                            ->selectRaw('mode, SUM(amount_paise) as total')->groupBy('mode')->pluck('total', 'mode')->map(fn ($v) => (int) $v)->all()
-                        : [],
-                ];
-            }, $out);
+        if (! $this->hasInvoices()) {
+            return $out;
         }
 
-        return $out;
+        return $this->safe(function () use ($out) {
+            $mine = $this->invoicesToday()->where('created_by', $this->user->id);
+            $lastWeek = Invoice::query()->notCancelled()->where('created_by', $this->user->id)
+                ->whereBetween('created_at', [$this->today->subWeek(), $this->today->subWeek()->endOfDay()]);
+            $modes = $this->paymentModesToday($this->user);
+
+            return array_merge($out, [
+                'billing' => true,
+                'bills' => (clone $mine)->count(),
+                'salesPaise' => (int) (clone $mine)->sum('total_paise'),
+                'lastWeekPaise' => (int) $lastWeek->sum('total_paise'),
+                'cashPaise' => $modes['cash'] ?? 0,
+                'modes' => $modes,
+            ]);
+        }, $out);
     }
 
     /** Drafts to finish (billing), open quotes, visits due today, stale quotes and new leads assigned to me. */
@@ -242,13 +235,12 @@ class HomeData
         }
 
         $rows = [];
-        if ($this->hasInvoices()) {
-            // WIRE: invoices.status = 'draft' (billing not merged yet)
-            $rows = array_merge($rows, $this->safe(function () {
-                $drafts = $this->invoiceQuery()->where('status', 'draft')->where('created_by', $this->user->id)->count();
-
-                return $drafts ? [['icon' => 'receipt', 'tone' => 'warn', 'title' => $drafts.' draft '.str('bill')->plural($drafts).' to finish', 'subtitle' => 'Saved automatically', 'url' => $this->routeOrNull('bills.index', ['status' => 'draft'])]] : [];
-            }, []));
+        if ($this->hasInvoices() && $this->user->can('invoices.create')) {
+            // One half-made bill per person, saved from the POS every few seconds (bill_drafts).
+            $draft = BillDraft::query()->where('user_id', $this->user->id)->where('item_count', '>', 0)->first();
+            if ($draft) {
+                $rows[] = ['icon' => 'receipt', 'tone' => 'warn', 'title' => 'A half-made bill to finish', 'subtitle' => $draft->item_count.' '.str('item')->plural($draft->item_count).' · '.Money::format((int) $draft->total_paise).' · saved '.$draft->updated_at?->timezone(self::TZ)->format('h:i A'), 'url' => $this->routeOrNull('bills.create')];
+            }
         }
 
         if ($this->hasQuotations() && $this->user->can('quotations.view')) {
@@ -319,31 +311,36 @@ class HomeData
 
     // ---------------------------------------------------------------- recent bills
 
-    /** Last 5 bills, or null when billing isn't merged. */
+    /** Last 5 bills with their e-bill WhatsApp status (message_log), or null without billing. */
     public function recentBills(bool $onlyMine = false): ?array
     {
         if (! $this->hasInvoices() || ! $this->user->can('invoices.view')) {
             return null;
         }
 
-        // WIRE: invoices(number, total_paise, status, customer_id, created_at, whatsapp_status)
-        return $this->safe(fn () => $this->invoiceQuery()
-            ->when($onlyMine, fn ($q) => $q->where('created_by', $this->user->id))
-            ->with('customer')->latest()->limit(5)->get()
-            ->map(fn ($i) => [
-                'name' => $i->customer?->name ?? 'Walk-in',
-                'number' => $i->number ?? ('#'.$i->id),
+        return $this->safe(function () use ($onlyMine) {
+            $bills = Invoice::query()->visibleTo($this->user)
+                ->when($onlyMine, fn ($q) => $q->where('created_by', $this->user->id))
+                ->with('customer')->latest()->latest('id')->limit(5)->get();
+            $wa = $this->whatsappStatuses($bills->pluck('id')->all());
+
+            return $bills->map(fn (Invoice $i) => [
+                'name' => $i->customer?->name ?? ($i->customer_name ?: 'Walk-in'),
+                'number' => $i->number,
                 'time' => $i->created_at?->timezone(self::TZ)->format('h:i A'),
                 'paise' => (int) $i->total_paise,
-                'status' => $i->status ?? null,
-                'whatsapp' => $i->whatsapp_status ?? null,
-                'url' => $this->routeOrNull('bills.show', $i),
-            ])->all(), []);
+                'status' => $i->status === Invoice::STATUS_PARTIAL ? 'part_paid' : $i->status,
+                'whatsapp' => match ($wa[$i->id] ?? null) {
+                    'queued' => 'sending', 'manual_opened' => 'sent', default => $wa[$i->id] ?? null,
+                },
+                'url' => route('bills.show', $i),
+            ])->all();
+        }, []);
     }
 
     // ---------------------------------------------------------------- owner / admin
 
-    /** Today's business strip. Billing numbers are null until billing merges; new customers are real. */
+    /** Today's business strip: sales, bills, money in by mode, average bill, new customers. */
     public function businessToday(): array
     {
         $out = [
@@ -356,26 +353,21 @@ class HomeData
             return $out;
         }
 
-        // WIRE: invoices(total_paise, status), payments(mode, amount_paise)
         return $this->safe(function () use ($out) {
             $today = $this->invoicesToday();
-            $lastWeek = $this->invoiceQuery()->where('status', '!=', 'cancelled')
+            $lastWeek = Invoice::query()->notCancelled()
                 ->whereBetween('created_at', [$this->today->subWeek(), $this->today->subWeek()->endOfDay()]);
             $bills = (clone $today)->count();
             $sales = (int) (clone $today)->sum('total_paise');
-            $modes = $this->hasPayments()
-                ? (self::PAYMENT)::query()->where('created_at', '>=', $this->today)
-                    ->selectRaw('mode, SUM(amount_paise) as total')->groupBy('mode')->pluck('total', 'mode')->map(fn ($v) => (int) $v)->all()
-                : [];
 
             return array_merge($out, [
                 'billing' => true,
                 'salesPaise' => $sales,
-                'lastWeekPaise' => (int) $lastWeek->sum('total_paise'),
+                'lastWeekPaise' => (int) (clone $lastWeek)->sum('total_paise'),
                 'bills' => $bills,
                 'lastWeekBills' => (clone $lastWeek)->count(),
                 'avgPaise' => $bills ? intdiv($sales, $bills) : 0,
-                'modes' => $modes,
+                'modes' => $this->paymentModesToday(),
             ]);
         }, $out);
     }
@@ -392,7 +384,7 @@ class HomeData
             // By staff member, with the value of the quotes going cold (UX-FLOWS §2 Owner).
             $late = collect(FollowUps::rowsForUser($this->user, 200))->where('overdue', true);
             $who = $late->groupBy(fn ($r) => $r['assignee'] ?: 'Unassigned')
-                ->map(fn ($g, $name) => \Illuminate\Support\Str::before($name, ' ').' '.$g->count())
+                ->map(fn ($g, $name) => Str::before($name, ' ').' '.$g->count())
                 ->sortDesc()->take(3)->implode(' · ');
             $value = (int) $late->sum('value_paise');
             $rows[] = [
@@ -404,23 +396,27 @@ class HomeData
         }
 
         if ($this->hasInvoices()) {
-            // WIRE: invoices(due_paise, status, created_at, cancelled_by, cancel_reason)
             $rows = array_merge($rows, $this->safe(function () {
                 $r = [];
-                $old = $this->invoiceQuery()->where('due_paise', '>', 0)->where('status', '!=', 'cancelled')
-                    ->where('created_at', '<', $this->today->subDays(15));
+                $old = Invoice::query()->unpaid()->where('created_at', '<', $this->today->subDays(15));
                 $count = (clone $old)->distinct('customer_id')->count('customer_id');
                 if ($count) {
                     $r[] = ['icon' => 'rupee', 'tone' => 'bad', 'title' => Money::format((int) (clone $old)->sum('due_paise')).' due over 15 days', 'detail' => $count.' '.str('customer')->plural($count), 'url' => $this->routeOrNull('payments.collect')];
                 }
-                $cancelled = $this->invoiceQuery()->where('status', 'cancelled')->where('updated_at', '>=', $this->today)->count();
-                if ($cancelled) {
-                    $r[] = ['icon' => 'receipt', 'tone' => 'warn', 'title' => $cancelled.' '.str('bill')->plural($cancelled).' cancelled today', 'detail' => 'See who and why', 'url' => $this->routeOrNull('bills.index', ['status' => 'cancelled'])];
+                $cancelled = Invoice::query()->where('status', Invoice::STATUS_CANCELLED)->where('cancelled_at', '>=', $this->today)
+                    ->with('canceller:id,name')->get(['id', 'cancelled_by', 'cancel_reason']);
+                if ($cancelled->isNotEmpty()) {
+                    $first = $cancelled->first();
+                    $r[] = ['icon' => 'receipt', 'tone' => 'warn', 'title' => $cancelled->count().' '.str('bill')->plural($cancelled->count()).' cancelled today',
+                        'detail' => trim(Str::before((string) $first->canceller?->name, ' ').': '.$first->cancel_reason, ': ') ?: 'See who and why',
+                        'url' => $this->routeOrNull('bills.index', ['status' => Invoice::STATUS_CANCELLED])];
                 }
-                if (Schema::hasColumn('invoices', 'whatsapp_status')) {
-                    $failed = $this->invoiceQuery()->where('whatsapp_status', 'failed')->where('created_at', '>=', $this->today->subDays(2))->count();
+                if (Schema::hasTable('message_log')) {
+                    $failed = MessageLog::query()->outgoing()->where('related_type', (new Invoice)->getMorphClass())
+                        ->where('status', 'failed')->where('created_at', '>=', $this->today->subDays(2))->distinct('related_id')->count('related_id');
                     if ($failed) {
-                        $r[] = ['icon' => 'whatsapp', 'tone' => 'bad', 'title' => $failed.' WhatsApp '.str('bill')->plural($failed).' not sent', 'detail' => 'Resend or send manually', 'url' => $this->routeOrNull('whatsapp.messages.index')];
+                        $r[] = ['icon' => 'whatsapp', 'tone' => 'bad', 'title' => $failed.' WhatsApp '.str('bill')->plural($failed).' not sent', 'detail' => 'Resend or send manually',
+                            'url' => $this->user->can('reports.all_staff') ? $this->routeOrNull('whatsapp.messages.index', ['status' => 'failed']) : $this->routeOrNull('bills.index')];
                     }
                 }
 
@@ -472,22 +468,21 @@ class HomeData
         return Route::has('products.index') ? LowStock::url() : null;
     }
 
-    /** Draft bills to resume (null until billing merges). */
+    /** Half-made bills (bill_drafts, one per person). Owner/Admin see everyone's; Resume opens your own. */
     public function draftBills(): ?array
     {
         if (! $this->hasInvoices() || ! $this->user->can('invoices.create')) {
             return null;
         }
 
-        // WIRE: invoices.status = 'draft', total_paise, updated_at
-        return $this->safe(fn () => $this->invoiceQuery()->where('status', 'draft')
-            ->when(! $this->user->can('reports.all_staff'), fn ($q) => $q->where('created_by', $this->user->id))
-            ->with('customer')->latest('updated_at')->limit(3)->get()
-            ->map(fn ($i) => [
-                'name' => $i->customer?->name ?? 'Walk-in',
-                'detail' => Money::format((int) $i->total_paise).' · saved '.$i->updated_at?->timezone(self::TZ)->format('h:i A'),
-                'url' => $this->routeOrNull('bills.create', ['draft' => $i->id]),
-            ])->all(), []);
+        return BillDraft::query()->where('item_count', '>', 0)
+            ->when(! $this->user->can('reports.all_staff'), fn ($q) => $q->where('user_id', $this->user->id))
+            ->with('user:id,name')->latest('updated_at')->limit(3)->get()
+            ->map(fn (BillDraft $d) => [
+                'name' => $d->user_id === $this->user->id ? 'Your bill in progress' : Str::before((string) $d->user?->name, ' ').'’s bill',
+                'detail' => $d->item_count.' '.str('item')->plural($d->item_count).' · '.Money::format((int) $d->total_paise).' · saved '.$d->updated_at?->timezone(self::TZ)->format('h:i A'),
+                'url' => $d->user_id === $this->user->id ? $this->routeOrNull('bills.create') : null,
+            ])->all();
     }
 
     /** Red count on the Follow-ups menu item: overdue + due today. Cached 60 s per user; null when 0. */
@@ -506,14 +501,13 @@ class HomeData
         return 'home.followup-badge.'.$user->id;
     }
 
-    /** Each staff member's bills and sales today; null until billing merges. */
+    /** Each staff member's bills and sales today. */
     public function staffToday(): ?array
     {
         if (! $this->hasInvoices()) {
             return null;
         }
 
-        // WIRE: invoices.created_by
         return $this->safe(function () {
             $rows = $this->invoicesToday()->selectRaw('created_by, COUNT(*) as bills, SUM(total_paise) as total')
                 ->groupBy('created_by')->orderByDesc('total')->get();
@@ -556,7 +550,7 @@ class HomeData
         ];
     }
 
-    /** This month: customers are real; sales/collected/dues when billing merges. */
+    /** This month: sales, bills, dues still open on this month's bills, new customers. */
     public function thisMonth(): array
     {
         $out = ['newCustomers' => $this->newCustomersThisMonth(), 'billing' => false];
@@ -565,7 +559,7 @@ class HomeData
         }
 
         return $this->safe(function () use ($out) {
-            $month = $this->invoiceQuery()->where('status', '!=', 'cancelled')->where('created_at', '>=', $this->today->startOfMonth());
+            $month = Invoice::query()->notCancelled()->where('created_at', '>=', $this->today->setTimezone(self::TZ)->startOfMonth()->utc());
 
             return array_merge($out, [
                 'billing' => true,
@@ -578,16 +572,35 @@ class HomeData
 
     // ---------------------------------------------------------------- finance
 
+    /** Money received today by mode, plus "due" = old dues recovered (payments on earlier bills). */
     public function collectionsToday(): ?array
     {
+        return $this->hasPayments() ? $this->paymentModesToday() : null;
+    }
+
+    /**
+     * cash/upi/card/bank received today (refunds net off; reversed payments ignored), and `due`:
+     * the part paid against bills made before today. Optionally only what one person took.
+     *
+     * @return array<string,int>
+     */
+    private function paymentModesToday(?User $by = null): array
+    {
         if (! $this->hasPayments()) {
-            return null;
+            return [];
         }
 
-        // WIRE: payments(mode, amount_paise, created_at)
-        return $this->safe(fn () => (self::PAYMENT)::query()->where('created_at', '>=', $this->today)
-            ->selectRaw('mode, SUM(amount_paise) as total')->groupBy('mode')->pluck('total', 'mode')
-            ->map(fn ($v) => (int) $v)->all(), []);
+        return $this->safe(function () use ($by) {
+            $base = fn () => Payment::query()->whereNull('reversed_at')->where('created_at', '>=', $this->today)
+                ->when($by, fn ($q) => $q->where('received_by', $by->id));
+            $modes = $base()->selectRaw('mode, SUM(amount_paise) as total')->groupBy('mode')->pluck('total', 'mode')
+                ->map(fn ($v) => (int) $v)->all();
+            $modes['due'] = (int) $base()->where('kind', Payment::KIND_RECEIPT)
+                ->where(fn ($q) => $q->whereNull('invoice_id')->orWhereHas('invoice', fn ($i) => $i->where('created_at', '<', $this->today)))
+                ->sum('amount_paise');
+
+            return $modes;
+        }, []);
     }
 
     /** Dues by age: 0–15, 15–30, 30+ days. */
@@ -597,15 +610,11 @@ class HomeData
             return null;
         }
 
-        return $this->safe(function () {
-            $base = fn () => $this->invoiceQuery()->where('due_paise', '>', 0)->where('status', '!=', 'cancelled');
-
-            return [
-                '0–15 days' => (int) $base()->where('created_at', '>=', $this->today->subDays(15))->sum('due_paise'),
-                '15–30 days' => (int) $base()->whereBetween('created_at', [$this->today->subDays(30), $this->today->subDays(15)])->sum('due_paise'),
-                '30+ days' => (int) $base()->where('created_at', '<', $this->today->subDays(30))->sum('due_paise'),
-            ];
-        }, []);
+        return $this->safe(fn () => [
+            '0–15 days' => (int) Invoice::query()->unpaid()->where('created_at', '>=', $this->today->subDays(15))->sum('due_paise'),
+            '15–30 days' => (int) Invoice::query()->unpaid()->whereBetween('created_at', [$this->today->subDays(30), $this->today->subDays(15)])->sum('due_paise'),
+            '30+ days' => (int) Invoice::query()->unpaid()->where('created_at', '<', $this->today->subDays(30))->sum('due_paise'),
+        ], []);
     }
 
     public function totalDuePaise(): int
@@ -614,7 +623,7 @@ class HomeData
             return 0;
         }
 
-        return $this->safe(fn () => (int) $this->invoiceQuery()->where('status', '!=', 'cancelled')->sum('due_paise'), 0);
+        return $this->safe(fn () => (int) Invoice::query()->unpaid()->sum('due_paise'), 0);
     }
 
     // ---------------------------------------------------------------- technician
@@ -636,7 +645,7 @@ class HomeData
         return $this->hasJobCards() ? $this->jobRows(Workshop::forTechnician($this->user)) : null;
     }
 
-    private function jobRows(\Illuminate\Support\Collection $cards): array
+    private function jobRows(Collection $cards): array
     {
         return $cards->map(fn (JobCard $j) => [
             'number' => $j->number,
@@ -703,12 +712,12 @@ class HomeData
 
     public function hasInvoices(): bool
     {
-        return class_exists(self::INVOICE) && Schema::hasTable('invoices');
+        return Schema::hasTable('invoices');
     }
 
     public function hasPayments(): bool
     {
-        return class_exists(self::PAYMENT) && Schema::hasTable('payments');
+        return Schema::hasTable('payments');
     }
 
     public function hasQuotations(): bool
@@ -726,15 +735,21 @@ class HomeData
         return class_exists(self::JOB_CARD) && Schema::hasTable('job_cards');
     }
 
-    private function invoiceQuery()
+    /** invoice id => latest e-bill WhatsApp status from message_log. */
+    private function whatsappStatuses(array $ids): array
     {
-        return (self::INVOICE)::query();
+        if ($ids === [] || ! Schema::hasTable('message_log')) {
+            return [];
+        }
+
+        return MessageLog::query()->outgoing()->where('related_type', (new Invoice)->getMorphClass())
+            ->whereIn('related_id', $ids)->orderBy('id')->get(['related_id', 'status'])
+            ->mapWithKeys(fn ($r) => [$r->related_id => $r->status])->all();
     }
 
     private function invoicesToday()
     {
-        return $this->invoiceQuery()->where('status', '!=', 'cancelled')->where('status', '!=', 'draft')
-            ->where('created_at', '>=', $this->today);
+        return Invoice::query()->notCancelled()->where('created_at', '>=', $this->today);
     }
 
     private function routeOrNull(string $name, mixed $params = []): ?string

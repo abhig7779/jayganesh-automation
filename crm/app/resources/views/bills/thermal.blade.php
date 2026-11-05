@@ -46,7 +46,7 @@
 </head>
 <body>
 <div class="noprint">
-    <button class="primary" onclick="window.print()">Print receipt</button>
+    <button class="primary" data-print>Print receipt</button>
     <a href="{{ route('bills.show', $i) }}">Back to bill</a>
 </div>
 <div class="roll">
@@ -112,7 +112,7 @@
     <div class="c sm">Thank you. Visit again!</div>
 </div>
 @unless (request()->boolean('preview'))
-    <script>window.addEventListener('load', () => setTimeout(() => window.print(), 300));</script>
+    <script nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">window.addEventListener('load', () => setTimeout(() => window.print(), 300)); document.querySelectorAll('[data-print]').forEach((b) => b.addEventListener('click', () => window.print()));</script>
 @endunless
 </body>
 </html>

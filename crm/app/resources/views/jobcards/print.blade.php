@@ -42,7 +42,7 @@
     </style>
 </head>
 <body>
-<div class="toolbar"><button onclick="window.print()">Print job sheet</button></div>
+<div class="toolbar"><button data-print>Print job sheet</button></div>
 <div class="sheet">
     <header>
         <div>
@@ -114,5 +114,6 @@
     </div>
     <p class="muted" style="margin-top:18px;font-size:11px">Please remove valuables from the car. Photos of the car are taken at car in and at delivery.</p>
 </div>
+<script nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">document.querySelectorAll('[data-print]').forEach((b) => b.addEventListener('click', () => window.print()));</script>
 </body>
 </html>

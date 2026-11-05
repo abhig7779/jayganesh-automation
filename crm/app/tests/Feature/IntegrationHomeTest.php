@@ -5,6 +5,7 @@ use App\Models\Branch;
 use App\Models\Customer;
 use App\Models\CustomerCar;
 use App\Models\FollowUp;
+use App\Models\Invoice;
 use App\Models\JobCard;
 use App\Models\Product;
 use App\Models\Quotation;
@@ -41,7 +42,7 @@ function seedDemoShop(): array
     Customer::factory()->count(30)->create(['branch_id' => $branch->id])
         ->each(fn (Customer $c) => CustomerCar::factory()->create(['customer_id' => $c->id]));
 
-    foreach (['10_ProductsDemoSeeder', '30_QuotationsDemoSeeder', '50_JobCardsDemoSeeder', '60_FinanceDemoSeeder', '70_OffersDemoSeeder'] as $file) {
+    foreach (['10_ProductsDemoSeeder', '20_BillsDemoSeeder', '30_QuotationsDemoSeeder', '40_WhatsAppDemoSeeder', '50_JobCardsDemoSeeder', '60_FinanceDemoSeeder', '70_OffersDemoSeeder'] as $file) {
         require_once database_path("seeders/Demo/$file.php");
         test()->seed('Database\\Seeders\\Demo\\'.preg_replace('/^\d+_/', '', $file));
     }
@@ -236,4 +237,62 @@ it('lists quotations and job cards in the customer history, with links', functio
     $this->actingAs($users['owner'])->get(route('customers.show', $customer))->assertOk()
         ->assertSee('Q-TEST-0001')->assertSee(route('quotations.show', $quote), false)
         ->assertSee($card->number)->assertSee(route('jobcards.show', $card), false);
+});
+
+it('shows billing on Home: sales strip, recent bills with WhatsApp ticks, my today', function () {
+    $users = seedDemoShop();
+
+    $owner = (new HomeData($users['owner']))->toArray();
+    expect($owner['business']['billing'])->toBeTrue()
+        ->and($owner['recentBills'])->not->toBeEmpty()
+        ->and($owner['recentBills'][0]['url'])->toStartWith(route('bills.index'))
+        ->and($owner['month']['bills'])->toBe(Invoice::query()->notCancelled()->where('created_at', '>=', now('Asia/Kolkata')->startOfMonth()->utc())->count());
+
+    $sales = (new HomeData($users['sales']))->toArray();
+    expect($sales['myToday']['billing'])->toBeTrue()
+        ->and(collect($sales['recentBills'])->pluck('number')->all())
+        ->each->toBeIn(Invoice::query()->where('created_by', $users['sales']->id)->pluck('number')->all());
+
+    $this->actingAs($users['owner'])->get('/')->assertOk()->assertSee('Recent bills')->assertDontSee('Switches on with Billing');
+});
+
+it('scopes search: Sales find only their own bills and quotes unless they see all staff', function () {
+    $users = seedDemoShop();
+    $search = app(SearchController::class);
+    $other = staff('sales');
+    $branch = Branch::first();
+
+    $bill = Invoice::query()->create([
+        'branch_id' => $branch->id, 'number' => 'JG-TEST-7777', 'financial_year' => '2627', 'place_of_supply' => '27',
+        'total_paise' => 99900, 'paid_paise' => 99900, 'status' => 'paid', 'created_by' => $other->id,
+    ]);
+    $quote = Quotation::query()->create([
+        'number' => 'Q-TEST-7777', 'branch_id' => $branch->id, 'customer_id' => Customer::first()->id,
+        'assigned_to' => $other->id, 'created_by' => $other->id, 'valid_until' => now()->addWeek(), 'total_paise' => 150000,
+    ]);
+
+    $mine = $search->search('7777', $users['sales']);
+    expect($mine['bills']['items'] ?? [])->toBeEmpty()->and($mine['quotations']['items'] ?? [])->toBeEmpty();
+
+    $theirs = $search->search('7777', $other);
+    expect(collect($theirs['bills']['items'])->pluck('title'))->toContain('JG-TEST-7777')
+        ->and(collect($theirs['quotations']['items'])->pluck('title'))->toContain('Q-TEST-7777');
+
+    $owner = $search->search('7777', $users['owner']);
+    expect(collect($owner['bills']['items'])->pluck('url'))->toContain(route('bills.show', $bill))
+        ->and(collect($owner['quotations']['items'])->pluck('url'))->toContain(route('quotations.show', $quote));
+
+    $this->actingAs($users['sales'])->get(route('search', ['q' => 'JG-TEST-7777', 'stay' => 1]))->assertOk()->assertDontSee('JG-TEST-7777</');
+});
+
+it('puts the CSP nonce on every inline script of the shell pages', function () {
+    $users = seedDemoShop();
+    foreach (['/', route('search', ['q' => 'gleam', 'stay' => 1]), route('followups.index'), route('quotations.create'), route('stock.check')] as $url) {
+        $html = $this->actingAs($users['sales'])->get($url)->assertOk()->getContent();
+        preg_match_all('/<script(?![^>]*\bsrc=)[^>]*>/', $html, $m);
+        foreach ($m[0] as $tag) {
+            expect(str_contains($tag, 'nonce='))->toBeTrue("$url: $tag");
+        }
+        expect($html)->not->toMatch('/\son(click|change|submit|input|load)="/');
+    }
 });

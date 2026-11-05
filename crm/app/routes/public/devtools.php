@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Branch;
 use App\Models\User;
 use App\Support\Permissions;
 use Illuminate\Http\Request;
@@ -29,24 +28,21 @@ if (app()->environment('local')) {
             .'<iframe src="'.e($src).'" style="border:0;width:'.$w.'px;height:'.$h.'px;display:block;margin:0 auto;background:#fff"></iframe></body></html>');
     };
 
-        Route::get('/dev/login-as/{role}', function (Request $request, string $role) use ($safePath) {
-            $user = User::role($role)->where('is_active', true)->orderBy('id')->first()
-                ?? tap(User::create([
-                    'name' => ucfirst($role).' (demo)',
-                    'email' => "$role@crm.test",
-                    'password' => 'password',
-                    'branch_id' => Branch::query()->value('id'),
-                ]))->syncRoles([$role]);
-            Auth::login($user);
-            $request->session()->regenerate();
-            $request->session()->put('last_seen_at', now()->timestamp);
+    Route::get('/dev/login-as/{role}', function (Request $request, string $role) use ($safePath) {
+        // Only signs in as an existing demo user (migrate:fresh --seed). It never creates an
+        // account, so no Owner with a known password can appear through this route.
+        $user = User::role($role)->where('is_active', true)->orderBy('id')->first();
+        abort_unless($user, 404, "No active {$role} user. Run php artisan migrate:fresh --seed.");
+        Auth::login($user);
+        $request->session()->regenerate();
+        $request->session()->put('last_seen_at', now()->timestamp);
 
-            return redirect($safePath($request->query('to')));
-        })->whereIn('role', array_keys(Permissions::ROLES))->name('dev.login-as');
+        return redirect($safePath($request->query('to')));
+    })->whereIn('role', array_keys(Permissions::ROLES))->name('dev.login-as');
 
-        Route::get('/dev/frame', fn (Request $request) => $frame($safePath($request->query('src')), $request))->name('dev.frame');
+    Route::get('/dev/frame', fn (Request $request) => $frame($safePath($request->query('src')), $request))->name('dev.frame');
 
-        Route::get('/dev/frame/{role}', fn (Request $request, string $role) => $frame(
-            url('/dev/login-as/'.$role).'?to='.rawurlencode($safePath($request->query('to'))), $request
-        ))->whereIn('role', array_keys(Permissions::ROLES))->name('dev.frame.as');
+    Route::get('/dev/frame/{role}', fn (Request $request, string $role) => $frame(
+        url('/dev/login-as/'.$role).'?to='.rawurlencode($safePath($request->query('to'))), $request
+    ))->whereIn('role', array_keys(Permissions::ROLES))->name('dev.frame.as');
 }

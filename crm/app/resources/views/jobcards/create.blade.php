@@ -34,7 +34,7 @@
         </div>
     </x-slot:header>
 
-    <script>
+    <script nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
         document.addEventListener('alpine:init', () => {
             Alpine.data('carIn', (init) => ({
                 ...init,

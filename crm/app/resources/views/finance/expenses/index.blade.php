@@ -26,13 +26,13 @@
             {{-- Filters --}}
             <form method="GET" action="{{ route('finance.expenses.index') }}" class="grid grid-cols-2 gap-2 sm:grid-cols-[1fr_1fr_1.4fr_auto]">
                 @foreach ($period->query() as $k => $v)<input type="hidden" name="{{ $k }}" value="{{ $v }}">@endforeach
-                <select name="category" class="input" aria-label="Category" onchange="this.form.submit()">
+                <select name="category" class="input" aria-label="Category" data-autosubmit>
                     <option value="">All categories</option>
                     @foreach ($categories as $cat)
                         <option value="{{ $cat->id }}" @selected($filters['category'] === $cat->id)>{{ $cat->name }}</option>
                     @endforeach
                 </select>
-                <select name="mode" class="input" aria-label="Paid by" onchange="this.form.submit()">
+                <select name="mode" class="input" aria-label="Paid by" data-autosubmit>
                     <option value="">All modes</option>
                     @foreach (Expense::MODES as $k => $label)
                         <option value="{{ $k }}" @selected($filters['mode'] === $k)>{{ $label }} only</option>

@@ -68,7 +68,7 @@
 </div>
 
 @include('quotations._product-search-js')
-<script>
+<script nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
 window.askedPrice = function (cfg) {
     return {
         mobile: cfg.old.mobile || '', what: cfg.old.what || '', price: cfg.old.price || '', productId: cfg.old.product_id || null,

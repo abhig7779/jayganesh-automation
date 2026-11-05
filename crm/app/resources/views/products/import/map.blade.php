@@ -30,7 +30,7 @@
             </div>
             <label class="flex items-center gap-2 text-sm">
                 <span class="text-zinc-600">Headings are in row</span>
-                <select name="header" class="input min-h-9 w-auto py-0 pr-8 text-[13px]" onchange="this.form.submit()">
+                <select name="header" class="input min-h-9 w-auto py-0 pr-8 text-[13px]" data-autosubmit>
                     @foreach ($headerChoices as $line => $cells)
                         <option value="{{ $line }}" @selected($line === $headerLine)>{{ $line }}: {{ \Illuminate\Support\Str::limit(implode(' | ', array_filter($cells)), 50) }}</option>
                     @endforeach
@@ -44,7 +44,7 @@
                 @if ($field === 'cost' && ! $canPrice) @continue @endif
                 <div>
                     <label class="mb-1 block text-[13px] font-medium text-zinc-700" for="map-{{ $field }}">{{ $label }}@if ($field === 'name') <span class="text-red-600">*</span>@endif</label>
-                    <select id="map-{{ $field }}" name="map[{{ $field }}]" onchange="this.form.submit()"
+                    <select id="map-{{ $field }}" name="map[{{ $field }}]" data-autosubmit
                             @class(['input min-h-10 py-0 pr-8 text-[13px]', 'border-ink' => $mapping[$field] !== null, 'text-zinc-500' => $mapping[$field] === null])>
                         <option value="">— not in file —</option>
                         @foreach ($headers as $col => $h)
@@ -56,7 +56,7 @@
         </div>
 
         <label class="mt-4 flex items-start gap-2 text-sm text-zinc-700">
-            <input type="checkbox" name="stock_is_count" value="1" class="mt-0.5 size-4 rounded border-zinc-300" onchange="this.form.submit()" @checked($stockIsCount)>
+            <input type="checkbox" name="stock_is_count" value="1" class="mt-0.5 size-4 rounded border-zinc-300" data-autosubmit @checked($stockIsCount)>
             <span>The stock column is today's count: also correct the stock of items we already have. <span class="text-zinc-600">(Off: stock is only used for new items.)</span></span>
         </label>
         <noscript><button class="btn-ghost mt-3">Update preview</button></noscript>

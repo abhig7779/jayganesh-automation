@@ -225,7 +225,7 @@
 </div>
 
 @include('quotations._product-search-js')
-<script>
+<script nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
 window.quoteBuilder = function (cfg) {
     const p = cfg.prefill || {};
     let keySeq = 1;

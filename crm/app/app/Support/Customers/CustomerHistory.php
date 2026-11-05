@@ -3,18 +3,17 @@
 namespace App\Support\Customers;
 
 use App\Models\Customer;
+use App\Models\Invoice;
 use App\Models\JobCard;
 use App\Models\Quotation;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 
 /**
  * A customer's bills, quotations and job cards for the profile's History tab. Each row links to
- * its own screen when the viewer may open it. Billing merges later, so bills() stays guarded and
- * returns null while that module is missing ("WIRE:" marks the column names to check).
+ * its own screen when the viewer may open it; a section is null when the viewer can't see it.
  *
  * Rows: type, number, date (display), at (unix time, for sorting), paise (null = not shown),
  * status, status_label, url.
@@ -23,25 +22,25 @@ class CustomerHistory
 {
     public function __construct(private readonly Customer $customer, private readonly ?User $viewer = null) {}
 
-    /** @return array<int, array<string, mixed>>|null */
+    /** Bills, newest first. Sales see only their own unless they have reports.all_staff. */
     public function bills(int $limit = 20): ?array
     {
-        $class = 'App\\Models\\Invoice';
-        if (! class_exists($class) || ! Schema::hasTable('invoices') || ($this->viewer && ! $this->viewer->can('invoices.view'))) {
+        if (! Schema::hasTable('invoices') || ($this->viewer && ! $this->viewer->can('invoices.view'))) {
             return null;
         }
 
-        // WIRE: invoices(customer_id, number, total_paise, status, created_at)
-        return $this->safe(fn () => $class::query()->where('customer_id', $this->customer->id)->latest()->limit($limit)->get()
-            ->map(fn ($i) => [
+        return $this->safe(fn () => Invoice::query()->where('customer_id', $this->customer->id)
+            ->when($this->viewer, fn ($q) => $q->visibleTo($this->viewer))
+            ->latest('id')->limit($limit)->get()
+            ->map(fn (Invoice $i) => [
                 'type' => 'Bill',
-                'number' => $i->number ?? '#'.$i->id,
+                'number' => $i->number,
                 'date' => $i->created_at?->timezone('Asia/Kolkata')->format('j M Y'),
                 'at' => $i->created_at?->getTimestamp() ?? 0,
                 'paise' => (int) $i->total_paise,
-                'status' => $i->status ?? null,
-                'status_label' => null,
-                'url' => Route::has('bills.show') ? route('bills.show', $i) : null,
+                'status' => $i->status === Invoice::STATUS_PARTIAL ? 'part_paid' : $i->status,
+                'status_label' => $i->statusLabel(),
+                'url' => route('bills.show', $i),
             ])->all());
     }
 
@@ -89,16 +88,14 @@ class CustomerHistory
             ])->all());
     }
 
-    /** Pending due across unpaid bills; 0 until billing merges. */
+    /** What the customer still owes across unpaid bills. */
     public function duePaise(): int
     {
-        $class = 'App\\Models\\Invoice';
-        if (! class_exists($class) || ! Schema::hasTable('invoices') || ! Schema::hasColumn('invoices', 'due_paise')) {
+        if (! Schema::hasTable('invoices')) {
             return 0;
         }
 
-        return (int) ($this->safe(fn () => $class::query()->where('customer_id', $this->customer->id)
-            ->where('status', '!=', 'cancelled')->sum('due_paise')) ?? 0);
+        return (int) ($this->safe(fn () => Invoice::query()->where('customer_id', $this->customer->id)->unpaid()->sum('due_paise')) ?: 0);
     }
 
     private function safe(callable $fn): mixed
