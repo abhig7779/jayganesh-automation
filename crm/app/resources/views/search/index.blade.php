@@ -1,6 +1,6 @@
 {{-- Full search page (phone search tab target, and "See all results" from the dropdown). --}}
 <x-layouts.app title="Search">
-    <x-ui.page-header title="Search" subtitle="Customers, cars, bills, quotations and products" />
+    <x-ui.page-header title="Search" subtitle="Customers, cars, job cards, bills, quotations and products" />
 
     <form method="GET" action="{{ route('search') }}" class="mb-5 max-w-2xl"
           hx-get="{{ route('search') }}" hx-trigger="input delay:200ms from:#search-page-q" hx-target="#search-page-results" hx-select="#search-page-results" hx-swap="outerHTML" hx-push-url="true">

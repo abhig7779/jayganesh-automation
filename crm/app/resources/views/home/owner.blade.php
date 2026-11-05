@@ -22,12 +22,12 @@
                 @endphp
                 <x-ui.stat :class="$cell" label="Sales" :paise="$business['salesPaise']" :hint="$salesWords" :trend="$salesTrend" />
                 <x-ui.stat :class="$cell" label="Bills" :value="$business['bills']" :hint="$billWords" :trend="$billTrend" />
-                <x-ui.stat :class="$cell" label="Cash · UPI · Card" :paise="($modes['cash'] ?? 0)" :hint="'UPI '.\App\Support\Money::format($modes['upi'] ?? 0).' · Card '.\App\Support\Money::format($modes['card'] ?? 0)" />
+                <x-ui.stat :class="$cell" label="Money in" :paise="($modes['cash'] ?? 0) + ($modes['upi'] ?? 0) + ($modes['card'] ?? 0) + ($modes['bank'] ?? 0)" :hint="'Cash '.\App\Support\Money::format($modes['cash'] ?? 0).' · UPI '.\App\Support\Money::format($modes['upi'] ?? 0).' · Card '.\App\Support\Money::format($modes['card'] ?? 0)" />
                 <x-ui.stat :class="$cell" label="Average bill" :paise="$business['avgPaise']" />
             @else
                 <x-ui.stat :class="$cell" label="Sales" soon />
                 <x-ui.stat :class="$cell" label="Bills" soon />
-                <x-ui.stat :class="$cell" label="Cash · UPI · Card" soon />
+                <x-ui.stat :class="$cell" label="Money in" soon />
                 <x-ui.stat :class="$cell" label="Average bill" soon />
             @endif
             @php [$custWords, $custTrend] = $home->compareWords($business['newCustomers'], $business['newCustomersLastWeek'], money: false); @endphp
@@ -102,7 +102,7 @@
                     <x-ui.stat label="New customers" :value="$month['newCustomers']" />
                 </div>
                 @if ($showMargins)
-                    <p class="mt-4 border-t border-line pt-3 text-xs font-medium text-muted">Margin and profit show here for you only (not for Admin) once purchases and billing are in.</p>
+                    <p class="mt-4 border-t border-line pt-3 text-xs font-medium text-muted">Margin and profit show here for you only (not for Admin) once purchases (cost prices) are in.</p>
                 @endif
             </x-ui.panel>
             @if ($finance)

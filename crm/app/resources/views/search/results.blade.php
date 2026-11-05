@@ -8,7 +8,7 @@
 @endphp
 @if ($q === '')
     @if (empty($compact))
-        <x-ui.empty-state icon="search" text="Type a mobile number, name, car number, bill number or product." />
+        <x-ui.empty-state icon="search" text="Type a mobile number, name, car number, bill, quote or job card number, or a product." />
     @endif
 @elseif (empty($groups))
     <div @class(['px-4 py-5 text-center' => ! empty($compact)])>

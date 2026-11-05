@@ -149,10 +149,15 @@ class HomeData
             ],
         };
 
-        // Owner/Admin get the full counter row, so Leads would only crowd it; it stays in the menu.
-        if (in_array($this->role(), ['owner', 'admin', 'sales'], true)) {
-            $defs = array_values(array_filter($defs, fn ($d) => $d[0] !== 'leads'));
-        }
+        // Owner/Admin: the four from UX-FLOWS §2 (the counter row would truncate on a laptop).
+        // Leads stays a menu item for everyone but Marketing.
+        $keep = match ($this->role()) {
+            'owner', 'admin' => ['new-bill', 'collect', 'offer', 'report', 'quote'],
+            'sales' => null,
+            default => null,
+        };
+        $defs = array_values(array_filter($defs, fn ($d) => ($keep === null || in_array($d[0], $keep, true))
+            && ($d[0] !== 'leads' || ! in_array($this->role(), ['owner', 'admin', 'sales'], true))));
 
         $tiles = [];
         foreach ($defs as [$key, $label, $icon, $route, $permission, $hint, $fkey]) {
