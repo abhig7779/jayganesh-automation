@@ -80,3 +80,6 @@ document.addEventListener('click', (e) => {
 });
 
 Alpine.start();
+
+// Job cards module: board drag, ticks and photo uploads, loaded only where needed.
+if (document.querySelector('[data-jobcards]')) import('./jobcards.js');
