@@ -4,7 +4,7 @@
         'canEditPrice' => $canEditPrice,
         'validDays' => $validDays,
         'lookupUrl' => url('/api/v1/customers/lookup'),
-        'productsUrl' => route('quotations.product-index'),
+        'productsUrl' => route('api.v1.products.all'),
         'storeUrl' => route('quotations.store'),
     ]))" @keydown.window="key($event)" class="pb-28 lg:pb-0">
 
@@ -225,7 +225,7 @@
 </div>
 
 @include('quotations._product-search-js')
-<script nonce="{{ Vite::cspNonce() }}">
+<script nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
 window.quoteBuilder = function (cfg) {
     const p = cfg.prefill || {};
     let keySeq = 1;
@@ -245,8 +245,6 @@ window.quoteBuilder = function (cfg) {
         canEditPrice: cfg.canEditPrice,
         revisedFrom: p.revised_from_number || null,
         errors: {}, formError: '', saving: false,
-        // Same key for every retry from this screen, so a save that timed out isn't made twice.
-        clientKey: (window.crypto?.randomUUID?.() ?? (Date.now().toString(36) + Math.random().toString(36).slice(2))),
 
         init() {
             this.loadProducts();
@@ -271,6 +269,7 @@ window.quoteBuilder = function (cfg) {
             this.results = r.results; this.searchQty = r.qty; this.hi = 0;
         },
         add(prod, qty) {
+            jgProductSearch.remember(prod);
             const found = this.lines.find((l) => l.product_id === prod.id);
             if (found) found.qty = Math.min(999, found.qty + qty);
             else this.lines.push({ key: keySeq++, product_id: prod.id, name: prod.name, qty, unit_price_paise: prod.price_paise, list_price_paise: prod.price_paise, mrp_paise: prod.mrp_paise, gst_rate: prod.gst_rate });
@@ -324,7 +323,6 @@ window.quoteBuilder = function (cfg) {
                 items: this.lines.map((l) => ({ product_id: l.product_id, name: l.name, qty: l.qty, unit_price_paise: this.canEditPrice ? l.unit_price_paise : null })),
                 valid_days: this.validDays, notes: this.notes, send: send ? 1 : 0,
                 lead_id: p.lead_id || null, revised_from_id: p.revised_from_id || null,
-                client_key: this.clientKey,
             };
             try {
                 const r = await fetch(cfg.storeUrl, {

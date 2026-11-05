@@ -1,5 +1,7 @@
 import htmx from 'htmx.org';
 import Alpine from 'alpinejs';
+// Instant item search (quotations + billing): sets window.jgProductSearch / ProductSearch / jgRupees.
+import './product-search.js';
 
 window.htmx = htmx;
 window.Alpine = Alpine;
@@ -69,6 +71,34 @@ document.addEventListener('keydown', (e) => {
             window.location = link.href;
         }
     }
+});
+
+// CSP-safe replacements for inline on*= handlers (no inline JS runs without the nonce):
+//   data-print                → window.print() on click
+//   data-autosubmit           → submit the form when a select / checkbox changes
+//   data-confirm="Question?"  → on a <form>, ask before submitting
+//   data-clear="#input-id"    → empty that input, fire input, focus it
+document.addEventListener('click', (e) => {
+    if (e.target.closest('[data-print]')) {
+        e.preventDefault();
+        window.print();
+    }
+    const clear = e.target.closest('[data-clear]');
+    if (clear) {
+        const input = document.querySelector(clear.dataset.clear);
+        if (input) {
+            input.value = '';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.focus();
+        }
+    }
+});
+document.addEventListener('change', (e) => {
+    if (e.target.matches('[data-autosubmit]')) e.target.form?.requestSubmit();
+});
+document.addEventListener('submit', (e) => {
+    const form = e.target.closest('form[data-confirm]');
+    if (form && !window.confirm(form.dataset.confirm)) e.preventDefault();
 });
 
 // Table rows with data-href open on click (PC tables), without nesting links in every cell.

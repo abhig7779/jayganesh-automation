@@ -51,12 +51,17 @@ class BillsDemoSeeder extends Seeder
         $popular = $products->sortByDesc(fn ($p) => $p->price_paise < 2_000_000 ? 1 : 0)->values();
 
         $base = now('Asia/Kolkata');
+        $realNow = now()->utc();
         $made = [];
         $shelf = [];
         $days = collect(range(29, 0))->flatMap(fn ($d) => array_fill(0, $d % 3 === 0 ? 2 : 1, $d))->take(40)->values();
 
         foreach ($days as $n => $daysAgo) {
             $when = $base->copy()->subDays($daysAgo)->setTime(mt_rand(10, 19), mt_rand(0, 59))->utc();
+            if ($when->greaterThan($realNow)) {
+                // Seeded early in the day: keep today's bills in the past, but still today.
+                $when = $realNow->copy()->subMinutes(20 + $n % 10 * 7)->max($base->copy()->startOfDay()->utc());
+            }
             Carbon::setTestNow($when);
 
             $customer = $n % 9 === 4 ? null : $customers[$n % $customers->count()];
@@ -77,6 +82,9 @@ class BillsDemoSeeder extends Seeder
             $mode = ['cash', 'upi', 'upi', 'card', 'cash', 'split'][$n % 6];
             $isDue = $customer && in_array($n, [5, 11, 17, 25, 34], true);
             $by = $staff[$n % $staff->count()];
+            if ($daysAgo === 0 && ($counter = $staff->first(fn ($u) => $u->hasRole('sales')))) {
+                $by = $counter; // today's bills are the counter's, so the Sales Home "My today" has numbers
+            }
 
             // Price the bill first to split the payment.
             $calc = GstCalculator::fromSettings();

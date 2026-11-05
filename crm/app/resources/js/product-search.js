@@ -99,6 +99,21 @@ function expand(r) {
     };
 }
 
+/** Accept a compact index row or a full ProductResource row. */
+function fromAny(r) {
+    if (r && r.i !== undefined) return expand(r);
+    return {
+        ...r,
+        id: r.id,
+        brand: r.brand || null,
+        sku: r.sku || null,
+        aliases: Array.isArray(r.aliases) ? r.aliases.join(', ') : (r.aliases || ''),
+        sold_count: r.sold_count || 0,
+        gst_rate: Number(r.gst_rate) || 0,
+        price_includes_gst: r.price_includes_gst !== false,
+    };
+}
+
 export function inStock(p) {
     return !p.track_stock || p.on_hand > 0;
 }
@@ -125,7 +140,9 @@ export class ProductSearch {
                 return r.json();
             })
             .then((data) => {
-                this.setProducts((data.products || []).map(expand));
+                // bills.product-index sends compact rows {products:[{i,n,…}]}; the products API
+                // (/api/v1/products/index) sends full rows {data:[{id,name,…}]}. Both work.
+                this.setProducts((data.products || data.data || []).map(fromAny));
                 this.loadedAt = Date.now();
                 return this.products.length;
             })
@@ -290,4 +307,66 @@ export class ScanDetector {
     }
 }
 
-if (typeof window !== 'undefined') window.ProductSearch = ProductSearch;
+/** Same rounding as App\\Services\\Quotations\\QuoteTotals::inclusive (integer paise). */
+export function inclusivePaise(pricePaise, gstRate, alreadyInclusive) {
+    const p = Number(pricePaise) || 0;
+    if (alreadyInclusive !== false) return p;
+    const bp = Math.round((Number(gstRate) || 0) * 100);
+    return p + Math.floor((p * bp * 2 + 10000) / 20000);
+}
+
+/** Indian money from paise: 123450 → "₹1,234.50". */
+export function rupees(paise) {
+    const neg = paise < 0;
+    const p = Math.abs(Math.round(paise));
+    const r = Math.floor(p / 100);
+    const f = p % 100;
+    let s = String(r);
+    if (s.length > 3) s = s.slice(0, -3).replace(/\B(?=(\d{2})+(?!\d))/g, ',') + ',' + s.slice(-3);
+    return (neg ? '−' : '') + '₹' + s + (f ? '.' + String(f).padStart(2, '0') : '');
+}
+
+/**
+ * The quotation screens' small API over the same matcher (window.jgProductSearch):
+ *   load(url) → Promise · search(q, limit) → { qty, exact, results } · popular(n) · remember(p)
+ * Products come back with price_paise GST-inclusive (what the customer pays per unit) and the
+ * stored price in base_price_paise.
+ */
+export function createProductSearch() {
+    const engine = new ProductSearch({ recentKey: 'jg.recentProducts' });
+    const withPrice = (p) => (p.base_price_paise !== undefined ? p : Object.assign(p, {
+        base_price_paise: p.price_paise,
+        price_paise: inclusivePaise(p.price_paise, p.gst_rate, p.price_includes_gst),
+        on_hand: p.track_stock === false ? null : p.on_hand,
+    }));
+    let loadedUrl = null;
+    let loading = null;
+
+    return {
+        engine,
+        load(url) {
+            if (loading && loadedUrl === url) return loading;
+            loadedUrl = url;
+            engine.url = url;
+            loading = engine.load(true).then((n) => { engine.products.forEach(withPrice); return n; })
+                .catch((e) => { loading = null; throw e; });
+            return loading;
+        },
+        get ready() { return engine.products.length > 0; },
+        byId: (id) => engine.byId(id),
+        popular: (n = 12) => engine.popular(n),
+        recent: (n = 8) => engine.recent(n),
+        remember: (p) => engine.touch(p?.id ?? p),
+        search(query, limit = 12) {
+            const { qty } = parseQty(query);
+            const rows = engine.search(query, limit);
+            return { qty, exact: rows[0]?.match === 'code', results: rows.map((r) => r.product) };
+        },
+    };
+}
+
+if (typeof window !== 'undefined') {
+    window.ProductSearch = ProductSearch;
+    window.jgProductSearch = window.jgProductSearch || createProductSearch();
+    window.jgRupees = window.jgRupees || rupees;
+}

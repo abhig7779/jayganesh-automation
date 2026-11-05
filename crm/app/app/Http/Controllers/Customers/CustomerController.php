@@ -55,6 +55,7 @@ class CustomerController extends Controller
             'list' => $this->listQuery($filters)->limit(40)->get(),
             'bills' => $history->bills(),
             'quotations' => $history->quotations(),
+            'jobCards' => $history->jobCards(),
             'duePaise' => $history->duePaise(),
             'hiddenHistory' => $history->hiddenCount(),
             'billUrl' => Route::has('bills.create') && $request->user()->can('invoices.create') && ! $customer->isArchived()

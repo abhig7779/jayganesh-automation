@@ -12,8 +12,8 @@
     $digits = ltrim((string) $customer->mobile, '+');
     $listParams = array_filter(request()->only('q', 'source', 'visit', 'sort'));
     $tab = in_array(request('tab'), ['history', 'cars', 'notes'], true) ? request('tab') : 'history';
-    $history = collect(array_merge($bills ?? [], $quotations ?? []))->sortByDesc(fn ($r) => strtotime($r['date'] ?? ''))->values();
-    $historyOn = $bills !== null || $quotations !== null;
+    $history = collect(array_merge($bills ?? [], $quotations ?? [], $jobCards ?? []))->sortByDesc(fn ($r) => $r['at'] ?? strtotime($r['date'] ?? ''))->values();
+    $historyOn = $bills !== null || $quotations !== null || ($jobCards ?? null) !== null;
 @endphp
 <x-layouts.app :title="$customer->name" wide>
 <div class="mx-auto max-w-[1200px] xl:grid xl:max-w-none xl:grid-cols-[340px_minmax(0,1fr)] xl:gap-6">
@@ -144,7 +144,7 @@
                         @include('home.partials.soon', ['icon' => 'history', 'text' => 'Bills and quotations for '.\Illuminate\Support\Str::before($customer->name, ' ').' will list here once Billing and Quotations are switched on, newest first.'])
                     </div>
                 @elseif ($history->isEmpty())
-                    <div class="card"><x-ui.empty-state icon="receipt" text="No bills or quotations yet." compact /></div>
+                    <div class="card"><x-ui.empty-state icon="receipt" text="No bills, quotations or job cards yet." compact /></div>
                 @else
                     <div class="overflow-hidden rounded-xl border border-line bg-surface">
                         <table class="table-pc">
@@ -154,9 +154,14 @@
                                     <tr @if ($h['url']) data-href="{{ $h['url'] }}" @endif>
                                         <td class="tnum whitespace-nowrap">{{ $h['date'] }}</td>
                                         <td>{{ $h['type'] }}</td>
-                                        <td class="tnum font-semibold text-ink">{{ $h['number'] }}</td>
-                                        <td>@if ($h['status']) <x-ui.status-badge :status="$h['status']" /> @endif</td>
-                                        <td class="text-right"><x-ui.money :paise="$h['paise']" size="sm" class="text-ink" /></td>
+                                        <td class="tnum font-semibold text-ink">
+                                            @if ($h['url']) <a href="{{ $h['url'] }}" class="hover:underline">{{ $h['number'] }}</a> @else {{ $h['number'] }} @endif
+                                        </td>
+                                        <td>
+                                            @if (! empty($h['status_label'])) <x-ui.status-badge :status="$h['status']">{{ $h['status_label'] }}</x-ui.status-badge>
+                                            @elseif ($h['status']) <x-ui.status-badge :status="$h['status']" /> @endif
+                                        </td>
+                                        <td class="text-right">@if ($h['paise'] !== null) <x-ui.money :paise="$h['paise']" size="sm" class="text-ink" /> @else <span class="text-faint">—</span> @endif</td>
                                     </tr>
                                 @endforeach
                             </tbody>

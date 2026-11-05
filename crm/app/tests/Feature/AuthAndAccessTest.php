@@ -86,7 +86,7 @@ it('applies the role matrix to staff and settings pages', function (string $role
 
 it('hides menu items a role cannot use', function () {
     $this->actingAs(staff('technician'))->get('/')->assertOk()
-        ->assertDontSee(route('settings.edit'), false)->assertDontSee(route('staff.index'), false)->assertSee('Job cards');
+        ->assertDontSee(route('settings.edit'), false)->assertDontSee(route('staff.index'), false)->assertSee('My job cards');
     $this->actingAs(staff('owner'))->get('/')->assertSee(route('settings.edit'), false)->assertSee(route('staff.index'), false);
 });
 

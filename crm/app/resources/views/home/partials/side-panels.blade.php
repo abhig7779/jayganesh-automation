@@ -1,27 +1,39 @@
 {{-- Right column panels shared by the counter and owner Home: workshop, draft bills, low stock. --}}
-@php
-    $jobBoard = \Illuminate\Support\Facades\Route::has('jobcards.index') ? route('jobcards.index') : null;
-    $stockIndex = \Illuminate\Support\Facades\Route::has('products.index') ? route('products.index') : null;
-@endphp
+@php $lowStockUrl = $home->lowStockUrl(); @endphp
 
 @if ($user->can('jobcards.view'))
     @php $workshop = $workshop ?? null; @endphp
-    <x-ui.panel title="Cars in workshop">
+    <x-ui.panel title="Cars in workshop" :subtitle="$workshop ? $workshop['in_shop'].' in the shop · '.$workshop['delivered_today'].' delivered today' : null">
         <x-slot:aside>
             @if ($workshop === null) <x-ui.status-badge status="soon" />
-            @elseif ($jobBoard) <a href="{{ $jobBoard }}" class="text-[13px] font-semibold hover:underline">Bay view</a> @endif
+            @else <a href="{{ $workshop['url'] }}" class="text-[13px] font-semibold hover:underline">Bay view</a> @endif
         </x-slot:aside>
         @if ($workshop === null)
             @include('home.partials.soon', ['icon' => 'car', 'text' => 'Switches on with Job cards: cars waiting, being worked on, in QC and ready for pickup.'])
         @else
             <div class="grid grid-cols-4 gap-2">
-                @foreach ($workshop as $key => $w)
-                    <a href="{{ $jobBoard ?? '#' }}" class="rounded-lg border border-line px-2 py-2.5 text-center hover:bg-hover">
+                @foreach ($workshop['counts'] as $key => $w)
+                    <a href="{{ $workshop['url'] }}" class="rounded-lg border border-line px-2 py-2.5 text-center hover:bg-hover">
                         <div class="tnum text-xl leading-6 font-bold {{ $key === 'ready' && $w['count'] ? 'text-ok' : '' }}">{{ $w['count'] }}</div>
                         <div class="mt-0.5 text-xs font-medium text-muted">{{ $w['label'] }}</div>
                     </a>
                 @endforeach
             </div>
+            @if ($workshop['late'])
+                <ul class="-mx-4 mt-3 divide-y divide-line border-t border-line lg:-mx-5">
+                    @foreach ($workshop['late'] as $j)
+                        <li>
+                            <a href="{{ $j['url'] ?? $workshop['url'] }}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-hover lg:px-5">
+                                <div class="min-w-0 flex-1">
+                                    <div class="truncate text-sm font-semibold tnum">{{ $j['plate'] }}</div>
+                                    <div class="truncate text-xs font-medium text-muted">{{ $j['detail'] }}</div>
+                                </div>
+                                <x-ui.status-badge tone="bad">{{ $j['when'] }}</x-ui.status-badge>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
         @endif
     </x-ui.panel>
 @endif
@@ -51,7 +63,7 @@
 
 @if ($user->can('inventory.view'))
     <x-ui.panel title="Low stock alerts">
-        <x-slot:aside>@if ($stockIndex && $lowStock) <a href="{{ $stockIndex }}" class="text-[13px] font-semibold hover:underline">Stock</a> @endif</x-slot:aside>
+        <x-slot:aside>@if ($lowStockUrl && $lowStock) <a href="{{ $lowStockUrl }}" class="text-[13px] font-semibold hover:underline">See all {{ $home->lowStockCount() }}</a> @endif</x-slot:aside>
         @if (empty($lowStock))
             <div class="flex items-center gap-2 text-[13px] font-medium text-muted">
                 <x-icon name="check" class="size-4 text-ok" stroke="2" /> Nothing is running low.

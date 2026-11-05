@@ -2,7 +2,7 @@
 <div x-show="asked" x-cloak class="fixed inset-0 z-50" @keydown.escape.window="asked = false">
     <div class="absolute inset-0 bg-[rgba(17,17,17,.4)]" @click="asked = false"></div>
     <div class="absolute inset-x-0 bottom-0 max-h-[92dvh] overflow-y-auto rounded-t-2xl bg-white px-4 pb-6 pt-2 shadow-[0_-8px_24px_rgba(0,0,0,.08)] lg:inset-auto lg:left-1/2 lg:top-24 lg:w-[480px] lg:-translate-x-1/2 lg:rounded-xl lg:border lg:border-zinc-200 lg:px-6 lg:pt-5"
-         x-data="askedPrice(@js(['productsUrl' => route('leads.product-index'), 'old' => ['mobile' => old('mobile'), 'what' => old('what'), 'price' => old('price'), 'product_id' => old('product_id'), 'source' => old('source', 'walk_in_enquiry')]]))"
+         x-data="askedPrice(@js(['productsUrl' => route('api.v1.products.all'), 'old' => ['mobile' => old('mobile'), 'what' => old('what'), 'price' => old('price'), 'product_id' => old('product_id'), 'source' => old('source', 'walk_in_enquiry')]]))"
          x-effect="if (asked) $nextTick(() => $refs.mobile.focus())">
         <div class="mx-auto mb-3 h-1 w-9 rounded-full bg-zinc-300 lg:hidden"></div>
         <div class="mb-4 flex items-start justify-between gap-3">
@@ -68,7 +68,7 @@
 </div>
 
 @include('quotations._product-search-js')
-<script nonce="{{ Vite::cspNonce() }}">
+<script nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
 window.askedPrice = function (cfg) {
     return {
         mobile: cfg.old.mobile || '', what: cfg.old.what || '', price: cfg.old.price || '', productId: cfg.old.product_id || null,
