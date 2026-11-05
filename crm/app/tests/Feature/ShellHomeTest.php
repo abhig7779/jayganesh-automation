@@ -66,11 +66,14 @@ it('shows modules that are not built yet as Soon in the menu, and live ones as l
     $html = $this->actingAs(staff('owner'))->get('/')->assertOk()->getContent();
     // Customers is built here: a real link.
     expect($html)->toContain('href="'.route('customers.index').'"');
-    // Bills, Quotations and Stock are not in this branch yet: shown, but marked Soon and not linked.
-    foreach (['Bills', 'Quotations', 'Stock'] as $label) {
-        expect($html)->toMatch('/aria-disabled="true">\s*<svg[^>]*>.*?<\/svg>\s*'.$label.'\s*<span[^>]*>Soon<\/span>/s');
+    // Every menu item is a real link once its module registers the route, and "Soon" until then.
+    foreach (require resource_path('views/partials/nav.php') as $item) {
+        if (Route::has($item['route'])) {
+            expect($html)->toContain('href="'.route($item['route']).'"');
+        } else {
+            expect($html)->toMatch('/aria-disabled="true">\\s*<svg[^>]*>.*?<\\/svg>\\s*'.preg_quote($item['label'], '/').'\\s*<span[^>]*>Soon<\\/span>/s');
+        }
     }
-    expect(Route::has('bills.index'))->toBeFalse();
 });
 
 it('hides menu items the role cannot use instead of greying them out', function () {
