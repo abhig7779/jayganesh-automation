@@ -105,7 +105,13 @@
                     <p class="mt-4 border-t border-line pt-3 text-xs font-medium text-muted">Margin and profit show here for you only (not for Admin) once purchases and billing are in.</p>
                 @endif
             </x-ui.panel>
+            @if ($finance)
+                @include('home.partials.finance-today')
+            @endif
             @include('home.partials.side-panels')
+            @if ($offers !== null)
+                @include('home.partials.offers')
+            @endif
         </aside>
     </div>
 </x-layouts.app>

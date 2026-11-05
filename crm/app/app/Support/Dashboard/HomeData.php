@@ -3,12 +3,15 @@
 namespace App\Support\Dashboard;
 
 use App\Models\Customer;
-use App\Models\Product;
+use App\Models\JobCard;
+use App\Models\Lead;
+use App\Models\Quotation;
 use App\Models\User;
 use App\Support\Money;
 use App\Support\RegNo;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 
@@ -19,10 +22,10 @@ use Illuminate\Support\Facades\Schema;
  * guarded by has*() (class_exists + Schema::hasTable). A section whose module is missing
  * returns `null`, and the view shows a calm "switches on with …" state instead of breaking.
  *
- * LEAD, after merging billing / quotations / job cards: search this file for "WIRE:" — each
- * marks a guarded query written against the column names in CONTRACTS.md / CRM-PLAN.md. Check
- * the column names against the merged migrations and remove the try/catch fallbacks you no
- * longer need.
+ * Quotations / follow-ups, job cards, products, finance and offers are merged: their sections call
+ * the modules' own helpers (Dashboard\FollowUps, Workshop, LowStock, FinanceHome, FinanceAlerts,
+ * Offers). Billing (invoices / payments) is still to come: the remaining "WIRE:" comments mark
+ * those guarded queries. Check their column names against the billing migrations when it merges.
  */
 class HomeData
 {
@@ -85,6 +88,8 @@ class HomeData
                 'workshop' => $this->workshop(),
                 'month' => $this->thisMonth(),
                 'recentBills' => $this->recentBills(),
+                'finance' => $this->financeToday(),
+                'offers' => $this->recentOffers(),
                 'showMargins' => $this->user->can('reports.margins'),
             ],
             'finance' => [
@@ -92,10 +97,9 @@ class HomeData
                 'duesAgeing' => $this->duesAgeing(),
                 'recentBills' => $this->recentBills(),
                 'newCustomers' => $this->newCustomersToday(),
+                'finance' => $this->financeToday(),
             ],
-            'technician' => [
-                'jobs' => $this->myJobCards(),
-            ],
+            'technician' => $this->technicianHome(),
             default => [
                 'myToday' => $this->myToday(),
                 'followUps' => $this->followUpsToday(),
@@ -104,6 +108,7 @@ class HomeData
                 'lowStock' => $this->lowStockItems(),
                 'workshop' => $this->user->can('jobcards.view') ? $this->workshop() : null,
                 'recentBills' => $this->recentBills(onlyMine: true),
+                'offers' => $this->recentOffers(),
             ],
         };
     }
@@ -111,43 +116,51 @@ class HomeData
     // ---------------------------------------------------------------- action tiles
 
     /**
-     * Tiles in the approved order. `url` is null while the module's route doesn't exist yet
-     * (the tile shows "Soon"); tiles for permissions the user lacks are left out entirely.
+     * Tiles in the approved order. A tile shows only when its route exists AND the user has the
+     * permission, so nobody sees a dead link or a greyed-out button (UX-FLOWS §0 rule 10).
+     * Billing tiles (New bill, Collect payment) appear on their own when billing registers its routes.
      *
-     * @return array<int, array{key:string,label:string,icon:string,url:?string,hint:?string,hintTone:?string,primary:bool,shortcut:?string}>
+     * @return array<int, array{key:string,label:string,icon:string,url:string,hint:?string,hintTone:?string,primary:bool,shortcut:?string}>
      */
     public function tiles(): array
     {
         $defs = match ($this->role()) {
             'finance' => [
                 ['collect', 'Collect payment', 'cash', 'payments.collect', 'payments.collect', 'Customer pays an old due', 'F8'],
-                ['expense', 'Add expense', 'rupee', 'expenses.create', 'finance.manage', 'Shop spends', null],
-                ['cashclose', 'Cash close', 'lock', 'cashclose.create', 'finance.manage', 'Count the drawer', null],
+                ['expense', 'Add expense', 'rupee', 'finance.expenses.create', 'finance.manage', 'Shop spends', 'F6'],
+                ['cashclose', 'Cash close', 'lock', 'finance.cash-close', 'finance.manage', 'Count the drawer', 'F7'],
                 ['supplier', 'Supplier payment', 'clipboard', 'supplier-payments.create', 'purchases.manage', 'Pay a supplier', null],
+                ['dues', 'Dues list', 'clock', 'finance.dues', 'finance.view', 'Who owes the shop', 'F9'],
                 ['report', "Today's report", 'chart', 'reports.index', 'reports.view', 'Day closing & cash', null],
             ],
             'technician' => [],
-            default => array_values(array_filter([
+            default => [
                 ['new-bill', 'New bill', 'receipt', 'bills.create', 'invoices.create', 'Customer, items, payment', 'F2'],
                 ['quote', 'New quotation', 'doc', 'quotations.create', 'quotations.manage', 'Estimate on WhatsApp', 'F6'],
                 ['customer', 'Add customer', 'user-plus', 'customers.create', 'customers.manage', 'Mobile number first', 'F7'],
                 ['collect', 'Collect payment', 'cash', 'payments.collect', 'payments.collect', null, 'F8'],
-                ['car-in', 'Car in', 'car', 'jobcards.create', 'jobcards.view', 'New bay intake', 'F9'],
+                ['car-in', 'Car in', 'car', 'jobcards.create', 'jobcards.create', 'New bay intake', 'F9'],
                 ['stock', 'Check price', 'box', 'stock.check', 'inventory.view', 'Stock, price & MRP', 'F4'],
                 ['report', "Today's report", 'chart', 'reports.index', 'reports.view', 'Day closing & cash', null],
                 // Marketing tools show only for people given them (role Marketing, or Staff → Extra access).
                 ['offer', 'Send offer', 'megaphone', 'offers.create', 'offers.manage', 'WhatsApp customers', null],
-            ])),
+                ['leads', 'Leads', 'chat', 'leads.index', 'leads.manage', 'Ad & WhatsApp enquiries', null],
+            ],
         };
+
+        // Owner/Admin get the full counter row, so Leads would only crowd it; it stays in the menu.
+        if (in_array($this->role(), ['owner', 'admin', 'sales'], true)) {
+            $defs = array_values(array_filter($defs, fn ($d) => $d[0] !== 'leads'));
+        }
 
         $tiles = [];
         foreach ($defs as [$key, $label, $icon, $route, $permission, $hint, $fkey]) {
-            if (! $this->user->can($permission)) {
+            if (! $this->user->can($permission) || ! Route::has($route)) {
                 continue;
             }
             $tile = [
                 'key' => $key, 'label' => $label, 'icon' => $icon, 'hint' => $hint, 'hintTone' => null,
-                'url' => Route::has($route) ? route($route) : null,
+                'url' => route($route),
                 'primary' => $key === 'new-bill', 'shortcut' => $fkey,
             ];
             if ($key === 'collect' && ($due = $this->totalDuePaise()) > 0) {
@@ -159,6 +172,16 @@ class HomeData
         }
 
         return $tiles;
+    }
+
+    /** Every route name Home can link to (tiles and panels), for the no-dead-links test. */
+    public static function tileRouteNames(): array
+    {
+        return [
+            'payments.collect', 'finance.expenses.create', 'finance.cash-close', 'supplier-payments.create', 'finance.dues',
+            'reports.index', 'bills.create', 'quotations.create', 'customers.create', 'jobcards.create', 'stock.check',
+            'offers.create', 'leads.index',
+        ];
     }
 
     // ---------------------------------------------------------------- customers (real now)
@@ -211,75 +234,87 @@ class HomeData
         return $out;
     }
 
-    /** Drafts to finish, quotes not converted in 7 days, leads assigned to me. */
+    /** Drafts to finish (billing), open quotes, visits due today, stale quotes and new leads assigned to me. */
     public function waitingOnMe(): ?array
     {
         if (! $this->hasInvoices() && ! $this->hasQuotations()) {
             return null;
         }
 
-        return $this->safe(function () {
-            $rows = [];
-            if ($this->hasInvoices()) {
-                // WIRE: invoices.status = 'draft'
+        $rows = [];
+        if ($this->hasInvoices()) {
+            // WIRE: invoices.status = 'draft' (billing not merged yet)
+            $rows = array_merge($rows, $this->safe(function () {
                 $drafts = $this->invoiceQuery()->where('status', 'draft')->where('created_by', $this->user->id)->count();
-                if ($drafts) {
-                    $rows[] = ['icon' => 'receipt', 'tone' => 'warn', 'title' => $drafts.' draft '.str('bill')->plural($drafts).' to finish', 'url' => $this->routeOrNull('bills.index', ['status' => 'draft'])];
-                }
-            }
-            if ($this->hasQuotations()) {
-                // WIRE: quotations(created_by, status, created_at)
-                $stale = (self::QUOTATION)::query()->where('created_by', $this->user->id)->where('status', 'open')
-                    ->where('created_at', '<', $this->today->subDays(7))->count();
-                if ($stale) {
-                    $rows[] = ['icon' => 'doc', 'tone' => null, 'title' => $stale.' '.str('quotation')->plural($stale).' open for over a week', 'url' => $this->routeOrNull('quotations.index', ['filter' => 'mine'])];
-                }
-            }
 
-            return $rows;
-        }, []);
+                return $drafts ? [['icon' => 'receipt', 'tone' => 'warn', 'title' => $drafts.' draft '.str('bill')->plural($drafts).' to finish', 'subtitle' => 'Saved automatically', 'url' => $this->routeOrNull('bills.index', ['status' => 'draft'])]] : [];
+            }, []));
+        }
+
+        if ($this->hasQuotations() && $this->user->can('quotations.view')) {
+            // quotations(assigned_to, status open|visit_booked, visit_on, total_paise, revised_to_id)
+            $mine = fn () => Quotation::query()->where('assigned_to', $this->user->id)
+                ->whereNull('revised_to_id')->whereIn('status', Quotation::ACTIVE);
+            $today = $this->localToday()->toDateString();
+
+            $visits = $mine()->where('status', Quotation::VISIT_BOOKED)->whereDate('visit_on', $today)->count();
+            if ($visits) {
+                $rows[] = ['icon' => 'car', 'tone' => 'ok', 'title' => $visits.' '.str('customer')->plural($visits).' coming in today', 'subtitle' => 'Visit booked from a quote', 'url' => $this->routeOrNull('quotations.index', ['status' => Quotation::VISIT_BOOKED])];
+            }
+            $open = $mine()->count();
+            if ($open) {
+                $value = (int) $mine()->sum('total_paise');
+                $rows[] = ['icon' => 'doc', 'tone' => null, 'title' => $open.' open '.str('quotation')->plural($open), 'subtitle' => Money::format($value).' waiting to be won', 'url' => $this->routeOrNull('quotations.index', ['filter' => 'mine'])];
+            }
+            $stale = $mine()->where('created_at', '<', $this->today->subDays(7))->count();
+            if ($stale) {
+                $rows[] = ['icon' => 'clock', 'tone' => 'warn', 'title' => $stale.' '.str('quotation')->plural($stale).' open for over a week', 'subtitle' => 'Call or mark lost', 'url' => $this->routeOrNull('quotations.index', ['filter' => 'mine'])];
+            }
+        }
+
+        if (class_exists(Lead::class) && Schema::hasTable('leads') && $this->user->can('leads.manage')) {
+            $new = Lead::query()->where('assigned_to', $this->user->id)->where('status', Lead::NEW)->count();
+            if ($new) {
+                $rows[] = ['icon' => 'chat', 'tone' => 'warn', 'title' => $new.' new '.str('enquiry')->plural($new).' to answer', 'subtitle' => 'Ad and WhatsApp leads', 'url' => $this->routeOrNull('leads.index', ['status' => Lead::NEW])];
+            }
+        }
+
+        return $rows;
     }
 
     // ---------------------------------------------------------------- follow-ups
 
     /**
-     * "Follow-ups today": null while the quotations module isn't merged. Overdue rows first.
+     * "Follow-ups today" from the quotations module (Dashboard\FollowUps): overdue first, then
+     * today's. Null when this person can't chase quotes or leads.
      *
      * @return array{count:int, overdue:int, rows:array}|null
      */
-    public function followUpsToday(): ?array
+    public function followUpsToday(int $limit = 6): ?array
     {
-        if (! $this->hasFollowUps() || ! $this->user->can('quotations.view')) {
+        if (! $this->hasFollowUps() || ! ($this->user->can('quotations.view') || $this->user->can('leads.manage'))) {
             return null;
         }
 
-        // WIRE: follow_ups(assigned_to, due_on, status, customer_id, quotation_id) + relations customer, quotation.
-        return $this->safe(function () {
-            $query = (self::FOLLOW_UP)::query()
-                ->where('status', 'open')
-                ->whereDate('due_on', '<=', $this->localToday()->toDateString())
-                ->when(! $this->user->can('reports.all_staff'), fn ($q) => $q->where('assigned_to', $this->user->id));
-            $rows = (clone $query)->with(['customer'])->orderBy('due_on')->limit(6)->get()->map(function ($f) {
-                $overdue = $f->due_on && CarbonImmutable::parse($f->due_on)->toDateString() < $this->localToday()->toDateString();
-                $mobile = $f->customer?->mobile;
+        $rows = array_map(fn (array $r) => [
+            'id' => $r['id'],
+            'name' => $r['name'],
+            'car' => trim($r['car_model'].($r['plate'] ? ' · '.$r['plate'] : '')),
+            'detail' => trim($r['kind_label'].' '.$r['value']).($r['asked'] ? ' · '.$r['asked'] : ''),
+            'overdue' => $r['overdue'],
+            'when' => $r['overdue'] ? 'Overdue '.str_replace(' late', '', $r['due_label']).' · '.$r['meta'] : 'Today · '.$r['meta'],
+            'assignee' => $r['assignee'],
+            'whatsapp' => $r['wa_url'],
+            'call' => $r['call_url'],
+            'url' => $this->routeOrNull('followups.index', ['select' => $r['id']]),
+        ], FollowUps::rowsForUser($this->user, $limit));
 
-                return [
-                    'name' => $f->customer?->name ?? 'Customer',
-                    'detail' => $f->summary ?? ($f->quotation?->number ?? 'Follow-up'),
-                    'overdue' => $overdue,
-                    'when' => $overdue ? (int) CarbonImmutable::parse($f->due_on)->diffInDays($this->localToday()).'d overdue' : 'Today',
-                    'call' => $mobile ? 'tel:'.$mobile : null,
-                    'whatsapp' => $mobile ? 'https://wa.me/'.ltrim($mobile, '+') : null,
-                    'url' => $this->routeOrNull('followups.index'),
-                ];
-            })->sortByDesc('overdue')->values()->all();
-
-            return [
-                'count' => (clone $query)->count(),
-                'overdue' => (clone $query)->whereDate('due_on', '<', $this->localToday()->toDateString())->count(),
-                'rows' => $rows,
-            ];
-        }, ['count' => 0, 'overdue' => 0, 'rows' => []]);
+        return [
+            'count' => FollowUps::countForUser($this->user),
+            'overdue' => FollowUps::overdueCountForUser($this->user),
+            'rows' => $rows,
+            'url' => $this->routeOrNull('followups.index'),
+        ];
     }
 
     // ---------------------------------------------------------------- recent bills
@@ -353,10 +388,19 @@ class HomeData
     {
         $rows = [];
 
-        if ($fu = $this->followUpsToday()) {
-            if ($fu['overdue'] > 0) {
-                $rows[] = ['icon' => 'chat', 'tone' => 'bad', 'title' => $fu['overdue'].' overdue '.str('follow-up')->plural($fu['overdue']), 'detail' => 'Quotes going cold', 'url' => $this->routeOrNull('followups.index')];
-            }
+        if ($this->hasFollowUps() && ($overdue = FollowUps::overdueCountForUser($this->user)) > 0) {
+            // By staff member, with the value of the quotes going cold (UX-FLOWS §2 Owner).
+            $late = collect(FollowUps::rowsForUser($this->user, 200))->where('overdue', true);
+            $who = $late->groupBy(fn ($r) => $r['assignee'] ?: 'Unassigned')
+                ->map(fn ($g, $name) => \Illuminate\Support\Str::before($name, ' ').' '.$g->count())
+                ->sortDesc()->take(3)->implode(' · ');
+            $value = (int) $late->sum('value_paise');
+            $rows[] = [
+                'icon' => 'chat', 'tone' => 'bad',
+                'title' => $overdue.' overdue '.str('follow-up')->plural($overdue).($value ? ' · '.Money::format($value) : ''),
+                'detail' => $who ?: 'Quotes going cold',
+                'url' => $this->routeOrNull('followups.index'),
+            ];
         }
 
         if ($this->hasInvoices()) {
@@ -384,8 +428,12 @@ class HomeData
             }, []));
         }
 
-        if ($low = $this->lowStockCount()) {
-            $rows[] = ['icon' => 'box', 'tone' => 'warn', 'title' => $low.' '.str('item')->plural($low).' low on stock', 'detail' => 'Reorder before the weekend', 'url' => $this->routeOrNull('products.index', ['filter' => 'low'])];
+        if ($this->user->can('inventory.view') && ($low = $this->lowStockCount())) {
+            $rows[] = ['icon' => 'box', 'tone' => 'warn', 'title' => $low.' '.str('item')->plural($low).' low on stock', 'detail' => 'Reorder before the weekend', 'url' => LowStock::url()];
+        }
+
+        if ($this->user->can('finance.view') && ($close = FinanceAlerts::missingCashClose($this->user->branch_id))) {
+            $rows[] = ['icon' => 'lock', 'tone' => 'bad', 'title' => $close['label'], 'detail' => 'Count the drawer and close the day', 'url' => $close['url']];
         }
 
         return $rows;
@@ -394,39 +442,34 @@ class HomeData
     /** Which modules are still to come, so the owner's "Needs attention" can say what it will watch. */
     public function pendingWatches(): array
     {
-        return array_values(array_filter([
-            $this->hasFollowUps() ? null : 'overdue follow-ups',
-            $this->hasInvoices() ? null : 'old dues, cancelled bills and failed WhatsApp bills',
-            'cash close',
-        ]));
+        return $this->hasInvoices() ? [] : ['old dues, cancelled bills and failed WhatsApp bills'];
     }
 
+    /** Stocked products at or under their reorder level, out of stock included (products module). */
     public function lowStockCount(): int
     {
-        if (! class_exists(Product::class) || ! Schema::hasTable('products')) {
-            return 0;
-        }
-
-        return $this->safe(fn () => Product::query()->where('is_active', true)->where('track_stock', true)
-            ->where('reorder_level', '>', 0)->whereColumn('on_hand', '<=', 'reorder_level')->count(), 0);
+        return Schema::hasTable('products') ? LowStock::count() : 0;
     }
 
-    /** Up to 5 low-stock products, lowest first (real: products is on main). */
+    /** Up to 5 low-stock products, emptiest first. */
     public function lowStockItems(int $limit = 5): array
     {
-        if (! class_exists(Product::class) || ! Schema::hasTable('products') || ! $this->user->can('inventory.view')) {
+        if (! Schema::hasTable('products') || ! $this->user->can('inventory.view')) {
             return [];
         }
 
-        return $this->safe(fn () => Product::query()->where('is_active', true)->where('track_stock', true)
-            ->where('reorder_level', '>', 0)->whereColumn('on_hand', '<=', 'reorder_level')
-            ->with('brand')->orderBy('on_hand')->limit($limit)->get()
-            ->map(fn (Product $p) => [
-                'name' => $p->name,
-                'detail' => $p->brand?->name ?? ($p->sku ?: 'Product'),
-                'left' => (int) $p->on_hand,
-                'url' => $this->routeOrNull('products.show', $p),
-            ])->all(), []);
+        return LowStock::items($limit)->map(fn ($p) => [
+            'name' => $p->name,
+            'detail' => trim(($p->brand?->name ?? 'Product').' · reorder at '.$p->reorder_level),
+            'left' => (int) $p->on_hand,
+            'url' => $this->routeOrNull('products.show', $p),
+        ])->all();
+    }
+
+    /** Low-stock list link for "See all". */
+    public function lowStockUrl(): ?string
+    {
+        return Route::has('products.index') ? LowStock::url() : null;
     }
 
     /** Draft bills to resume (null until billing merges). */
@@ -447,12 +490,20 @@ class HomeData
             ])->all(), []);
     }
 
-    /** Red count on the Follow-ups menu item (null = module not merged). */
+    /** Red count on the Follow-ups menu item: overdue + due today. Cached 60 s per user; null when 0. */
     public static function followUpBadge(User $user): ?int
     {
-        $count = (new self($user))->followUpsToday()['count'] ?? null;
+        if (! ($user->can('quotations.view') || $user->can('leads.manage')) || ! Schema::hasTable('follow_ups')) {
+            return null;
+        }
+        $count = Cache::remember(self::badgeCacheKey($user), 60, fn () => FollowUps::countForUser($user));
 
         return $count ?: null;
+    }
+
+    public static function badgeCacheKey(User $user): string
+    {
+        return 'home.followup-badge.'.$user->id;
     }
 
     /** Each staff member's bills and sales today; null until billing merges. */
@@ -478,21 +529,31 @@ class HomeData
         }, []);
     }
 
-    /** Cars in the workshop by status; null until job cards merge. */
+    /**
+     * Cars in the workshop by status (job cards module), plus the late ones.
+     *
+     * @return array{counts:array<string,array{label:string,count:int}>, in_shop:int, delivered_today:int, late:array, url:string}|null
+     */
     public function workshop(): ?array
     {
         if (! $this->hasJobCards()) {
             return null;
         }
+        $w = Workshop::summary($this->user->branch_id);
+        $labels = [JobCard::WAITING => 'Waiting', JobCard::WORKING => 'Working', JobCard::QC => 'QC', JobCard::READY => 'Ready'];
 
-        // WIRE: job_cards.status in waiting|working|qc|ready
-        return $this->safe(function () {
-            $counts = (self::JOB_CARD)::query()->whereIn('status', ['waiting', 'working', 'qc', 'ready'])
-                ->selectRaw('status, COUNT(*) as n')->groupBy('status')->pluck('n', 'status');
-
-            return collect(['waiting' => 'Waiting', 'working' => 'Working', 'qc' => 'QC', 'ready' => 'Ready'])
-                ->map(fn ($label, $key) => ['label' => $label, 'count' => (int) ($counts[$key] ?? 0)])->all();
-        }, []);
+        return [
+            'counts' => collect($labels)->map(fn ($label, $key) => ['label' => $label, 'count' => (int) ($w['counts'][$key] ?? 0)])->all(),
+            'in_shop' => $w['in_shop'],
+            'delivered_today' => (int) ($w['counts']['delivered_today'] ?? 0),
+            'late' => $w['late']->take(3)->map(fn (JobCard $j) => [
+                'plate' => $j->plate() ?? $j->number,
+                'detail' => trim($j->carLabel().' · '.($j->customer?->name ?? '').($j->technician ? ' · '.$j->technician->name : ''), ' ·'),
+                'when' => $j->promiseText(),
+                'url' => $this->routeOrNull('jobcards.show', $j),
+            ])->values()->all(),
+            'url' => $w['board_url'],
+        ];
     }
 
     /** This month: customers are real; sales/collected/dues when billing merges. */
@@ -558,23 +619,63 @@ class HomeData
 
     // ---------------------------------------------------------------- technician
 
-    /** My job cards; null until the job cards module merges. */
+    /**
+     * Technician home: the job cards module's own "My jobs" cards (Start, Add photo, Ready for QC),
+     * fed by Workshop::forTechnician. `jobs` is the same list as plain rows.
+     */
+    private function technicianHome(): array
+    {
+        $cards = $this->hasJobCards() ? Workshop::forTechnician($this->user) : null;
+
+        return ['cards' => $cards, 'jobs' => $cards === null ? null : $this->jobRows($cards)];
+    }
+
+    /** My open job cards (Workshop::forTechnician): working first, then by promised time. No prices. */
     public function myJobCards(): ?array
     {
-        if (! $this->hasJobCards()) {
+        return $this->hasJobCards() ? $this->jobRows(Workshop::forTechnician($this->user)) : null;
+    }
+
+    private function jobRows(\Illuminate\Support\Collection $cards): array
+    {
+        return $cards->map(fn (JobCard $j) => [
+            'number' => $j->number,
+            'car' => $j->carLabel(true),
+            'plate' => $j->plate(),
+            'customer' => $j->customer?->name,
+            'status' => $j->status,
+            'status_label' => $j->label(),
+            'late' => $j->isLate(),
+            'promised' => $j->promiseText(),
+            'bay' => $j->bay,
+            'items' => $j->items->sortBy('position')->map(fn ($i) => ['name' => $i->description, 'qty' => (int) $i->qty, 'done' => (bool) $i->done])->values()->all(),
+            'done' => $j->items->where('done', true)->count(),
+            'photo' => ($p = $j->photos->firstWhere('stage', 'before') ?? $j->photos->first()) ? $p->url() : null,
+            'photos' => $j->photos->count(),
+            'url' => $this->routeOrNull('jobcards.show', $j),
+        ])->all();
+    }
+
+    // ---------------------------------------------------------------- finance & offers
+
+    /** FinanceHome::today() for people who may see finance (Owner, Admin view, Finance). */
+    public function financeToday(): ?array
+    {
+        if (! $this->user->can('finance.view') || ! Schema::hasTable('expenses')) {
             return null;
         }
 
-        // WIRE: job_cards(technician_id, status, promised_at) + relations car, items
-        return $this->safe(fn () => (self::JOB_CARD)::query()->where('technician_id', $this->user->id)
-            ->whereIn('status', ['waiting', 'working', 'qc'])->with('car')->orderBy('promised_at')->get()
-            ->map(fn ($j) => [
-                'car' => $j->car?->label() ?? 'Car',
-                'plate' => $j->car?->reg_no ? RegNo::pretty($j->car->reg_no) : null,
-                'status' => $j->status,
-                'promised' => $j->promised_at ? CarbonImmutable::parse($j->promised_at)->format('h:i A') : null,
-                'url' => $this->routeOrNull('jobcards.show', $j),
-            ])->all(), []);
+        return FinanceHome::today($this->user->branch_id);
+    }
+
+    /** Latest offers with their progress, for people who send them. */
+    public function recentOffers(): ?array
+    {
+        if (! $this->user->can('offers.manage') || ! Route::has('offers.index')) {
+            return null;
+        }
+
+        return Offers::recent(3);
     }
 
     // ---------------------------------------------------------------- plain-words comparison

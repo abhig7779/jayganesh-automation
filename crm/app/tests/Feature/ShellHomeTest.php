@@ -29,8 +29,8 @@ it('renders a Home for every role without errors', function (string $role, array
 })->with([
     'owner' => ['owner', ["Today's business", 'Needs attention', 'Send offer', 'New customers', 'Follow-ups today'], []],
     'admin' => ['admin', ["Today's business", 'Needs attention'], ['Shop settings']],
-    'finance' => ['finance', ['collections', 'Dues ageing', 'Payables to suppliers', 'Collect payment'], ['New bill</span>']],
-    'sales' => ['sales', ['Follow-ups today', 'My today', 'Add customer', 'Collect payment', 'Car in', 'Check price'], ["Today's business", 'Send offer', 'Leads']],
+    'finance' => ['finance', ['collections', 'Dues ageing', 'Payables to suppliers', 'Add expense', 'Cash close', 'Money today'], ['New bill</span>']],
+    'sales' => ['sales', ['Follow-ups today', 'My today', 'Add customer', 'New quotation', 'Car in', 'Check price'], ["Today's business", 'Send offer', 'Leads']],
     'technician' => ['technician', ['My job cards'], ['Collect payment', '₹', 'My today']],
     'marketing' => ['marketing', ['Send offer', 'Leads'], ['Collect payment', 'My today']],
 ]);
@@ -51,22 +51,26 @@ it('lists low stock on the owner home', function () {
         ->assertSee('Low stock alerts')->assertSee('Gleam Ceramic Spray 250ml')->assertSee('1 item low on stock');
 });
 
-it('links tiles only to routes that exist and marks the rest as soon', function () {
+it('links tiles only to routes that exist and hides the rest', function () {
     $tiles = collect((new HomeData(staff('sales')))->tiles())->keyBy('key');
     expect($tiles['customer']['url'])->toBe(route('customers.create'))
-        ->and($tiles['new-bill']['url'])->toBeNull()
-        ->and($tiles['new-bill']['primary'])->toBeTrue()
+        ->and($tiles->has('new-bill'))->toBe(Route::has('bills.create'))
+        ->and($tiles['car-in']['url'])->toBe(route('jobcards.create'))
         ->and($tiles['customer']['shortcut'])->toBe('F7')
         ->and($tiles->has('offer'))->toBeFalse()
         ->and($tiles->has('leads'))->toBeFalse();
 });
 
 it('shows modules that are not built yet as Soon in the menu, and live ones as links', function () {
-    $html = $this->actingAs(staff('owner'))->get('/')->assertOk()->getContent();
+    $owner = staff('owner');
+    $html = $this->actingAs($owner)->get('/')->assertOk()->getContent();
     // Customers is built here: a real link.
     expect($html)->toContain('href="'.route('customers.index').'"');
     // Every menu item is a real link once its module registers the route, and "Soon" until then.
     foreach (require resource_path('views/partials/nav.php') as $item) {
+        if (isset($item['when']) && ! $item['when']($owner)) {
+            continue;
+        }
         if (Route::has($item['route'])) {
             expect($html)->toContain('href="'.route($item['route']).'"');
         } else {

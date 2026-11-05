@@ -4,7 +4,7 @@
         'canEditPrice' => $canEditPrice,
         'validDays' => $validDays,
         'lookupUrl' => url('/api/v1/customers/lookup'),
-        'productsUrl' => route('quotations.product-index'),
+        'productsUrl' => route('api.v1.products.all'),
         'storeUrl' => route('quotations.store'),
     ]))" @keydown.window="key($event)" class="pb-28 lg:pb-0">
 
@@ -269,6 +269,7 @@ window.quoteBuilder = function (cfg) {
             this.results = r.results; this.searchQty = r.qty; this.hi = 0;
         },
         add(prod, qty) {
+            jgProductSearch.remember(prod);
             const found = this.lines.find((l) => l.product_id === prod.id);
             if (found) found.qty = Math.min(999, found.qty + qty);
             else this.lines.push({ key: keySeq++, product_id: prod.id, name: prod.name, qty, unit_price_paise: prod.price_paise, list_price_paise: prod.price_paise, mrp_paise: prod.mrp_paise, gst_rate: prod.gst_rate });

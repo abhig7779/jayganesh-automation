@@ -4,19 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\CustomerCar;
+use App\Models\JobCard;
 use App\Models\Product;
+use App\Models\Quotation;
 use App\Models\User;
 use App\Support\Money;
 use App\Support\Phone;
 use App\Support\RegNo;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 
 /**
  * Global search (UX-FLOWS §1 "Global search"): one box finds customers (mobile digits or name),
- * cars (plate), bills (number), quotations (number) and products (name / SKU). Results are
+ * cars (plate), job cards (number or plate), bills (number), quotations (number) and products
+ * (name / SKU / "also called" alias, via Product::search + rankedFor). Results are
  * grouped by type and filtered by what the user may see. htmx gets the grouped partial (the
  * top-bar dropdown); a normal request gets the full page. 10 digits that match one customer
  * jump straight to their profile.
@@ -101,16 +105,16 @@ class SearchController extends Controller
             }
         }
 
-        // Quotations by number (guarded). WIRE: quotations.number
-        $quotation = 'App\\Models\\Quotation';
-        if ($user->can('quotations.view') && class_exists($quotation) && Schema::hasTable('quotations')) {
-            $items = $this->safe(fn () => $quotation::query()->where('number', 'like', '%'.str_replace(['%', '_'], '', $q).'%')
-                ->with('customer')->latest()->limit(self::PER_GROUP)->get()
-                ->map(fn ($x) => [
+        // Quotations by number ("Q-2627-0012", "0012"): Sales see their own, Owner/Admin all.
+        $term = str_replace(['%', '_'], '', $q);
+        if ($user->can('quotations.view') && Schema::hasTable('quotations') && preg_match('/\d/', $term)) {
+            $items = $this->safe(fn () => Quotation::query()->visibleTo($user)->where('number', 'like', '%'.$term.'%')
+                ->with('customer')->latest('id')->limit(self::PER_GROUP)->get()
+                ->map(fn (Quotation $x) => [
                     'title' => $x->number,
-                    'subtitle' => ($x->customer?->name ?? 'Customer').' · '.$x->created_at?->timezone('Asia/Kolkata')->format('j M'),
+                    'subtitle' => ($x->customer?->name ?? 'Customer').' · '.$x->statusLabel().' · '.$x->created_at?->timezone('Asia/Kolkata')->format('j M'),
                     'meta' => Money::format((int) $x->total_paise),
-                    'url' => Route::has('quotations.show') ? route('quotations.show', $x) : null,
+                    'url' => route('quotations.show', $x),
                     'icon' => 'doc',
                 ])->all());
             if ($items) {
@@ -118,15 +122,40 @@ class SearchController extends Controller
             }
         }
 
-        // Products by name / SKU / brand (the products table is on main).
+        // Job cards by number (JC-2627-0004) or plate. Technicians find only their own cars.
+        if ($user->can('jobcards.view') && Schema::hasTable('job_cards')) {
+            $reg = RegNo::normalize($q);
+            $byPlate = $reg && strlen($reg) >= 4 && preg_match('/\d/', $reg);
+            $byNumber = preg_match('/\d/', $term) && strlen($term) >= 2;
+            if ($byPlate || $byNumber) {
+                $items = $this->safe(fn () => JobCard::query()
+                    ->when(! Gate::forUser($user)->allows('seeAll', JobCard::class), fn ($w) => $w->forTechnician($user))
+                    ->where(fn ($w) => $w
+                        ->when($byNumber, fn ($x) => $x->orWhere('number', 'like', '%'.$term.'%'))
+                        ->when($byPlate, fn ($x) => $x->orWhereHas('car', fn ($c) => $c->where('reg_no', 'like', '%'.$reg.'%'))))
+                    ->with(['car', 'customer'])->latest('id')->limit(self::PER_GROUP)->get()
+                    ->map(fn (JobCard $j) => [
+                        'title' => $j->plate() ? $j->plate().' · '.$j->number : $j->number,
+                        'subtitle' => trim($j->carLabel(true).' · '.($j->customer?->name ?? '').' · '.$j->label(), ' ·'),
+                        'meta' => $j->isOpen() ? $j->promiseText() : $j->created_at?->timezone('Asia/Kolkata')->format('j M'),
+                        'url' => route('jobcards.show', $j),
+                        'icon' => 'wrench',
+                    ])->all());
+                if ($items) {
+                    $groups['jobcards'] = ['label' => 'Job cards', 'items' => $items];
+                }
+            }
+        }
+
+        // Products by name / SKU / brand / alias: exact SKU first, then names starting with the text.
         if ($user->can('inventory.view') && mb_strlen($q) >= 2 && Schema::hasTable('products')) {
-            $items = $this->safe(fn () => Product::query()->active()->search($q)->with('brand')
-                ->orderByDesc('sold_count')->limit(self::PER_GROUP)->get()
+            $items = $this->safe(fn () => Product::query()->active()->search($q)->rankedFor($q)->with('brand')
+                ->limit(self::PER_GROUP)->get()
                 ->map(fn (Product $p) => [
                     'title' => $p->name,
                     'subtitle' => trim(($p->brand?->name ? $p->brand->name.' · ' : '').($p->isService() ? 'Service' : ($p->track_stock ? $p->on_hand.' in stock' : 'Product'))),
                     'meta' => Money::format((int) $p->price_paise),
-                    'url' => Route::has('products.show') ? route('products.show', $p) : (Route::has('stock.check') ? route('stock.check', ['q' => $p->name]) : null),
+                    'url' => route('products.show', $p),
                     'icon' => 'box',
                 ])->all());
             if ($items) {

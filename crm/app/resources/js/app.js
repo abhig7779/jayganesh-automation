@@ -1,8 +1,13 @@
 import htmx from 'htmx.org';
 import Alpine from 'alpinejs';
+import { createProductSearch, rupees } from './product-search';
 
 window.htmx = htmx;
 window.Alpine = Alpine;
+
+// Instant item search shared by quotations and billing (resources/js/product-search.js).
+window.jgProductSearch = window.jgProductSearch || createProductSearch();
+window.jgRupees = window.jgRupees || rupees;
 
 // Send Laravel's CSRF token with every htmx request.
 document.addEventListener('htmx:configRequest', (e) => {

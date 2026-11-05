@@ -13,11 +13,19 @@
 @php
     $user = auth()->user();
     $nav = collect(require resource_path('views/partials/nav.php'))
-        ->filter(fn ($i) => $i['can'] === null || $user->can($i['can']))
+        ->filter(fn ($i) => ($i['can'] === null || $user->can($i['can'])) && (! isset($i['when']) || ($i['when'])($user)))
+        ->map(function ($i) use ($user) {
+            $i['children'] = array_values(array_filter($i['children'] ?? [], fn ($c) => $user->can($c['can'])));
+
+            return $i;
+        })
         ->values();
     $isActive = function (array $i): bool {
-        if (! $i['route'] || $i['soon']) {
+        if (! $i['route'] || ! empty($i['soon'])) {
             return false;
+        }
+        if (! empty($i['active'])) {
+            return request()->routeIs(...$i['active']);
         }
         if (str_ends_with($i['route'], '.create')) {
             return request()->routeIs($i['route']);
@@ -31,7 +39,7 @@
     $billUrl = \Illuminate\Support\Facades\Route::has('bills.create') ? route('bills.create') : null;
 
     // Bottom tabs: the items flagged 'mobile' (except New bill), in the order the design asks for.
-    $tabOrder = ['dashboard' => 1, 'bills.index' => 2, 'customers.index' => 3];
+    $tabOrder = ['dashboard' => 1, 'jobcards.mine' => 1, 'bills.index' => 2, 'customers.index' => 3];
     $tabs = $nav->filter(fn ($i) => ! empty($i['mobile']) && $i['route'] !== 'bills.create')
         ->sortBy(fn ($i) => $tabOrder[$i['route']] ?? 9)->values();
     $leftTabs = $canBill ? $tabs->take(2) : $tabs;
@@ -62,13 +70,17 @@
                        @if ($isActive($item)) aria-current="page" @endif
                        @if (! empty($item['shortcut'])) data-shortcut="{{ $item['shortcut'] }}" @endif>
                         <x-icon :name="$item['icon']" class="size-5" /> {{ $item['label'] }}
-                        @if ($item['route'] === 'followups.index' && $followUpBadge)
-                            <span class="ml-auto inline-flex min-w-5 items-center justify-center rounded-full bg-bad px-1.5 text-[11px] leading-5 font-bold text-white">{{ $followUpBadge }}</span>
+                        @if (($item['badge'] ?? null) === 'followups' && $followUpBadge)
+                            <span class="ml-auto inline-flex min-w-5 items-center justify-center rounded-full bg-bad px-1.5 text-[11px] leading-5 font-bold text-white" data-badge="followups" aria-label="{{ $followUpBadge }} due">{{ $followUpBadge }}</span>
                         @endif
                         @if (! empty($item['shortcut']))
                             <span class="ml-auto rounded border border-white/15 px-1.5 py-px text-[10px] font-semibold text-zinc-400">F2</span>
                         @endif
                     </a>
+                    @foreach ($item['children'] as $child)
+                        @php $childOn = $isActive($child); @endphp
+                        <a href="{{ route($child['route']) }}" @class(['nav-link min-h-9 py-1.5 pl-11 text-[13px]', 'nav-link-active' => $childOn]) @if ($childOn) aria-current="page" @endif>{{ $child['label'] }}</a>
+                    @endforeach
                 @endif
             @endforeach
         </nav>
@@ -195,6 +207,9 @@
                             @php $on = $isActive($item); @endphp
                             <a href="{{ route($item['route']) }}" @class(['relative flex flex-col items-center justify-center gap-1', 'text-ink' => $on, 'text-muted' => ! $on]) @if ($on) aria-current="page" @endif>
                                 @if ($on) <span class="absolute top-0 h-[3px] w-6 rounded-b bg-brand"></span> @endif
+                                @if ($item['route'] === 'dashboard' && $followUpBadge)
+                                    <span class="absolute top-1.5 left-1/2 ml-1.5 inline-flex min-w-[18px] items-center justify-center rounded-full bg-bad px-1 text-[10px] leading-[18px] font-bold text-white" aria-label="{{ $followUpBadge }} follow-ups due">{{ $followUpBadge }}</span>
+                                @endif
                                 <x-icon :name="$item['icon']" class="size-6" :stroke="$on ? '2.1' : '1.6'" />
                                 <span class="text-[11px] leading-none font-semibold">{{ $item['label'] }}</span>
                             </a>
@@ -223,6 +238,9 @@
                     <a href="{{ route($item['route']) }}" class="flex min-h-14 items-center gap-3 px-4 hover:bg-hover active:bg-sunken">
                         <x-icon :name="$item['icon']" class="size-6" />
                         <span class="flex-1 text-[15px] font-semibold">{{ $item['label'] }}</span>
+                        @if (($item['badge'] ?? null) === 'followups' && $followUpBadge)
+                            <span class="inline-flex min-w-5 items-center justify-center rounded-full bg-bad px-1.5 text-[11px] leading-5 font-bold text-white">{{ $followUpBadge }}</span>
+                        @endif
                         <x-icon name="chevron-right" class="size-4 text-faint" />
                     </a>
                 @endif

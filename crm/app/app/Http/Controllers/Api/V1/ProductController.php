@@ -30,7 +30,9 @@ class ProductController extends Controller
      */
     public function all(Request $request)
     {
-        abort_unless($request->user()->can('inventory.view') || $request->user()->can('invoices.create'), 403);
+        // Quotations (Sales) and the asked-price sheet (Marketing / leads) search the same list.
+        $user = $request->user();
+        abort_unless($user->can('inventory.view') || $user->can('invoices.create') || $user->can('quotations.manage') || $user->can('leads.manage'), 403);
 
         $stamp = Product::query()->max('updated_at').'|'.Product::query()->count();
         $etag = '"'.md5($stamp.'|'.(int) $request->user()->can('reports.margins')).'"';

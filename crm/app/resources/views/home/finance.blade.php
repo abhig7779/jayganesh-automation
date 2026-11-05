@@ -1,9 +1,13 @@
-{{-- Home: Finance (UX-FLOWS §2 Finance). Collections by mode, dues ageing, recent bills. --}}
+{{-- Home: Finance (UX-FLOWS §2 Finance). Money today (finance module), collections by mode, dues ageing, recent bills. --}}
 <x-layouts.app title="Home">
     @include('home.partials.greeting')
     @include('home.partials.tiles')
 
     <div class="grid gap-5 lg:grid-cols-2">
+        @if ($finance)
+            @include('home.partials.finance-today')
+        @endif
+
         <x-ui.panel title="Today's collections" subtitle="By payment mode">
             <x-slot:aside>@if ($collections === null) <x-ui.status-badge status="soon" /> @endif</x-slot:aside>
             @if ($collections === null)

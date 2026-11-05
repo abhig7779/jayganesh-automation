@@ -46,7 +46,7 @@ class CustomerController extends Controller
     {
         $customer->load(['cars' => fn ($q) => $q->latest(), 'creator']);
         $filters = $this->filters($request);
-        $history = new CustomerHistory($customer);
+        $history = new CustomerHistory($customer, $request->user());
 
         return view('customers.show', [
             'customer' => $customer,
@@ -55,6 +55,7 @@ class CustomerController extends Controller
             'list' => $this->listQuery($filters)->limit(40)->get(),
             'bills' => $history->bills(),
             'quotations' => $history->quotations(),
+            'jobCards' => $history->jobCards(),
             'duePaise' => $history->duePaise(),
             'billUrl' => Route::has('bills.create') && $request->user()->can('invoices.create') && ! $customer->isArchived()
                 ? route('bills.create', ['customer' => $customer->id]) : null,
