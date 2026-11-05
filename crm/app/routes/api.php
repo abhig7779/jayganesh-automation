@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\Api\V1\CustomerCarController;
 use App\Http\Controllers\Api\V1\CustomerController;
+use App\Http\Controllers\Api\V1\LeadIntakeController;
 use App\Http\Controllers\Api\V1\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Laravel\Sanctum\Http\Middleware\CheckAbilities;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -29,4 +31,10 @@ Route::prefix('v1')->name('api.v1.')->middleware(['auth:sanctum', 'throttle:120,
     Route::get('products', [ProductController::class, 'index'])->name('products.index');
     Route::get('products/index', [ProductController::class, 'all'])->name('products.all');
     // --- end products ---
+
+    // --- leads intake --- (website form / other tools; key with ability leads:create, see crm/LEADS-API.md)
+    Route::post('leads', [LeadIntakeController::class, 'store'])
+        ->middleware(CheckAbilities::class.':leads:create')
+        ->name('leads.store');
+    // --- end leads intake ---
 });
