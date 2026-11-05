@@ -45,6 +45,10 @@ final class SettingsSchema
 
             // Offers (marketing)
             'offers.marketing_rate_paise' => ['group' => 'Offers', 'label' => 'WhatsApp marketing rate per message, in paise (88 = ₹0.88), for the cost estimate', 'type' => 'number', 'rules' => 'nullable|integer|min:0|max:10000', 'default' => 88],
+
+            // Finance (cash close)
+            'finance.opening_float_paise' => ['group' => 'Finance', 'label' => 'Opening cash in the drawer each morning, in paise (₹2,000 = 200000)', 'type' => 'number', 'rules' => 'nullable|integer|min:0|max:100000000', 'default' => 200000],
+            'finance.owner_whatsapp' => ['group' => 'Finance', 'label' => 'Owner WhatsApp number for the day-close summary', 'type' => 'text', 'rules' => 'nullable|string|max:20', 'default' => '+91 98231 07676'],
         ];
     }
 
