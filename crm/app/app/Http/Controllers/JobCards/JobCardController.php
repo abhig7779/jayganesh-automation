@@ -16,7 +16,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Route;
 use Illuminate\View\View;
 
 class JobCardController extends Controller
@@ -121,7 +120,6 @@ class JobCardController extends Controller
             'canWork' => Gate::allows('work', $jobCard),
             'canUpdate' => Gate::allows('update', $jobCard),
             'technicians' => Gate::allows('update', $jobCard) ? $this->technicians() : collect(),
-            'billingReady' => Route::has('bills.create'),
             'canBill' => Gate::allows('makeBill', $jobCard),
             'whatsAppLink' => in_array($jobCard->status, [JobCard::READY, JobCard::DELIVERED], true) && Gate::allows('seeAll', JobCard::class)
                 ? route('jobcards.notify-ready', $jobCard) : null,

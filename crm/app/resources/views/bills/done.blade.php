@@ -11,7 +11,7 @@
         'title' => 'Bill '.$i->number,
         'text' => \App\Services\Billing\BillShare::message($i, $pdfUrl),
         'sendWhatsapp' => $i->send_whatsapp,
-        'automatic' => \Illuminate\Support\Facades\Schema::hasTable('message_log') && \App\Models\Setting::get('whatsapp.mode') === 'cloud_api',
+        'automatic' => app(\App\Services\WhatsApp\WhatsApp::class)->isAutomatic(),
         'manualLink' => $waLink,
         'initialStatus' => null,
     ];

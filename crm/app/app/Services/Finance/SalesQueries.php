@@ -8,24 +8,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Every read of the billing module's tables lives here, so the lead can check the column names
- * in one place at merge time. Billing owns these tables (crm/CONTRACTS.md):
- *
- *   invoices:      id, branch_id, number, customer_id, status (paid|partial|due|cancelled),
- *                  subtotal_paise, cgst_paise, sgst_paise, igst_paise, discount_paise, total_paise,
- *                  paid_paise, due_paise, created_by, created_at, cancelled_at
- *   invoice_items: invoice_id, product_id, name, hsn, qty, unit_price_paise, gst_rate,
- *                  taxable_paise, cgst_paise, sgst_paise, igst_paise, line_total_paise
- *   payments:      id, invoice_id (nullable), customer_id, mode (cash|upi|card|bank), amount_paise,
- *                  received_by, created_at
+ * Every read of the billing module's tables lives here (invoices, invoice_items, payments,
+ * credit_note_items; see database/migrations/2026_11_07_200000_create_billing_tables.php).
  *
  * Rules used throughout:
  * - A bill counts on the day it was made (invoices.created_at, IST). Cancelled bills are left out
- *   of sales and counted separately.
- * - Money in = payments.created_at. Payments on cancelled bills are left out (the money went back).
- * - "Dues collected" = payments on bills made before the period, plus payments not tied to a bill.
- *
- * Every public method is safe to call before billing is merged: it returns zeros / empty lists.
+ *   of sales and counted separately. Sales are net of part returns (invoices.credited_paise).
+ * - Money in = payments.created_at, net: receipts are positive, refunds (kind = refund) negative,
+ *   reversed payments (reversed_at set) are ignored. A cancelled bill nets to zero because
+ *   cancelling records a refund for what was paid.
+ * - "Dues collected" = receipts on bills made before the period, plus receipts not tied to a bill.
  */
 final class SalesQueries
 {
@@ -63,13 +55,13 @@ final class SalesQueries
             ->where('invoices.created_at', '<', $p->utcEnd());
     }
 
-    /** Payments in the period, joined to their bill (alias inv), without payments on cancelled bills. */
+    /** Payments in the period, joined to their bill (alias inv). Net of refunds; reversed payments left out. */
     private static function payments(Period $p, ?int $branchId): Builder
     {
         return DB::table('payments')
             ->leftJoin('invoices as inv', 'inv.id', '=', 'payments.invoice_id')
-            ->where(fn ($q) => $q->whereNull('payments.invoice_id')->orWhere('inv.status', '!=', 'cancelled'))
-            ->when($branchId, fn ($q) => $q->where(fn ($w) => $w->whereNull('payments.invoice_id')->orWhere('inv.branch_id', $branchId)))
+            ->whereNull('payments.reversed_at')
+            ->when($branchId, fn ($q) => $q->where('payments.branch_id', $branchId))
             ->where('payments.created_at', '>=', $p->utcStart())
             ->where('payments.created_at', '<', $p->utcEnd());
     }
@@ -77,6 +69,18 @@ final class SalesQueries
     private static function items(Period $p, ?int $branchId): Builder
     {
         return DB::table('invoice_items')
+            ->join('invoices', 'invoices.id', '=', 'invoice_items.invoice_id')
+            ->where('invoices.status', '!=', 'cancelled')
+            ->where('invoices.created_at', '>=', $p->utcStart())
+            ->where('invoices.created_at', '<', $p->utcEnd())
+            ->when($branchId, fn ($q) => $q->where('invoices.branch_id', $branchId));
+    }
+
+    /** Part returns (credit note lines) against live bills made in the period, so GST nets out like sales do. */
+    private static function creditLines(Period $p, ?int $branchId): Builder
+    {
+        return DB::table('credit_note_items')
+            ->join('invoice_items', 'invoice_items.id', '=', 'credit_note_items.invoice_item_id')
             ->join('invoices', 'invoices.id', '=', 'invoice_items.invoice_id')
             ->where('invoices.status', '!=', 'cancelled')
             ->where('invoices.created_at', '>=', $p->utcStart())
@@ -114,7 +118,7 @@ final class SalesQueries
         }
 
         $live = self::liveInvoices($p, $branchId)
-            ->selectRaw('COUNT(*) as n, COALESCE(SUM(total_paise),0) as total, COALESCE(SUM(discount_paise),0) as disc')
+            ->selectRaw('COUNT(*) as n, COALESCE(SUM(total_paise - credited_paise),0) as total, COALESCE(SUM(discount_paise),0) as disc')
             ->first();
         $cancelled = self::invoices($branchId)
             ->where('status', 'cancelled')
@@ -166,6 +170,7 @@ final class SalesQueries
         }
 
         return (int) self::payments($p, $branchId)
+            ->where('payments.kind', 'receipt')
             ->where(fn ($q) => $q->whereNull('payments.invoice_id')->orWhere('inv.created_at', '<', $p->utcStart()))
             ->sum('payments.amount_paise');
     }
@@ -203,7 +208,7 @@ final class SalesQueries
 
         $bills = self::invoices($branchId)
             ->where('created_at', '>=', $p->utcStart())->where('created_at', '<', $p->utcEnd())
-            ->get(['created_at', 'status', 'total_paise']);
+            ->get(['created_at', 'status', 'total_paise', 'credited_paise']);
         foreach ($bills as $b) {
             $d = self::istDay($b->created_at);
             if (! isset($days[$d])) {
@@ -214,7 +219,7 @@ final class SalesQueries
                 $days[$d]['cancelled_paise'] += (int) $b->total_paise;
             } else {
                 $days[$d]['bills']++;
-                $days[$d]['sales_paise'] += (int) $b->total_paise;
+                $days[$d]['sales_paise'] += (int) $b->total_paise - (int) $b->credited_paise;
             }
         }
 
@@ -248,7 +253,7 @@ final class SalesQueries
             ->groupBy('invoices.created_by', 'users.name')
             ->selectRaw("invoices.created_by as user_id, users.name as name,
                 SUM(CASE WHEN invoices.status != 'cancelled' THEN 1 ELSE 0 END) as bills,
-                COALESCE(SUM(CASE WHEN invoices.status != 'cancelled' THEN invoices.total_paise ELSE 0 END),0) as sales,
+                COALESCE(SUM(CASE WHEN invoices.status != 'cancelled' THEN invoices.total_paise - invoices.credited_paise ELSE 0 END),0) as sales,
                 SUM(CASE WHEN invoices.status = 'cancelled' THEN 1 ELSE 0 END) as cancelled")
             ->get();
 
@@ -353,27 +358,36 @@ final class SalesQueries
             return [];
         }
 
-        return self::items($p, $branchId)
-            ->groupBy('invoice_items.gst_rate')
-            ->selectRaw('invoice_items.gst_rate as rate,
-                COUNT(DISTINCT invoice_items.invoice_id) as bills,
-                COALESCE(SUM(invoice_items.taxable_paise),0) as taxable,
-                COALESCE(SUM(invoice_items.cgst_paise),0) as cgst,
-                COALESCE(SUM(invoice_items.sgst_paise),0) as sgst,
-                COALESCE(SUM(invoice_items.igst_paise),0) as igst,
-                COALESCE(SUM(invoice_items.line_total_paise),0) as total')
-            ->orderBy('invoice_items.gst_rate')
-            ->get()
-            ->map(fn ($r) => [
-                'rate' => self::rate($r->rate),
-                'bills' => (int) $r->bills,
-                'taxable_paise' => (int) $r->taxable,
-                'cgst_paise' => (int) $r->cgst,
-                'sgst_paise' => (int) $r->sgst,
-                'igst_paise' => (int) $r->igst,
-                'tax_paise' => (int) $r->cgst + (int) $r->sgst + (int) $r->igst,
-                'total_paise' => (int) $r->total,
-            ])->all();
+        $rows = [];
+        $add = function ($r, int $sign) use (&$rows) {
+            $k = (string) self::rate($r->rate);
+            $rows[$k] ??= ['rate' => self::rate($r->rate), 'bills' => 0, 'taxable_paise' => 0, 'cgst_paise' => 0,
+                'sgst_paise' => 0, 'igst_paise' => 0, 'tax_paise' => 0, 'total_paise' => 0];
+            $rows[$k]['bills'] += $sign > 0 ? (int) $r->bills : 0;
+            $rows[$k]['taxable_paise'] += $sign * (int) $r->taxable;
+            $rows[$k]['cgst_paise'] += $sign * (int) $r->cgst;
+            $rows[$k]['sgst_paise'] += $sign * (int) $r->sgst;
+            $rows[$k]['igst_paise'] += $sign * (int) $r->igst;
+            $rows[$k]['tax_paise'] += $sign * ((int) $r->cgst + (int) $r->sgst + (int) $r->igst);
+            $rows[$k]['total_paise'] += $sign * (int) $r->total;
+        };
+        foreach (self::items($p, $branchId)->groupBy('invoice_items.gst_rate')
+            ->selectRaw('invoice_items.gst_rate as rate, COUNT(DISTINCT invoice_items.invoice_id) as bills,
+                COALESCE(SUM(invoice_items.taxable_paise),0) as taxable, COALESCE(SUM(invoice_items.cgst_paise),0) as cgst,
+                COALESCE(SUM(invoice_items.sgst_paise),0) as sgst, COALESCE(SUM(invoice_items.igst_paise),0) as igst,
+                COALESCE(SUM(invoice_items.line_total_paise),0) as total')->get() as $r) {
+            $add($r, 1);
+        }
+        foreach (self::creditLines($p, $branchId)->groupBy('invoice_items.gst_rate')
+            ->selectRaw('invoice_items.gst_rate as rate, 0 as bills,
+                COALESCE(SUM(credit_note_items.taxable_paise),0) as taxable, COALESCE(SUM(credit_note_items.cgst_paise),0) as cgst,
+                COALESCE(SUM(credit_note_items.sgst_paise),0) as sgst, COALESCE(SUM(credit_note_items.igst_paise),0) as igst,
+                COALESCE(SUM(credit_note_items.line_total_paise),0) as total')->get() as $r) {
+            $add($r, -1);
+        }
+        ksort($rows, SORT_NUMERIC);
+
+        return array_values($rows);
     }
 
     /** HSN-wise summary (GSTR-1 table 12 style). @return list<array<string,mixed>> */
@@ -383,28 +397,40 @@ final class SalesQueries
             return [];
         }
 
-        return self::items($p, $branchId)
-            ->groupBy('invoice_items.hsn', 'invoice_items.gst_rate')
-            ->selectRaw('invoice_items.hsn as hsn, invoice_items.gst_rate as rate,
-                COALESCE(SUM(invoice_items.qty),0) as qty,
-                COALESCE(SUM(invoice_items.taxable_paise),0) as taxable,
-                COALESCE(SUM(invoice_items.cgst_paise),0) as cgst,
-                COALESCE(SUM(invoice_items.sgst_paise),0) as sgst,
-                COALESCE(SUM(invoice_items.igst_paise),0) as igst,
-                COALESCE(SUM(invoice_items.line_total_paise),0) as total')
-            ->orderBy('invoice_items.hsn')
-            ->orderBy('invoice_items.gst_rate')
-            ->get()
-            ->map(fn ($r) => [
-                'hsn' => $r->hsn ?: 'No HSN',
-                'rate' => self::rate($r->rate),
-                'qty' => self::qty($r->qty),
-                'taxable_paise' => (int) $r->taxable,
-                'cgst_paise' => (int) $r->cgst,
-                'sgst_paise' => (int) $r->sgst,
-                'igst_paise' => (int) $r->igst,
-                'total_paise' => (int) $r->total,
-            ])->all();
+        $rows = [];
+        $add = function ($r, int $sign) use (&$rows) {
+            $hsn = $r->hsn ?: 'No HSN';
+            $k = $hsn.'|'.self::rate($r->rate);
+            $rows[$k] ??= ['hsn' => $hsn, 'rate' => self::rate($r->rate), 'qty' => 0, 'taxable_paise' => 0,
+                'cgst_paise' => 0, 'sgst_paise' => 0, 'igst_paise' => 0, 'total_paise' => 0];
+            $rows[$k]['qty'] += $sign * (float) $r->qty;
+            $rows[$k]['taxable_paise'] += $sign * (int) $r->taxable;
+            $rows[$k]['cgst_paise'] += $sign * (int) $r->cgst;
+            $rows[$k]['sgst_paise'] += $sign * (int) $r->sgst;
+            $rows[$k]['igst_paise'] += $sign * (int) $r->igst;
+            $rows[$k]['total_paise'] += $sign * (int) $r->total;
+        };
+        foreach (self::items($p, $branchId)->groupBy('invoice_items.hsn', 'invoice_items.gst_rate')
+            ->selectRaw('invoice_items.hsn as hsn, invoice_items.gst_rate as rate, COALESCE(SUM(invoice_items.qty),0) as qty,
+                COALESCE(SUM(invoice_items.taxable_paise),0) as taxable, COALESCE(SUM(invoice_items.cgst_paise),0) as cgst,
+                COALESCE(SUM(invoice_items.sgst_paise),0) as sgst, COALESCE(SUM(invoice_items.igst_paise),0) as igst,
+                COALESCE(SUM(invoice_items.line_total_paise),0) as total')->get() as $r) {
+            $add($r, 1);
+        }
+        foreach (self::creditLines($p, $branchId)->groupBy('invoice_items.hsn', 'invoice_items.gst_rate')
+            ->selectRaw('invoice_items.hsn as hsn, invoice_items.gst_rate as rate, COALESCE(SUM(credit_note_items.qty),0) as qty,
+                COALESCE(SUM(credit_note_items.taxable_paise),0) as taxable, COALESCE(SUM(credit_note_items.cgst_paise),0) as cgst,
+                COALESCE(SUM(credit_note_items.sgst_paise),0) as sgst, COALESCE(SUM(credit_note_items.igst_paise),0) as igst,
+                COALESCE(SUM(credit_note_items.line_total_paise),0) as total')->get() as $r) {
+            $add($r, -1);
+        }
+        ksort($rows);
+
+        return array_map(function ($r) {
+            $r['qty'] = self::qty($r['qty']);
+
+            return $r;
+        }, array_values($rows));
     }
 
     private static function rate(mixed $r): int|float
@@ -434,10 +460,14 @@ final class SalesQueries
                 COALESCE(SUM(CASE WHEN products.cost_paise IS NULL THEN invoice_items.taxable_paise ELSE 0 END),0) as uncosted')
             ->first();
 
+        $c = self::creditLines($p, $branchId)->selectRaw('COALESCE(SUM(credit_note_items.line_total_paise),0) as sales,
+            COALESCE(SUM(credit_note_items.taxable_paise),0) as taxable,
+            COALESCE(SUM(credit_note_items.cgst_paise + credit_note_items.sgst_paise + credit_note_items.igst_paise),0) as gst')->first();
+
         return [
-            'sales_paise' => (int) $r->sales,
-            'taxable_paise' => (int) $r->taxable,
-            'gst_paise' => (int) $r->gst,
+            'sales_paise' => (int) $r->sales - (int) $c->sales,
+            'taxable_paise' => (int) $r->taxable - (int) $c->taxable,
+            'gst_paise' => (int) $r->gst - (int) $c->gst,
             'cost_paise' => (int) round((float) $r->cost),
             'uncosted_taxable_paise' => (int) $r->uncosted,
         ];
@@ -457,14 +487,15 @@ final class SalesQueries
             ->get([
                 'invoices.number', 'invoices.created_at', 'invoices.status', 'invoices.subtotal_paise',
                 'invoices.discount_paise', 'invoices.cgst_paise', 'invoices.sgst_paise', 'invoices.igst_paise',
-                'invoices.total_paise', 'invoices.paid_paise', 'invoices.due_paise',
+                'invoices.total_paise', 'invoices.credited_paise', 'invoices.paid_paise', 'invoices.due_paise',
+                'invoices.customer_name', 'invoices.customer_mobile',
                 'customers.name as customer', 'customers.mobile as mobile',
             ])
             ->map(fn ($r) => [
                 'date' => self::istDay($r->created_at),
                 'number' => $r->number,
-                'customer' => $r->customer ?? 'Walk-in',
-                'mobile' => $r->mobile,
+                'customer' => $r->customer ?? $r->customer_name ?? 'Walk-in',
+                'mobile' => $r->mobile ?? $r->customer_mobile,
                 'status' => $r->status,
                 'subtotal_paise' => (int) $r->subtotal_paise,
                 'discount_paise' => (int) $r->discount_paise,

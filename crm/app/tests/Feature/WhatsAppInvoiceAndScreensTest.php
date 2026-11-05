@@ -180,32 +180,6 @@ it('fails the e-bill clearly when no PDF can be made', function () {
     Http::assertNothingSent();
 });
 
-it('handles the InvoiceSaved event with a billing-style invoice', function () {
-    Bus::fake();
-
-    event(new InvoiceSaved((object) [
-        'number' => 'JG-2526-0007', 'customer_mobile' => '98231 07676', 'customer_name' => 'Sneha',
-        'total_paise' => 1_250_000, 'balance_paise' => 200_000, 'status' => 'partial',
-    ]));
-
-    $log = MessageLog::sole();
-    expect($log->params())->toBe(['Sneha', 'JG-2526-0007', '₹12,500', 'Balance due ₹2,000'])
-        ->and($log->to)->toBe('+919823107676')
-        ->and($log->document_name)->toBe('JG-2526-0007.pdf');
-    Bus::assertDispatchedAfterResponse(SendWhatsAppTemplate::class);
-});
-
-it('adapts invoice fields for the message', function () {
-    $paid = InvoiceMessage::fromInvoice((object) ['number' => 'JG/1', 'customer' => (object) ['name' => 'Amit', 'mobile' => '+919876543210'], 'total_paise' => 99_900, 'status' => 'paid']);
-
-    expect($paid->to())->toBe('+919876543210')
-        ->and($paid->customerName())->toBe('Amit')
-        ->and($paid->statusText())->toBe('Paid')
-        ->and($paid->pdfName())->toBe('JG-1.pdf')
-        ->and($paid->pdfPath())->toBeNull() // InvoicePdf belongs to billing; absent on this branch
-        ->and(InvoiceMessage::fromInvoice((object) ['number' => 'X', 'customer_mobile' => '12345'])->to())->toBeNull();
-});
-
 // --- screens ---
 
 function waLogRow(array $attrs = []): MessageLog

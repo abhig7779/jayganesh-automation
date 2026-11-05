@@ -43,7 +43,7 @@ function financeReadXlsx(string $path): array
     return $out;
 }
 
-describe('with the billing tables', function () {
+describe('with real bills', function () {
     beforeEach(function () {
         $this->f = FinanceFixture::build($this->branch->id);
         $this->today = Period::preset('today');
@@ -192,11 +192,10 @@ describe('with the billing tables', function () {
     });
 });
 
-it('shows a tidy empty state before billing is installed', function () {
+it('shows a tidy empty state before any bill is made', function () {
     $u = staff('owner');
-    $this->actingAs($u)->get(route('reports.index'))->assertOk()->assertSee('Bills module not installed yet');
+    $this->actingAs($u)->get(route('reports.index'))->assertOk()->assertDontSee('not installed');
     $this->actingAs($u)->get(route('reports.index', ['report' => 'ca']))->assertOk()->assertSee('Download expense register');
-    $this->actingAs($u)->get(route('reports.export', ['report' => 'daily']))->assertNotFound();
     $this->actingAs($u)->get(route('reports.register', ['type' => 'expenses']))->assertOk();
     expect(SalesQueries::summary(Period::preset('today'))['bills'])->toBe(0)
         ->and(SalesQueries::openDues())->toBe([]);

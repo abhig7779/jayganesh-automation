@@ -4,14 +4,15 @@ namespace App\Services\Billing;
 
 use App\Models\Invoice;
 use App\Models\Setting;
+use App\Services\WhatsApp\WhatsApp;
 use App\Support\Money;
 use App\Support\Phone;
 use Illuminate\Support\Facades\URL;
 
 /**
  * The customer-facing bits of a bill: the signed PDF link (7 days, no login), the English
- * WhatsApp message, and the manual wa.me link. Until the WhatsApp module is merged the link is
- * built inline; afterwards App\Services\WhatsApp\WhatsApp::manualLink() is used (CONTRACTS §4).
+ * WhatsApp message, and the manual wa.me link. The manual link comes from
+ * App\Services\WhatsApp\WhatsApp::manualLink().
  */
 final class BillShare
 {
@@ -50,11 +51,7 @@ final class BillShare
             return null;
         }
         $text = self::message($invoice);
-        $whatsApp = 'App\\Services\\WhatsApp\\WhatsApp';
-        if (class_exists($whatsApp)) {
-            return app($whatsApp)->manualLink($invoice->customer_mobile, $text);
-        }
 
-        return 'https://wa.me/'.ltrim($invoice->customer_mobile, '+').'?text='.rawurlencode($text);
+        return app(WhatsApp::class)->manualLink($invoice->customer_mobile, $text);
     }
 }

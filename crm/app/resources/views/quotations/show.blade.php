@@ -140,7 +140,6 @@
                             <x-quotations.icon name="receipt" /> Convert to bill
                         </button>
                     </form>
-                    @unless ($billingReady)<p class="mt-1.5 text-xs text-zinc-600">Billing coming soon. The items will carry over to the bill.</p>@endunless
                 @endcan
                 <div class="mt-3 grid grid-cols-2 gap-2">
                     <a href="{{ route('quotations.pdf', $q) }}" target="_blank" class="flex min-h-11 items-center justify-center gap-1.5 rounded-lg border border-zinc-300 bg-white text-sm font-semibold hover:bg-zinc-50"><x-quotations.icon name="download" class="size-4" />PDF</a>

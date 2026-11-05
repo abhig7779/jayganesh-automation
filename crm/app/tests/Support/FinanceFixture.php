@@ -24,7 +24,6 @@ final class FinanceFixture
 {
     public static function build(int $branchId): array
     {
-        CreateBillingTables::up();
 
         $sales = staff('sales', ['name' => 'Rohit Shinde']);
         $owner = staff('owner', ['name' => 'Prakash Jadhav']);
@@ -42,31 +41,32 @@ final class FinanceFixture
         $ledLine = fn (array $x = []) => array_merge(['product_id' => $led->id, 'name' => $led->name, 'hsn' => '85122010', 'qty' => 1, 'gst_rate' => 18,
             'taxable_paise' => 423644, 'cgst_paise' => 38128, 'sgst_paise' => 38128, 'line_total_paise' => 499900], $x);
 
-        $a = CreateBillingTables::bill(['at' => '2026-11-05 11:30', 'customer_id' => $rahul->id, 'created_by' => $sales->id, 'branch_id' => $branchId], [
+        $a = BillingRows::bill(['at' => '2026-11-05 11:30', 'customer_id' => $rahul->id, 'created_by' => $sales->id, 'branch_id' => $branchId], [
             $ledLine(),
             ['product_id' => $mat->id, 'name' => $mat->name, 'hsn' => '87089900', 'qty' => 2, 'gst_rate' => 28,
                 'taxable_paise' => 500000, 'cgst_paise' => 70000, 'sgst_paise' => 70000, 'line_total_paise' => 640000],
         ], [['cash', 639900], ['upi', 500000]]);
 
-        $b = CreateBillingTables::bill(['at' => '2026-11-05 16:10', 'customer_id' => $sneha->id, 'created_by' => $owner->id, 'branch_id' => $branchId], [
+        $b = BillingRows::bill(['at' => '2026-11-05 16:10', 'customer_id' => $sneha->id, 'created_by' => $owner->id, 'branch_id' => $branchId], [
             ['product_id' => $fit->id, 'name' => $fit->name, 'hsn' => '998714', 'qty' => 1, 'gst_rate' => 18,
                 'taxable_paise' => 42373, 'cgst_paise' => 3814, 'sgst_paise' => 3813, 'line_total_paise' => 50000],
         ]);
 
-        $d = CreateBillingTables::bill(['at' => '2026-11-05 12:00', 'customer_id' => $rahul->id, 'created_by' => $owner->id, 'branch_id' => $branchId,
+        $d = BillingRows::bill(['at' => '2026-11-05 12:00', 'customer_id' => $rahul->id, 'created_by' => $owner->id, 'branch_id' => $branchId,
             'status' => 'cancelled', 'cancelled_at' => '2026-11-05 07:00:00'], [
                 $ledLine(['taxable_paise' => 84661, 'cgst_paise' => 7620, 'sgst_paise' => 7619, 'line_total_paise' => 99900]),
             ], [['cash', 99900]]);
+        BillingRows::payment('cash', -99900, '2026-11-05 12:30', $d, $rahul->id, $branchId); // refund when cancelled
 
-        $c = CreateBillingTables::bill(['at' => '2026-11-04 10:00', 'customer_id' => $amit->id, 'created_by' => $sales->id, 'branch_id' => $branchId], [
+        $c = BillingRows::bill(['at' => '2026-11-04 10:00', 'customer_id' => $amit->id, 'created_by' => $sales->id, 'branch_id' => $branchId], [
             $ledLine(['cgst_paise' => 0, 'sgst_paise' => 0, 'igst_paise' => 76256]),
         ], [['upi', 499900]]);
 
-        $e = CreateBillingTables::bill(['at' => '2026-09-26 13:00', 'customer_id' => $amit->id, 'created_by' => $sales->id, 'branch_id' => $branchId,
+        $e = BillingRows::bill(['at' => '2026-09-26 13:00', 'customer_id' => $amit->id, 'created_by' => $sales->id, 'branch_id' => $branchId,
             'total_paise' => 300000, 'paid_paise' => 150000, 'status' => 'partial'], [
                 $ledLine(['taxable_paise' => 254237, 'cgst_paise' => 22882, 'sgst_paise' => 22881, 'line_total_paise' => 300000]),
             ], [['cash', 100000]]);
-        CreateBillingTables::payment('card', 50000, '2026-11-05 10:15', $e, $amit->id);
+        BillingRows::payment('card', 50000, '2026-11-05 10:15', $e, $amit->id);
 
         $cat = ExpenseCategory::query()->pluck('id', 'name');
         $exp = fn (string $date, string $c, int $paise, string $mode) => Expense::query()->create([

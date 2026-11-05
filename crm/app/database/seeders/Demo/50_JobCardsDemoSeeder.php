@@ -4,10 +4,14 @@ namespace Database\Seeders\Demo;
 
 use App\Models\Branch;
 use App\Models\CustomerCar;
+use App\Models\Invoice;
 use App\Models\JobCard;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\Billing\GstCalculator;
+use App\Services\Billing\InvoiceService;
 use App\Services\JobCards\JobCardService;
+use App\Services\Stock\StockService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 
@@ -98,11 +102,57 @@ class JobCardsDemoSeeder extends Seeder
                 }
                 Carbon::setTestNow();
             }
+            if ($status === 'delivered') {
+                // Delivered work is billed: a real bill, linked back to the job card.
+                Carbon::setTestNow($at->copy()->addMinutes(20)->isFuture() ? now() : $at->copy()->addMinutes(20));
+                $bill = $this->paidBill(
+                    $card->items()->get()->map(fn ($it) => array_filter([
+                        'product_id' => $it->product_id, 'qty' => (int) $it->qty,
+                        'name' => $it->product_id ? null : $it->description, 'unit_price_paise' => (int) $it->price_paise,
+                    ], fn ($v) => $v !== null))->all(),
+                    $card->customer_id, $card->customer_car_id, null, User::role('owner')->first() ?? $counter,
+                );
+                $service->linkInvoice($card, $bill->id, $counter);
+                Carbon::setTestNow();
+            }
             if ($status === 'working') {
                 $first = $card->items()->first();
                 $first && $service->setItemDone($first, true, $card->technician ?? $counter);
             }
         }
+    }
+
+    /**
+     * A real, fully paid bill through InvoiceService (so numbers, stock, totals and InvoiceSaved
+     * are real). Restocks first when the demo shelf is short, so stock never goes negative.
+     *
+     * @param  list<array{product_id:?int, name?:string, qty:int, unit_price_paise?:int}>  $items
+     */
+    private function paidBill(array $items, int $customerId, ?int $carId, ?int $quotationId, User $by): Invoice
+    {
+        $stock = app(StockService::class);
+        $lines = [];
+        foreach ($items as $i) {
+            $p = ! empty($i['product_id']) ? Product::query()->find($i['product_id']) : null;
+            if ($p && $p->track_stock && $p->on_hand < $i['qty']) {
+                $stock->move($p, $i['qty'] + 3, 'opening', null, null, null, 'Demo restock');
+            }
+            $lines[] = $i + ['gst_rate' => 18];
+        }
+        $calc = GstCalculator::fromSettings();
+        $total = $calc->calculate(array_map(function ($l) {
+            $p = ! empty($l['product_id']) ? Product::query()->find($l['product_id']) : null;
+
+            return [
+                'qty' => $l['qty'], 'unit_price_paise' => $l['unit_price_paise'] ?? $p?->price_paise ?? 0,
+                'gst_rate' => $p?->gst_rate ?? 18, 'price_includes_gst' => $p?->price_includes_gst ?? true,
+            ];
+        }, $lines))['total_paise'];
+
+        return app(InvoiceService::class)->create([
+            'customer_id' => $customerId, 'customer_car_id' => $carId, 'quotation_id' => $quotationId,
+            'items' => $lines, 'payments' => [['mode' => 'upi', 'amount_paise' => $total]], 'send_whatsapp' => false,
+        ], $by);
     }
 
     private function roundQuarter(Carbon $t): Carbon

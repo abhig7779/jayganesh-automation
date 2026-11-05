@@ -52,6 +52,7 @@ class BillsDemoSeeder extends Seeder
 
         $base = now('Asia/Kolkata');
         $made = [];
+        $shelf = [];
         $days = collect(range(29, 0))->flatMap(fn ($d) => array_fill(0, $d % 3 === 0 ? 2 : 1, $d))->take(40)->values();
 
         foreach ($days as $n => $daysAgo) {
@@ -61,7 +62,17 @@ class BillsDemoSeeder extends Seeder
             $customer = $n % 9 === 4 ? null : $customers[$n % $customers->count()];
             $lines = [];
             foreach ($popular->random(mt_rand(1, 3)) as $p) {
-                $lines[] = ['product_id' => $p->id, 'qty' => $p->isService() ? 1 : mt_rand(1, 2)];
+                $qty = $p->isService() ? 1 : mt_rand(1, 2);
+                $left = $shelf[$p->id] ??= (int) $p->on_hand;
+                if ($p->track_stock && $left < $qty) {
+                    continue; // the demo shelf is empty: don't sell what we don't have
+                }
+                $shelf[$p->id] = $left - $qty;
+                $lines[] = ['product_id' => $p->id, 'qty' => $qty];
+            }
+            if ($lines === []) {
+                $service0 = $products->first(fn ($p) => $p->isService());
+                $lines[] = ['product_id' => $service0->id, 'qty' => 1];
             }
             $mode = ['cash', 'upi', 'upi', 'card', 'cash', 'split'][$n % 6];
             $isDue = $customer && in_array($n, [5, 11, 17, 25, 34], true);

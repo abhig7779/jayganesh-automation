@@ -15,10 +15,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+
+require_once __DIR__.'/Billing/helpers.php';
 
 uses(RefreshDatabase::class);
 
@@ -286,9 +287,6 @@ it('shows the board with cards in their columns', function () {
 // --- Make bill -------------------------------------------------------------------------------
 
 it('puts the job card into the bill prefill shape and opens New bill', function () {
-    Route::get('/bills/create', fn () => 'new bill')->name('bills.create');
-    app('router')->getRoutes()->refreshNameLookups();
-
     $product = Product::create(['name' => 'DHC Gleam 2.0 LED headlight', 'price_paise' => 499_900]);
     $card = jobCard(['items' => [
         ['product_id' => $product->id, 'qty' => 2],
@@ -307,17 +305,26 @@ it('puts the job card into the bill prefill shape and opens New bill', function 
     ])->and(session('jobcards.billing_job_card_id'))->toBe($card->id);
 });
 
-it('says billing is coming soon until billing is merged', function () {
-    $card = jobCard();
+it('links the saved bill to the job card it was made from', function () {
+    $product = billProduct(['name' => 'Garware PPF', 'price_paise' => 499_900], 5);
+    $card = jobCard(['items' => [['product_id' => $product->id, 'qty' => 1]]]);
     foreach (['working', 'qc', 'ready', 'delivered'] as $to) {
         $this->service->transition($card, $to, $this->counter);
     }
     $owner = staff('owner');
 
-    $this->actingAs($owner)->get(route('jobcards.show', $card))->assertOk()->assertSee('Billing coming soon');
-    $this->actingAs($owner)->from(route('jobcards.show', $card))->post(route('jobcards.bill', $card))
-        ->assertRedirect(route('jobcards.show', $card))->assertSessionHas('status');
-    expect(session('bill_prefill'))->toBeNull();
+    $this->actingAs($owner)->get(route('jobcards.show', $card))->assertOk()->assertSee('Make bill')->assertDontSee('coming soon');
+    $this->post(route('jobcards.bill', $card))->assertRedirect(route('bills.create'));
+    expect(session('bill_prefill')['job_card_id'])->toBe($card->id);
+
+    $res = $this->postJson(route('bills.store'), [
+        'customer_id' => $this->customer->id, 'customer_car_id' => $this->car->id,
+        'items' => [['product_id' => $product->id, 'qty' => 1, 'unit_price_paise' => 499_900]],
+        'payments' => [['mode' => 'cash', 'amount_paise' => 499_900]], 'send_whatsapp' => false,
+    ])->assertCreated();
+
+    expect($card->fresh()->invoice_id)->toBe($res->json('id'));
+    $this->actingAs($owner)->post(route('jobcards.bill', $card))->assertSessionHasErrors('bill'); // already billed
 
     // Technicians can't make bills.
     $this->actingAs(staff('technician'))->post(route('jobcards.bill', $card))->assertForbidden();

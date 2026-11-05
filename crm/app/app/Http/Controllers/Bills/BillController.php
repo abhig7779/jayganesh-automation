@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\InvoiceSeries;
+use App\Models\MessageLog;
 use App\Models\Payment;
 use App\Models\Product;
 use App\Models\Setting;
@@ -19,6 +20,7 @@ use App\Services\Billing\NumberSeries;
 use App\Services\Billing\PaymentService;
 use App\Services\Billing\UpiQr;
 use App\Services\Pdf\InvoicePdf;
+use App\Services\WhatsApp\WhatsApp;
 use App\Support\CarModels;
 use App\Support\Money;
 use App\Support\Phone;
@@ -441,20 +443,17 @@ class BillController extends Controller
         ];
     }
 
-    /** invoice id => latest WhatsApp status ('sending', 'sent', 'delivered', 'read', 'failed'), once the module exists. */
+    /** invoice id => latest e-bill status from message_log ('queued', 'sent', 'delivered', 'read', 'failed'). */
     private function whatsappStatuses(array $invoiceIds): array
     {
-        if ($invoiceIds === [] || ! Schema::hasTable('message_log')) {
-            return [];
-        }
-        $cols = Schema::getColumnListing('message_log');
-        if (! in_array('related_id', $cols, true) || ! in_array('status', $cols, true)) {
+        if ($invoiceIds === []) {
             return [];
         }
 
-        return DB::table('message_log')
+        return MessageLog::query()
+            ->where('related_type', (new Invoice)->getMorphClass())
             ->whereIn('related_id', $invoiceIds)
-            ->when(in_array('related_type', $cols, true), fn ($q) => $q->where('related_type', (new Invoice)->getMorphClass()))
+            ->where('template', (string) Setting::get('whatsapp.template_invoice'))
             ->orderBy('id')
             ->get(['related_id', 'status'])
             ->mapWithKeys(fn ($r) => [$r->related_id => $r->status])
@@ -463,8 +462,6 @@ class BillController extends Controller
 
     private function whatsappIsAutomatic(): bool
     {
-        $cls = 'App\\Services\\WhatsApp\\WhatsApp';
-
-        return class_exists($cls) ? (bool) app($cls)->isAutomatic() : Setting::get('whatsapp.mode') === 'cloud_api';
+        return app(WhatsApp::class)->isAutomatic();
     }
 }

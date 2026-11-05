@@ -12,7 +12,7 @@ use Carbon\CarbonImmutable;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Database\Seeders\SettingsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\Support\CreateBillingTables;
+use Tests\Support\BillingRows;
 use Tests\Support\FinanceFixture;
 
 uses(RefreshDatabase::class);
@@ -41,9 +41,9 @@ it('works out expected cash as float + cash payments − cash expenses', functio
 });
 
 it('counts a payment at 00:30 IST on the right shop day', function () {
-    CreateBillingTables::up();
-    CreateBillingTables::payment('cash', 10000, '2026-11-05 00:30');   // 4 Nov 19:00 UTC
-    CreateBillingTables::payment('cash', 20000, '2026-11-04 23:50');
+
+    BillingRows::payment('cash', 10000, '2026-11-05 00:30');   // 4 Nov 19:00 UTC
+    BillingRows::payment('cash', 20000, '2026-11-04 23:50');
 
     $s = app(CashCloseService::class);
     expect($s->expected('2026-11-05')['cash_in_paise'])->toBe(10000)
@@ -103,12 +103,12 @@ it('builds the WhatsApp day-close summary for the owner', function () {
         ->assertOk()->assertSee('Send to owner on WhatsApp')->assertSee('Cash difference −₹200');
 });
 
-it('closes the day before billing is installed, counting only float and cash expenses', function () {
+it('closes a day with no bills, counting only float and cash expenses', function () {
     $u = staff('finance');
     Expense::create(['branch_id' => $this->branch->id, 'date' => '2026-11-05', 'expense_category_id' => ExpenseCategory::first()->id,
         'amount_paise' => 15000, 'mode' => 'cash', 'created_by' => $u->id]);
 
-    $this->actingAs($u)->get(route('finance.cash-close'))->assertOk()->assertSee('Bills module not installed yet')->assertSee('₹1,850');
+    $this->actingAs($u)->get(route('finance.cash-close'))->assertOk()->assertSee('₹1,850');
     $this->actingAs($u)->post(route('finance.cash-close.store'), ['date' => '2026-11-05', 'counted' => '1850'])->assertRedirect();
     expect(CashClose::first()->difference_paise)->toBe(0);
     expect(app(CashCloseService::class)->whatsappText(CashClose::first()))
@@ -139,7 +139,7 @@ it('flags a missing close for yesterday only when the shop was open', function (
     expect(FinanceAlerts::missingCashClose($this->branch->id))->toBeNull();
 });
 
-it('flags a missing close from expenses alone before billing is installed', function () {
+it('flags a missing close from expenses alone when there are no bills', function () {
     Expense::create(['branch_id' => $this->branch->id, 'date' => '2026-11-04', 'expense_category_id' => ExpenseCategory::first()->id,
         'amount_paise' => 15000, 'mode' => 'cash']);
     expect(FinanceAlerts::missingCashClose()['date'])->toBe('2026-11-04');

@@ -68,13 +68,11 @@
             @if (! $isTechnician && in_array($card->status, ['ready', 'delivered'], true))
                 @if ($card->invoice_id)
                     <span class="inline-flex h-10 items-center gap-2 rounded-lg bg-green-50 px-3 text-sm font-semibold text-green-700"><x-jobcards.icon name="receipt" /> Bill made</span>
-                @elseif ($canBill && $billingReady)
+                @elseif ($canBill)
                     <form method="POST" action="{{ route('jobcards.bill', $card) }}">
                         @csrf
                         <button class="{{ $card->status === 'delivered' ? $btn1 : $btn2 }}"><x-jobcards.icon name="receipt" /> Make bill</button>
                     </form>
-                @elseif ($canBill)
-                    <span class="inline-flex h-10 items-center gap-2 rounded-lg bg-zinc-100 px-3 text-sm font-medium text-zinc-600"><x-jobcards.icon name="receipt" /> Billing coming soon</span>
                 @endif
             @endif
 
