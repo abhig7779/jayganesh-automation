@@ -41,7 +41,6 @@ it('shows real customer numbers on the owner home', function () {
     expect($data['business']['newCustomers'])->toBe(4)
         ->and($data['business']['billing'])->toBeFalse()
         ->and($data['month']['newCustomers'])->toBe(4)
-        ->and($data['followUps'])->toBeNull()   // quotations not merged in this branch
         ->and($data['recentBills'])->toBeNull()
         ->and($data['staffToday'])->toBeNull();
 });

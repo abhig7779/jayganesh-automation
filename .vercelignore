@@ -1,0 +1,7 @@
+# Only website/ is deployed (project root dir = website). Keep CLI uploads small.
+crm/
+automation/
+website-api/
+.claude/
+**/node_modules
+**/vendor

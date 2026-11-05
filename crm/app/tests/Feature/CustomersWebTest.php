@@ -162,7 +162,6 @@ it('shows the profile with call and WhatsApp links, cars and a guarded history',
         ->assertSee('https://wa.me/919823104512', false)
         ->assertSee('MH 12 KT 4521')
         ->assertSee('Total spent')->assertSee('Last visit')
-        ->assertSee('once Billing and Quotations are switched on') // not merged here
         ->assertSee(route('customers.edit', $c), false);
 
     // View-only roles see the profile without edit or archive actions.
