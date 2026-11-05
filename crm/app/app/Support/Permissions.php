@@ -17,6 +17,7 @@ final class Permissions
         'inventory.view', 'inventory.manage', 'prices.manage',
         'purchases.manage',
         'jobcards.view', 'jobcards.manage',
+        'jobcards.create', // job cards module: open "Car in" cards and see the whole board (Sales, Admin, Owner)
         'finance.view', 'finance.manage',
         'leads.manage', 'offers.manage',
         'reports.view', 'reports.margins', 'reports.all_staff',
@@ -29,7 +30,7 @@ final class Permissions
             'customers.view', 'customers.manage', 'quotations.view', 'quotations.manage',
             'invoices.view', 'invoices.create', 'invoices.cancel', 'payments.collect',
             'inventory.view', 'inventory.manage', 'purchases.manage',
-            'jobcards.view', 'jobcards.manage', 'finance.view',
+            'jobcards.view', 'jobcards.manage', 'jobcards.create', 'finance.view',
             'leads.manage', 'offers.manage', 'reports.view', 'reports.all_staff',
             'staff.manage', 'audit.view',
         ],
@@ -41,7 +42,7 @@ final class Permissions
         'sales' => [
             'customers.view', 'customers.manage', 'quotations.view', 'quotations.manage',
             'invoices.view', 'invoices.create', 'payments.collect',
-            'inventory.view', 'jobcards.view', 'leads.manage',
+            'inventory.view', 'jobcards.view', 'jobcards.create', 'leads.manage',
         ],
         'technician' => ['jobcards.view', 'jobcards.manage'],
     ];
