@@ -7,3 +7,4 @@ media/
 .next/
 *.tsbuildinfo
 .vercel
+.claude/worktrees/

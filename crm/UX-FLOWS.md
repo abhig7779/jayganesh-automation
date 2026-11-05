@@ -2,6 +2,20 @@
 
 This is what every page does, who sees it, and how each daily job flows from first tap to done. Design and build follow this file. Companion to `CRM-PLAN.md` (what) and `ARCHITECTURE.md` (how). Written 5 Nov 2026.
 
+> **Owner decisions, 5 Nov 2026:**
+> 1. **Counter staff work on a desktop PC.** The desktop is the primary design: the one-page POS, keyboard shortcuts, wide tables, and two-pane lists. Phones are for the owner and technicians on the floor.
+> 2. **Item search must be instant and easy.** The whole product list is cached in the browser and searched as you type (no server wait). Matching:
+>    - word-prefix matching, with tolerance for one typo (e.g. "gleem" finds Gleam);
+>    - "Also called" names on every product (e.g. "seat kavar", "music system");
+>    - a barcode scan or an exact SKU adds the item at once;
+>    - `2*gleam` adds two;
+>    - the empty box shows Recent and Popular items;
+>    - after each add, the cursor stays in the box, ready for the next item.
+> 3. **Normal price vs our price.** Every product has a **Normal price (MRP)** and **Our price**. The bill shows:
+>    - the MRP struck through next to our price;
+>    - **"You save ₹X"** on the POS, the bill PDF, the thermal print, quotations and the WhatsApp message.
+>    - GST is always on the actual selling price.
+
 ---
 
 ## 0. Ease-of-use rules (for staff who aren't techy)
