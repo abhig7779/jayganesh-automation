@@ -8,7 +8,7 @@ Written 6 Nov 2026. This file holds the texts and screencast scripts for the App
 |---|---|
 | Business verification (portfolio 1728410417676996) | Approved |
 | App icon, app domains | Done on 5–6 Nov: generic icon uploaded; domains `jayganeshcaraccessories.com` and `jayganesh-website.pages.dev` |
-| Privacy policy / data deletion URLs | Still on `jayganesh-website.pages.dev`. Switch them to `https://jayganeshcaraccessories.com/privacy-policy/` (and `#delete-your-data`) only after the live site shows the `delete-your-data` section; the Vercel deploy is on hold. |
+| Privacy policy / terms / data deletion URLs | Switched on 6 Nov to `https://jayganeshcaraccessories.com/privacy-policy/`, `/terms/` and `/privacy-policy/#delete-your-data` (all live, checked with curl) |
 | App Review request | **Not submitted.** 37 items in the request (list in §3). Nothing was removed; "Business Asset User Profile Access" was added on 6 Nov. |
 | Facebook Login for Business configuration | Created 6 Nov: **"WA coexistence - CRM", config id `4202556123367996`**. WhatsApp Embedded Signup; products WhatsApp Cloud API + Marketing Messages API for WhatsApp; system-user token that **never expires**; asset WhatsApp accounts (Manage); permissions `whatsapp_business_messaging`, `whatsapp_business_management`, `whatsapp_business_manage_events`. |
 | Tech Provider onboarding | Step 1 (business verification) done. Step 2 is this App Review: advanced access to `whatsapp_business_messaging` and `whatsapp_business_management`. Coexistence onboarding of 98231 07676 from our own app needs it. |
@@ -131,7 +131,6 @@ Record only after the Messenger/Instagram inbox is built. Until then, leave them
 ## 5. Owner checklist (in order)
 
 - [ ] **Add a payment method** in Meta Business for WhatsApp account 1834738223843088 (error 141006 blocks paid messages).
-- [ ] **Deploy the live website's privacy page** with the `delete-your-data` section, then tell the developer to change the two policy URLs in Settings → Basic.
 - [ ] **Choose the AI model for WhatsApp replies:** Claude (paid per message, chats stay private) or OpenAI's free daily tokens (free, but those tokens are only free because the conversations are shared with OpenAI; customer chats would be shared too). Then put the key on the CRM server.
 - [ ] **Read §3 and decide which items go in this first submission.** Recommended: the WhatsApp two + the Used items. The developer submits only after you say yes.
 - [ ] Record the screencasts (§4) with the developer once the CRM is live.
