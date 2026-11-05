@@ -50,6 +50,10 @@ export default function PrivacyPolicy() {
         <li>To follow up on your enquiry, by phone or message, until it is resolved or you ask us to stop.</li>
         <li>To carry out work on your vehicle, prepare invoices, and handle warranty claims and complaints.</li>
         <li>
+          To send you your bill, payment receipt, quotation, quotation reminders and &ldquo;your car is ready&rdquo;
+          updates on WhatsApp.
+        </li>
+        <li>
           To send offers and updates, only if you have agreed to receive them. Every marketing message lets you opt out,
           for example by replying STOP.
         </li>
@@ -62,6 +66,15 @@ export default function PrivacyPolicy() {
         receive an automatic reply with information such as prices, shop timings or our location. These replies are sent
         through the official tools provided by Meta Platforms. A member of our team can read the conversation and reply
         personally. Automated replies are not used to make decisions that have legal or similar effects on you.
+      </p>
+
+      <h2>Bills and updates on WhatsApp</h2>
+      <p>
+        We keep customer, vehicle, quotation and billing records in our own customer management system, used only by our
+        staff. When you buy from us or ask for a quote, it sends your bill or quotation as a PDF, payment receipts,
+        quotation reminders and vehicle-ready updates to your WhatsApp number through the WhatsApp Business Platform
+        provided by Meta Platforms. These are service messages about your own purchase or enquiry. We send offers only
+        if you have agreed to receive them, and you can stop them at any time by replying STOP.
       </p>
 
       <h2>Who we share it with</h2>
@@ -98,10 +111,10 @@ export default function PrivacyPolicy() {
         <li>stop sending you marketing messages, at any time.</li>
       </ul>
 
-      <h2>How to delete your data</h2>
+      <h2 id="delete-your-data">How to delete your data</h2>
       <p>
         To have your information deleted, including data received through our Instagram, Facebook or WhatsApp
-        automation, send a WhatsApp message to <span className="notranslate" translate="no">{site.phoneDisplay}</span> with the words &ldquo;Delete my data&rdquo; and the
+        automation and the records in our customer management system, send a WhatsApp message to <span className="notranslate" translate="no">{site.phoneDisplay}</span> with the words &ldquo;Delete my data&rdquo; and the
         phone number or social media username you contacted us from, or tell us in person at the shop. We will confirm
         and complete the request within 30 days, except for records we must keep by law, which we will tell you about.
       </p>

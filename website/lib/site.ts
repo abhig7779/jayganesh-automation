@@ -31,7 +31,7 @@ export const site = {
   reviews: countText,
   customers: "8,000+",
   instagramFollowers: "12.3K",
-  legalUpdated: "19 October 2026",
+  legalUpdated: "5 November 2026",
 };
 
 /** A wa.me link that opens WhatsApp with a ready message. */
