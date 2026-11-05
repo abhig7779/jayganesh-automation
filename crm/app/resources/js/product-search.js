@@ -290,4 +290,4 @@ export class ScanDetector {
     }
 }
 
-window.ProductSearch = ProductSearch;
+if (typeof window !== 'undefined') window.ProductSearch = ProductSearch;

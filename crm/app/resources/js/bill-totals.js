@@ -38,6 +38,7 @@ export function calculate(lines, billDiscount = 0, { registered = true, intra = 
 
     let taxable = 0, cgst = 0, sgst = 0, igst = 0, before = 0, gross = 0, mrpSave = 0;
     const rates = new Set();
+    let cgstLead = 0; // odd paise alternate so CGST and SGST totals differ by at most 1 paisa
     prepared.forEach((p, i) => {
         const share = shares[i];
         let t, c = 0, s = 0, g = 0, lineTotal;
@@ -45,7 +46,12 @@ export function calculate(lines, billDiscount = 0, { registered = true, intra = 
             lineTotal = p.grossIncl - share;
             t = div(lineTotal * 10000, 10000 + p.bp);
             const tax = lineTotal - t;
-            if (intra) { c = Math.floor((tax + 1) / 2); s = Math.floor(tax / 2); } else g = tax;
+            if (intra) {
+                const half = Math.floor(tax / 2), odd = tax % 2, toC = odd && cgstLead <= 0;
+                c = half + (toC ? odd : 0);
+                s = half + (toC ? 0 : odd);
+                cgstLead += c - s;
+            } else g = tax;
         } else {
             t = p.basis - (share > 0 ? div(share * 10000, 10000 + p.bp) : 0);
             if (intra) { c = pct(t, p.bp / 2); s = c; } else g = pct(t, p.bp);

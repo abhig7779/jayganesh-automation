@@ -21,11 +21,13 @@
             <span x-show="custState === 'loading'" class="mr-2 size-4 animate-spin rounded-full border-2 border-zinc-300 border-t-ink" aria-label="Checking"></span>
             <button type="button" x-show="mobile && custState !== 'loading'" @click="changeCustomer()" class="mr-1 grid size-8 place-items-center rounded text-zinc-500 hover:bg-zinc-100" aria-label="Clear number"><x-bills.icon name="x" class="size-4" /></button>
         </div>
-        @if ($pc)<x-bills.kbd>F3</x-bills.kbd>@endif
-        <span class="flex-1"></span>
-        <template x-if="custState === 'found' && ctx && ctx.due_paise > 0">
-            <span class="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-600"><span class="size-1.5 rounded-full bg-red-600"></span>Due <span x-text="money(ctx.due_paise)"></span></span>
-        </template>
+        @if ($pc)
+            <x-bills.kbd>F3</x-bills.kbd>
+            <span class="flex-1"></span>
+            <template x-if="custState === 'found' && ctx && ctx.due_paise > 0">
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-600"><span class="size-1.5 rounded-full bg-red-600"></span>Due <span x-text="money(ctx.due_paise)"></span></span>
+            </template>
+        @endif
     </div>
     <p class="mt-1 text-[13px] text-red-600" x-show="mobileError" x-text="mobileError"></p>
     <p class="mt-1 text-[13px] text-zinc-600" x-show="custState === 'short'">Mobile number needs 10 digits.</p>
@@ -49,10 +51,20 @@
                     <span class="grid size-12 shrink-0 place-items-center rounded-lg bg-zinc-100 text-sm font-bold text-ink" x-text="cust.name.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase()"></span>
                 @endunless
                 <div class="min-w-0 flex-1 text-[13px] text-zinc-600">
-                    <span class="{{ $pc ? 'text-[15px]' : 'block text-[17px]' }} font-semibold text-ink" x-text="cust.name"></span>
-                    <span x-show="cust.area"> · <span x-text="cust.area"></span></span>
-                    <span x-show="ctx"> · <span x-text="ctx?.bills_count ? ctx.bills_count + ' previous bill' + (ctx.bills_count === 1 ? '' : 's') : 'First bill'"></span></span>
-                    <span x-show="ctx?.last_visit" class="{{ $pc ? '' : 'block' }}"><span class="{{ $pc ? '' : 'hidden' }}"> · </span>Last visit <span x-text="ctx?.last_visit"></span><span x-show="ctx?.last_items"> · <span x-text="ctx?.last_items"></span></span></span>
+                    @if ($pc)
+                        <span class="text-[15px] font-semibold text-ink" x-text="cust.name"></span>
+                        <span x-text="[cust.area, ctx ? (ctx.bills_count ? ctx.bills_count + ' previous bill' + (ctx.bills_count === 1 ? '' : 's') : 'First bill') : null, ctx?.last_visit ? 'Last visit ' + ctx.last_visit : null].filter(Boolean).map(x => ' · ' + x).join('')"></span>
+                        <span class="block truncate" x-show="ctx?.last_items" x-text="'Last bought: ' + ctx?.last_items"></span>
+                    @else
+                        <span class="flex items-start justify-between gap-2">
+                            <span class="block text-[17px] font-semibold text-ink" x-text="cust.name"></span>
+                            <template x-if="ctx && ctx.due_paise > 0">
+                                <span class="mt-0.5 inline-flex shrink-0 items-center rounded-full border border-red-200 bg-red-50 px-2 py-0.5 text-xs font-semibold text-red-600" x-text="'Due ' + money(ctx.due_paise)"></span>
+                            </template>
+                        </span>
+                        <span class="block" x-text="[cust.area, ctx ? (ctx.bills_count ? ctx.bills_count + ' previous bill' + (ctx.bills_count === 1 ? '' : 's') : 'First bill') : null].filter(Boolean).join(' · ')"></span>
+                        <span class="block" x-show="ctx?.last_visit" x-text="'Last visit ' + ctx?.last_visit + (ctx?.last_items ? ' · ' + ctx.last_items : '')"></span>
+                    @endif
                 </div>
                 @if ($historyUrl)
                     <a :href="'{{ $historyUrl }}/' + cust.id" target="_blank" class="text-[13px] font-semibold text-ink underline underline-offset-2">History</a>

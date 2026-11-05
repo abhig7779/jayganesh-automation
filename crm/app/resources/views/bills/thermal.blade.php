@@ -12,17 +12,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>{{ $i->number }} · 80 mm</title>
+@include('bills.partials.web-fonts')
 <style>
     /* 80 mm thermal roll: any printer driver works; the page is as long as the bill. */
     @page { size: 80mm auto; margin: 0; }
     * { box-sizing: border-box; }
     html, body { margin: 0; background: #e5e5e5; }
-    body { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, 'Courier New', monospace; font-size: 11.5px; color: #000; line-height: 1.35; }
+    body { font-family: 'Noto Sans', system-ui, sans-serif; font-size: 11.5px; font-weight: 400; color: #000; line-height: 1.35; font-variant-numeric: tabular-nums; }
     .roll { width: 80mm; margin: 12px auto; background: #fff; padding: 4mm 4mm 6mm; }
     .c { text-align: center; }
-    .r { text-align: right; }
-    .b { font-weight: 700; }
-    .big { font-size: 15px; font-weight: 700; }
+    .r { text-align: right; white-space: nowrap; }
+    .b { font-weight: 600; }
+    .m { font-weight: 500; }
+    .big { font-size: 15px; font-weight: 600; }
     .sm { font-size: 10px; }
     .rule { border-top: 1px dashed #000; margin: 5px 0; }
     .rule2 { border-top: 2px solid #000; margin: 5px 0; }
@@ -65,7 +67,7 @@
     <div class="rule"></div>
     <table>
         @foreach ($i->items as $item)
-            <tr class="item"><td colspan="2" class="b">{{ $item->name }}</td></tr>
+            <tr class="item"><td colspan="2" class="m">{{ $item->name }}</td></tr>
             <tr>
                 <td>{{ $item->qty }} x {{ $m($item->unitInclPaise()) }}@if ($item->shownMrpPaise()) <s>MRP {{ Money::format($item->shownMrpPaise()) }}</s>@endif
                     @if ($tax)<br><span class="sm">HSN {{ $item->hsn ?: '-' }} · GST {{ $item->rateLabel() }}%</span>@endif
@@ -106,7 +108,7 @@
     </table>
     <div class="rule"></div>
     @if ($shop['footer'])<div class="c sm">{{ $shop['footer'] }}</div>@endif
-    <div class="c sm" style="margin-top:4px;">Computer-generated bill · Billed by {{ $i->creator?->name }}</div>
+    <div class="c sm" style="margin-top:4px;">Computer-generated bill · Billed by {{ \Illuminate\Support\Str::before(trim((string) $i->creator?->name), ' ') }}</div>
     <div class="c sm">Thank you. Visit again!</div>
 </div>
 @unless (request()->boolean('preview'))

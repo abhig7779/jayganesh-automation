@@ -185,3 +185,21 @@ it('balances on many random bills', function () {
         expectBalanced($r);
     }
 });
+
+it('keeps CGST and SGST totals equal or 1 paisa apart, with the odd paisa on CGST', function () {
+    // Several inclusive lines whose tax is an odd number of paise.
+    $r = gstCalc()->calculate([gstLine(4999), gstLine(649), gstLine(1299, 1, 28), gstLine(349), gstLine(7999, 1, 12)]);
+    expect($r['cgst_paise'] - $r['sgst_paise'])->toBeIn([0, 1])
+        ->and(collect($r['hsn_summary'])->sum('cgst_paise'))->toBe($r['cgst_paise'])
+        ->and(collect($r['hsn_summary'])->sum('sgst_paise'))->toBe($r['sgst_paise']);
+
+    mt_srand(7);
+    for ($n = 0; $n < 300; $n++) {
+        $lines = [];
+        for ($k = 0, $c = mt_rand(1, 8); $k < $c; $k++) {
+            $lines[] = ['qty' => mt_rand(1, 4), 'unit_price_paise' => mt_rand(1, 3_000_000), 'gst_rate' => [5, 12, 18, 28][mt_rand(0, 3)], 'price_includes_gst' => (bool) mt_rand(0, 3)];
+        }
+        $r = gstCalc()->calculate($lines, mt_rand(0, 1) ? mt_rand(0, 300_000) : 0);
+        expect($r['cgst_paise'] - $r['sgst_paise'])->toBeIn([0, 1]);
+    }
+});

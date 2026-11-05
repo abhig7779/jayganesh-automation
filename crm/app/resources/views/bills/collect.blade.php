@@ -57,7 +57,7 @@
             @endif
         @endif
     @else
-        <form method="POST" action="{{ route('payments.collect.store') }}" class="max-w-xl pb-28 lg:pb-0"
+        <form method="POST" action="{{ route('payments.collect.store') }}" class="max-w-xl pb-44 lg:pb-0"
               x-data="{
                 bills: @js($billRows),
                 ticked: @js($bills->pluck('id')->values()),
@@ -132,7 +132,7 @@
 
                 <p class="mt-4 text-[13px] text-zinc-700">Applied to the oldest ticked bills first. Balance after: <span class="font-semibold" :class="balanceAfter > 0 ? 'text-red-600' : 'text-green-700'" x-text="money(balanceAfter)"></span></p>
 
-                <div class="fixed inset-x-0 bottom-0 z-20 border-t border-zinc-200 bg-white px-4 pt-3 lg:static lg:mt-5 lg:border-0 lg:bg-transparent lg:p-0" style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom))">
+                <div class="fixed inset-x-0 bottom-[calc(3.5rem+env(safe-area-inset-bottom))] z-20 border-t border-zinc-200 bg-white px-4 pt-3 pb-3 lg:static lg:mt-5 lg:border-0 lg:bg-transparent lg:p-0">
                     <button class="flex h-14 w-full items-center justify-center rounded-lg bg-brand-400 text-[17px] font-semibold text-ink hover:bg-[#F2C800] disabled:opacity-50" :disabled="paise <= 0 || over || !ticked.length">
                         <span x-text="'Collect ' + money(paise) + ' & send receipt'"></span>
                     </button>

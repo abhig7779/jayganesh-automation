@@ -129,7 +129,7 @@
                     </div>
                 @else
                     <div class="flex flex-wrap gap-2">
-                        <template x-for="p in popular" :key="'p'+p.id">
+                        <template x-for="p in popular.slice(0, 8)" :key="'p'+p.id">
                             <button type="button" @click="pick(p)" class="inline-flex h-10 items-center gap-1.5 rounded-full border border-zinc-300 bg-white px-3 text-sm font-medium text-ink active:bg-zinc-100">
                                 <span class="max-w-40 truncate" x-text="p.name"></span><span class="text-zinc-600 tabular-nums" x-text="'· ' + money(p.price_paise)"></span>
                             </button>

@@ -223,11 +223,32 @@ it('renders the A4 PDF to storage and the savings line on it', function () {
 
     $html = view('bills.pdf', InvoicePdf::data($this->bill))->render();
     expect($html)->toContain('TAX INVOICE')
-        ->toContain('Total savings ₹1,501 (MRP ₹6,500 → you pay ₹4,999)')
+        ->toContain('Total savings ₹1,501 (MRP ₹6,500, you pay ₹4,999)')
         ->toContain('Rupees Four Thousand Nine Hundred Ninety-Nine Only')
         ->toContain('27AAJFJ1234K1Z5')
         ->toContain('computer-generated invoice');
     File::delete($path);
+});
+
+it('typesets the PDF in Noto Sans with the ₹ sign and no DejaVu fallback', function () {
+    $html = view('bills.pdf', InvoicePdf::data($this->bill))->render();
+    expect($html)->toContain("font-family: 'Noto Sans'")
+        ->toContain('NotoSans-Regular.ttf')->toContain('NotoSans-SemiBold.ttf')->toContain('NotoSans-Medium.ttf')
+        ->toContain('₹4,999')
+        ->not->toContain('DejaVu');
+    expect(InvoicePdf::options())->toMatchArray(['defaultFont' => 'Noto Sans', 'fontDir' => storage_path('fonts'), 'fontCache' => storage_path('fonts')]);
+
+    // The embedded font is Noto Sans, not dompdf's DejaVu default.
+    $pdf = InvoicePdf::output($this->bill);
+    expect($pdf)->toContain('NotoSans')->not->toContain('DejaVu');
+});
+
+it('prints Bill of supply with no tax columns when there is no GSTIN', function () {
+    Setting::put('tax.gstin', null);
+    $bill = makeBill(staff('owner'), [[$this->product]], ['payments' => payFull([[$this->product]])]);
+    $html = view('bills.pdf', InvoicePdf::data($bill))->render();
+    expect($bill->kind)->toBe('bill_of_supply')
+        ->and($html)->toContain('BILL OF SUPPLY')->not->toContain('TAX INVOICE')->not->toContain('>Taxable</th>')->not->toContain('GSTIN');
 });
 
 it('renders a bill of supply PDF with a UPI QR when money is due', function () {

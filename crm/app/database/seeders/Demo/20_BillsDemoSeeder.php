@@ -30,10 +30,8 @@ class BillsDemoSeeder extends Seeder
             return;
         }
         $this->ensureProducts();
-        // Demo shop details so bills show GST and a UPI QR (placeholders from DESIGN.md §10).
-        if (blank(Setting::get('tax.gstin'))) {
-            Setting::put('tax.gstin', '27AAJFJ1234K1Z5');
-        }
+        // Demo UPI ID placeholder (DESIGN.md §10) so the QR shows. The GSTIN is never faked: with
+        // tax.gstin empty, demo bills are Bills of supply until the owner enters the real one.
         if (blank(Setting::get('billing.upi_id'))) {
             Setting::put('billing.upi_id', 'jayganesh@upi');
         }
@@ -117,15 +115,16 @@ class BillsDemoSeeder extends Seeder
         // name, brand, hsn, gst, price ₹, mrp ₹, stock, type, sku
         $rows = [
             ['DHC Gleam 2.0 LED headlight (H4)', 'DHC', '8512', 18, 4999, 6500, 14, 'product', 'DHC-GLM-H4'],
-            ['7D floor mats (Creta)', 'Autoform', '5705', 12, 3200, 3999, 6, 'product', 'AF-7D-CRETA'],
+            ['7D floor mats (Creta)', 'Autoform', '5705', 18, 3200, 3999, 6, 'product', 'AF-7D-CRETA'],
             ['Autoform seat covers (Creta)', 'Autoform', '9401', 18, 8500, 9999, 8, 'product', 'AF-SC-CRETA'],
             ['Ceramic coating 9H', 'Shield', '9987', 18, 14999, 18000, 0, 'service', 'SVC-CER-9H'],
             ['Garware PPF full body', 'Garware', '9987', 18, 65000, 72000, 0, 'service', 'SVC-PPF-GAR'],
             ['3M PPF bonnet + bumper', '3M', '9987', 18, 18000, null, 0, 'service', 'SVC-PPF-3M'],
             ['Android stereo 9" 2+32 GB', 'Blaupunkt', '8527', 18, 11500, 14990, 6, 'product', 'BP-AND-9'],
             ['Fitting charge', null, '998714', 18, 500, null, 0, 'service', 'SVC-FIT'],
-            ['Mud flaps (OEM)', 'Hyundai', '8708', 28, 650, 799, 22, 'product', 'HY-MUD-OEM'],
-            ['Steering cover (leather stitch)', 'Autofurnish', '8708', 28, 799, 1199, 19, 'product', 'AFN-STR-01'],
+            // Car accessories bill at 18% (same as the products module's seed).
+            ['Mud flaps (OEM)', 'Hyundai', '8708', 18, 650, 799, 22, 'product', 'HY-MUD-OEM'],
+            ['Steering cover (leather stitch)', 'Autofurnish', '8708', 18, 799, 1199, 19, 'product', 'AFN-STR-01'],
             ['Dashcam 70mai A400', '70mai', '8525', 18, 4500, 5999, 7, 'product', '70M-A400'],
             ['Godrej aer car perfume', 'Godrej', '3307', 18, 349, 399, 35, 'product', 'GOD-AER-01'],
             ['Gleam LED fog lamps 3000K/6500K', 'DHC', '8512', 18, 3450, 4200, 6, 'product', 'DHC-FOG-GL'],

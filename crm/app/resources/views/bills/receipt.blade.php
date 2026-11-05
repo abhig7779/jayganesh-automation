@@ -1,6 +1,7 @@
 @php use App\Support\Money; @endphp
 <x-layouts.app title="Payment received">
-<div class="mx-auto max-w-xl space-y-4">
+@include('bills.partials.web-fonts')
+<div class="font-noto mx-auto max-w-xl space-y-4">
     <section class="rounded-xl border border-zinc-200 bg-white p-5">
         <div class="grid size-14 place-items-center rounded-full border-2 border-green-700 text-green-700"><x-bills.icon name="check" class="size-7" /></div>
         <h1 class="mt-3 text-[28px] font-bold">Payment received</h1>

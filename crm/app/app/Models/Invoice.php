@@ -129,15 +129,18 @@ class Invoice extends Model
         return $this->total_paise - $this->round_off_paise + $this->totalSavingsPaise();
     }
 
-    /** "Total savings ₹2,600 (MRP ₹16,298 → you pay ₹13,698)", or null when nothing was saved. */
-    public function savingsLine(): ?string
+    /**
+     * "Total savings ₹2,600 (MRP ₹16,298 → you pay ₹13,698)", or null when nothing was saved.
+     * The PDF passes ', ' because Noto Sans has no arrow glyph.
+     */
+    public function savingsLine(string $join = ' → '): ?string
     {
         if ($this->totalSavingsPaise() <= 0) {
             return null;
         }
 
         return 'Total savings '.Money::format($this->totalSavingsPaise())
-            .' (MRP '.Money::format($this->mrpValuePaise()).' → you pay '.Money::format($this->total_paise).')';
+            .' (MRP '.Money::format($this->mrpValuePaise()).$join.'you pay '.Money::format($this->total_paise).')';
     }
 
     public function statusLabel(): string

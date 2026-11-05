@@ -84,8 +84,11 @@ final class GstCalculator
         // 2. Spread the bill discount over the lines by value.
         $shares = self::allocate(min($billDiscountPaise, array_sum(array_column($prepared, '_net_incl'))), array_column($prepared, '_net_incl'));
 
-        // 3. Tax per line, rounded to the paisa.
+        // 3. Tax per line, rounded to the paisa. When a line's tax is an odd number of paise,
+        // the spare paisa goes to CGST, unless CGST is already a paisa ahead on this bill, then
+        // to SGST. So CGST and SGST totals are equal or CGST is exactly 1 paisa more.
         $out = [];
+        $cgstLead = 0;
         foreach ($prepared as $i => $p) {
             $share = $shares[$i] ?? 0;
             $bp = $p['_rate_bp'];
@@ -94,7 +97,15 @@ final class GstCalculator
                 $lineTotal = $p['_net_incl'] - $share;
                 $taxable = self::div($lineTotal * 10000, 10000 + $bp);
                 $tax = $lineTotal - $taxable;
-                [$cgst, $sgst, $igst] = $intra ? [intdiv($tax + 1, 2), intdiv($tax, 2), 0] : [0, 0, $tax];
+                if ($intra) {
+                    $half = intdiv($tax, 2);
+                    $odd = $tax % 2;
+                    $toCgst = $odd && $cgstLead <= 0;
+                    [$cgst, $sgst, $igst] = [$half + ($toCgst ? $odd : 0), $half + ($toCgst ? 0 : $odd), 0];
+                    $cgstLead += $cgst - $sgst;
+                } else {
+                    [$cgst, $sgst, $igst] = [0, 0, $tax];
+                }
             } else {
                 $taxable = $p['_basis_net'] - ($share > 0 ? self::div($share * 10000, 10000 + $bp) : 0);
                 [$cgst, $sgst, $igst] = $intra

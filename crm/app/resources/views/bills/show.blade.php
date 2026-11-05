@@ -5,6 +5,7 @@
     $canCancel = auth()->user()->can('cancel', $i);
     $canReturn = auth()->user()->can('returnItems', $i) && $i->items->contains(fn ($it) => $it->returnableQty() > 0);
     $intra = $i->igst_paise === 0;
+    $tax = $i->isTaxInvoice();
 @endphp
 <x-layouts.app title="Bill {{ $i->number }}">
 <div x-data="{ menu: false, sheet: null, reason: '{{ old('reason') }}' }" @keydown.escape.window="menu = false; sheet = null">
@@ -73,8 +74,10 @@
                             <th class="px-2 py-2.5 text-right">Qty</th>
                             <th class="px-2 py-2.5 text-right">MRP</th>
                             <th class="px-2 py-2.5 text-right">Rate</th>
-                            <th class="px-2 py-2.5 text-right">Taxable</th>
-                            <th class="px-2 py-2.5 text-right">GST</th>
+                            @if ($tax)
+                                <th class="px-2 py-2.5 text-right">Taxable</th>
+                                <th class="px-2 py-2.5 text-right">GST</th>
+                            @endif
                             <th class="px-4 py-2.5 text-right">Total</th>
                         </tr>
                     </thead>
@@ -90,8 +93,10 @@
                                 <td class="px-2 py-2.5 text-right tabular-nums">{{ $item->qty }}</td>
                                 <td class="px-2 py-2.5 text-right tabular-nums text-zinc-500">@if ($item->shownMrpPaise())<s>{{ Money::format($item->shownMrpPaise()) }}</s>@else — @endif</td>
                                 <td class="px-2 py-2.5 text-right tabular-nums">{{ Money::format($item->unitInclPaise()) }}</td>
-                                <td class="px-2 py-2.5 text-right tabular-nums">{{ Money::format($item->taxable_paise, true) }}</td>
-                                <td class="px-2 py-2.5 text-right tabular-nums text-zinc-600">{{ $item->rateLabel() }}%<span class="block text-xs">{{ Money::format($item->taxPaise(), true) }}</span></td>
+                                @if ($tax)
+                                    <td class="px-2 py-2.5 text-right tabular-nums">{{ Money::format($item->taxable_paise, true) }}</td>
+                                    <td class="px-2 py-2.5 text-right tabular-nums text-zinc-600">{{ $item->rateLabel() }}%<span class="block text-xs">{{ Money::format($item->taxPaise(), true) }}</span></td>
+                                @endif
                                 <td class="px-4 py-2.5 text-right font-semibold tabular-nums">{{ Money::format($item->line_total_paise, true) }}</td>
                             </tr>
                         @endforeach
@@ -99,8 +104,9 @@
                 </table>
                 </div>
                 <dl class="ml-auto max-w-sm space-y-1 border-t border-zinc-200 px-4 py-3 text-[13px] text-zinc-700 tabular-nums">
-                    <div class="flex justify-between"><dt>Taxable value</dt><dd>{{ Money::format($i->subtotal_paise, true) }}</dd></div>
-                    @if ($intra)
+                    <div class="flex justify-between"><dt>{{ $tax ? 'Taxable value' : 'Value of supply (no GST)' }}</dt><dd>{{ Money::format($i->subtotal_paise, true) }}</dd></div>
+                    @if (! $tax)
+                    @elseif ($intra)
                         <div class="flex justify-between"><dt>CGST</dt><dd>{{ Money::format($i->cgst_paise, true) }}</dd></div>
                         <div class="flex justify-between"><dt>SGST</dt><dd>{{ Money::format($i->sgst_paise, true) }}</dd></div>
                     @else

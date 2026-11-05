@@ -27,7 +27,7 @@
     </x-slot:header>
 
     {{-- Filters --}}
-    <form method="GET" action="{{ route('bills.index') }}" class="mb-4 space-y-3" x-data="{ more: {{ $activeFilters > 0 || ! $isToday ? 'true' : 'false' }} }">
+    <form method="GET" action="{{ route('bills.index') }}" class="mb-4 space-y-3" x-data="{ more: {{ $activeFilters > 0 || request()->has('from') ? 'true' : 'false' }} }">
         <div class="flex flex-wrap items-center gap-2">
             <label class="flex h-11 min-w-0 flex-1 items-center gap-2 rounded-lg border border-zinc-300 bg-white px-3 focus-within:border-ink lg:max-w-md">
                 <x-bills.icon name="search" class="size-5 text-zinc-500" />
@@ -135,17 +135,17 @@
                 <tbody class="divide-y divide-zinc-100">
                     @foreach ($bills as $b)
                         <tr class="cursor-pointer hover:bg-[#FAFAFA]" onclick="if(!event.target.closest('a'))window.location='{{ route('bills.show', $b) }}'">
-                            <td class="px-4 py-2.5 font-semibold"><a href="{{ route('bills.show', $b) }}" class="hover:underline">{{ $b->number }}</a></td>
+                            <td class="whitespace-nowrap px-4 py-2.5 font-semibold"><a href="{{ route('bills.show', $b) }}" class="hover:underline">{{ $b->number }}</a></td>
                             <td class="whitespace-nowrap px-3 py-2.5 text-zinc-600">{{ $b->created_at->timezone('Asia/Kolkata')->format($isToday ? 'g:i A' : 'j M, g:i A') }}</td>
                             <td class="px-3 py-2.5">
                                 <span class="font-medium text-ink">{{ $b->customer_name }}</span>
-                                @if ($b->customer_mobile)<span class="block text-xs text-zinc-500">{{ Phone::pretty($b->customer_mobile) }}</span>@endif
+                                @if ($b->customer_mobile)<span class="block whitespace-nowrap text-xs text-zinc-500">{{ Phone::pretty($b->customer_mobile) }}</span>@endif
                             </td>
-                            <td class="max-w-48 truncate px-3 py-2.5 text-zinc-600">{{ $b->car_label ?? '—' }}</td>
-                            <td class="px-3 py-2.5 text-zinc-700">{{ collect($b->paidByMode())->keys()->map(fn ($m) => Payment::MODE_LABELS[$m] ?? $m)->implode(' + ') ?: '—' }}</td>
-                            <td class="px-3 py-2.5 text-zinc-600">{{ $b->creator?->name }}</td>
-                            <td class="px-3 py-2.5"><x-bills.status :status="$b->status" /></td>
-                            <td class="px-3 py-2.5"><x-bills.wa-tick :status="$waStatus[$b->id] ?? null" :send="$b->send_whatsapp" /></td>
+                            <td class="max-w-44 truncate px-3 py-2.5 text-zinc-600">{{ $b->car_label ?? '—' }}</td>
+                            <td class="whitespace-nowrap px-3 py-2.5 text-zinc-700">{{ collect($b->paidByMode())->keys()->map(fn ($m) => Payment::MODE_LABELS[$m] ?? $m)->implode(' + ') ?: '—' }}</td>
+                            <td class="whitespace-nowrap px-3 py-2.5 text-zinc-600">{{ \Illuminate\Support\Str::before(trim((string) $b->creator?->name), ' ') }}</td>
+                            <td class="whitespace-nowrap px-3 py-2.5"><x-bills.status :status="$b->status" /></td>
+                            <td class="whitespace-nowrap px-3 py-2.5"><x-bills.wa-tick :status="$waStatus[$b->id] ?? null" :send="$b->send_whatsapp" /></td>
                             <td class="px-3 py-2.5 text-right tabular-nums {{ $b->due_paise > 0 ? 'font-semibold text-red-600' : 'text-zinc-400' }}">{{ $b->due_paise > 0 ? Money::format($b->due_paise) : '—' }}</td>
                             <td @class(['px-4 py-2.5 text-right font-semibold tabular-nums', 'text-zinc-500 line-through' => $b->isCancelled()])>{{ Money::format($b->total_paise) }}</td>
                         </tr>

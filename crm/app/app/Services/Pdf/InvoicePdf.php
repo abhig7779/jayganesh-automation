@@ -35,8 +35,24 @@ class InvoicePdf
     {
         return Pdf::loadView('bills.pdf', self::data($invoice))
             ->setPaper('a4')
-            ->setOption(['dpi' => 96, 'defaultFont' => 'DejaVu Sans', 'isRemoteEnabled' => false])
+            ->setOption(self::options())
             ->output();
+    }
+
+    /** dompdf options shared by every CRM PDF: Noto Sans from resources/fonts, metrics cached in storage/fonts. */
+    public static function options(): array
+    {
+        File::ensureDirectoryExists(storage_path('fonts'));
+
+        return [
+            'dpi' => 96,
+            'defaultFont' => 'Noto Sans',
+            'fontDir' => storage_path('fonts'),
+            'fontCache' => storage_path('fonts'),
+            'chroot' => [base_path()],
+            'isRemoteEnabled' => false,
+            'isFontSubsettingEnabled' => true,
+        ];
     }
 
     public static function path(Invoice $invoice): string
