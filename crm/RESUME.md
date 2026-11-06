@@ -13,3 +13,7 @@
 **To resume:** for each folder, review `git status`, run the tests there, commit, then merge into main. Then do one full run on SQLite + MySQL CI, and the first MilesWeb deploy (`crm/DEPLOY.md`, needs your SSH key + the DB password).
 
 **Your part:** `crm/MORNING-CHECKLIST.md`.
+
+**Open CI items at pause (test-only, the app itself is unaffected):**
+1. SQLite jobs: run `./vendor/bin/pint` in `crm/app` (likely the fully-qualified `\App\Models\Branch` added in `tests/Support/BillingRows.php`; import it instead), then rerun.
+2. MySQL job: 36–37 tests still fail with `payments_branch_id_foreign`. The test data in `tests/Support/BillingRows.php` / the finance tests insert payments for a branch id that doesn't exist on MySQL (auto-increment isn't reset between tests). Make every insert use the test's real `$this->branch->id`.
