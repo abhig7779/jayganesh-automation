@@ -30,7 +30,7 @@ final class BillingRows
         $paid = $attrs['paid_paise'] ?? array_sum(array_map(fn ($p) => $p[1], $payments));
 
         $id = DB::table('invoices')->insertGetId(array_merge([
-            'branch_id' => 1,
+            'branch_id' => \App\Models\Branch::query()->value('id'),
             'number' => sprintf('JG-2627-%04d', $n),
             'financial_year' => '2627',
             'place_of_supply' => '27',
@@ -49,7 +49,7 @@ final class BillingRows
             'updated_at' => $at->utc()->toDateTimeString(),
             'cancelled_at' => null,
         ], $attrs));
-        $branchId = $attrs['branch_id'] ?? 1;
+        $branchId = $attrs['branch_id'] ?? \App\Models\Branch::query()->value('id');
 
         foreach ($items as $item) {
             DB::table('invoice_items')->insert(array_merge([

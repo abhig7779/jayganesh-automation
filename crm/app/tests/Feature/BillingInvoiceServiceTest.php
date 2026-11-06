@@ -121,7 +121,7 @@ it('saves a bill with totals, items, payments, stock moves, customer stats and a
         ->and(StockMove::where('type', 'sale')->first()->reference_id)->toBe($inv->id);
 
     expect(Payment::count())->toBe(2)
-        ->and($inv->allocations()->sum('amount_paise'))->toBe(1049800);
+        ->and((int) $inv->allocations()->sum('amount_paise'))->toBe(1049800);
 
     $c->refresh();
     expect($c->total_spent_paise)->toBe(1049800)->and($c->last_visit_at)->not->toBeNull();
@@ -323,8 +323,8 @@ it('cancels a bill: stock back, refund recorded, number kept, event fired', func
         ->and($inv->due_paise)->toBe(0)
         ->and($p->fresh()->on_hand)->toBe(10)
         ->and($p->fresh()->sold_count)->toBe(0)
-        ->and(StockMove::where('type', 'sale_cancel')->sum('qty'))->toBe(2)
-        ->and(Payment::where('kind', 'refund')->sum('amount_paise'))->toBe(-999800)
+        ->and((int) StockMove::where('type', 'sale_cancel')->sum('qty'))->toBe(2)
+        ->and((int) Payment::where('kind', 'refund')->sum('amount_paise'))->toBe(-999800)
         ->and(Payment::where('kind', 'refund')->first()->mode)->toBe('upi')
         ->and($c->fresh()->total_spent_paise)->toBe(0)
         ->and(Invoice::count())->toBe(1);
