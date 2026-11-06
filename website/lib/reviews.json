@@ -1,9 +1,36 @@
 {
   "rating": 4.9,
-  "count": 811,
+  "count": 814,
   "updatedAt": "2026-11-06",
   "source": "google",
   "reviews": [
+    {
+      "id": "atharva-kumbhar",
+      "name": "ATHARVA KUMBHAR",
+      "stars": 5,
+      "text": "Best place in town for car accessories and detailing. Service is best and quick.",
+      "when": "",
+      "publishTime": "2026-11-06T13:45:47.280683Z",
+      "photo": "https://lh3.googleusercontent.com/a-/ALV-UjWqW4KNyL0SVryg2QV8KYhRXgXnqcqw3gazmGUFpR92kvRhw5wf_g=s120-c-rp-mo-ba12-br100"
+    },
+    {
+      "id": "kaushik-karmakar",
+      "name": "kaushik karmakar",
+      "stars": 5,
+      "text": "Excellent service",
+      "when": "",
+      "publishTime": "2026-11-06T10:09:12.218515Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocLFpFa5JQlPCC-Tlan1-YiDi_qRw9_VUhdrxC7T3g3-xzzFfg=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "aniket-kudale",
+      "name": "Aniket kudale",
+      "stars": 5,
+      "text": "Good service",
+      "when": "",
+      "publishTime": "2026-11-06T08:25:57.284547Z",
+      "photo": "https://lh3.googleusercontent.com/a-/ALV-UjUSiprXU-YEOUQ5BhIXMw8giuvZ7Gw-m2gTqDlZcz1w-2MhTpxp=s120-c-rp-mo-br100"
+    },
     {
       "id": "bandu-gaikwad",
       "name": "Bandu Gaikwad",
