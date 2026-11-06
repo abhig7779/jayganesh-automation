@@ -17,7 +17,9 @@ return new class extends Migration
         foreach (self::TABLES as $table) {
             Schema::table($table, function (Blueprint $t) use ($table) {
                 $t->string('client_key', 64)->nullable();
-                $t->unique(['branch_id', 'client_key'], $table.'_client_key_unique');
+                // client_key first: MySQL would otherwise adopt a branch_id-led index for the branch foreign key
+                // and refuse to drop it on rollback.
+                $t->unique(['client_key', 'branch_id'], $table.'_client_key_unique');
             });
         }
     }
