@@ -65,7 +65,23 @@
       "at": "2026-11-03T16:06:30.406Z"
     }
   },
-  "day-08": {},
+  "day-08": {
+    "instagram": {
+      "id": "18094399718194494",
+      "url": "https://www.instagram.com/p/DfZ-JeSiRSY/",
+      "at": "2026-11-06T15:52:05.877Z"
+    },
+    "facebook": {
+      "id": "105450074857682_1601269595349045",
+      "url": "https://www.facebook.com/105450074857682_1601269595349045",
+      "at": "2026-11-06T15:52:14.036Z"
+    },
+    "gbp": {
+      "name": "accounts/118415286605190585622/locations/664794718368427985/localPosts/7813293271324911352",
+      "url": "https://local.google.com/place?id=7001168110915760232&use=posts&lpsid=CAIQACoeChxtc3BfaDp5aTFkTGx4THpwNjZSX0V0SHpPSzVB",
+      "at": "2026-11-06T15:52:20.419Z"
+    }
+  },
   "day-09": {},
   "day-10": {},
   "day-11": {},
