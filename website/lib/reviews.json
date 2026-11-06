@@ -1,9 +1,18 @@
 {
   "rating": 4.9,
-  "count": 810,
-  "updatedAt": "2026-11-05",
+  "count": 811,
+  "updatedAt": "2026-11-06",
   "source": "google",
   "reviews": [
+    {
+      "id": "bandu-gaikwad",
+      "name": "Bandu Gaikwad",
+      "stars": 5,
+      "text": "Making creta Gadi aahe yekafam mast light aahe anniversary baking Sagal Kam Kelly aahe seet cover,door panel,dash bord rap, pillar rap, android music...\nKam yekdam mast Zal aahe ..",
+      "when": "",
+      "publishTime": "2026-11-06T07:18:58.649267Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocKigauD3GJGa9gvYvBvOjDfbnE0GJK-Lo3Wq4GH8R4B4wLPJA=s120-c-rp-mo-br100"
+    },
     {
       "id": "angad-pawar",
       "name": "Angad pawar",
