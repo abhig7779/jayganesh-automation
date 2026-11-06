@@ -64,4 +64,20 @@ return [
         'review_request' => "Hi {{1}}, thank you for choosing Jay Ganesh Car Accessories for your {{2}}. If you liked our work, please leave us a Google review here: {{3}}\n\nThank you!",
         'hello_world' => 'Hello World (Meta sample template).',
     ],
+
+    // --- Connect WhatsApp (coexistence via Meta Embedded Signup; crm/WHATSAPP-SETUP-STATUS.md) ---
+    'app_id' => env('WHATSAPP_APP_ID'),                                    // Meta app "Automation"
+    'embedded_signup_config_id' => env('WHATSAPP_EMBEDDED_SIGNUP_CONFIG_ID'),
+
+    // --- AI auto-reply for Click-to-WhatsApp ad chats (off by default; Settings → WhatsApp) ---
+    'ai' => [
+        'anthropic_key' => env('ANTHROPIC_API_KEY'),
+        'claude_model' => env('WHATSAPP_AI_CLAUDE_MODEL', 'claude-sonnet-5-5'),
+        'openai_key' => env('OPENAI_API_KEY'),
+        'openai_model' => env('WHATSAPP_AI_OPENAI_MODEL', 'gpt-5.4'),
+        'debounce_seconds' => (int) env('WHATSAPP_AI_DEBOUNCE_SECONDS', 20),
+        'max_replies_per_day' => (int) env('WHATSAPP_AI_MAX_REPLIES_PER_DAY', 8),
+        'pause_hours_after_owner' => (int) env('WHATSAPP_AI_PAUSE_HOURS_AFTER_OWNER', 12),
+        'pause_hours_after_handoff' => (int) env('WHATSAPP_AI_PAUSE_HOURS_AFTER_HANDOFF', 24),
+    ],
 ];

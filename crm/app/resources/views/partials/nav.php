@@ -46,6 +46,8 @@ $items = [
     ['label' => 'Settings', 'route' => 'settings.edit', 'icon' => 'cog', 'can' => 'settings.manage', 'active' => ['settings.*'],
         'children' => [
             ['label' => 'API keys', 'route' => 'api-tokens.index', 'can' => 'settings.manage', 'active' => ['api-tokens.*']],
+            ['label' => 'Connect WhatsApp', 'route' => 'whatsapp.connect', 'can' => 'settings.manage', 'active' => ['whatsapp.connect*']],
+            ['label' => 'WhatsApp log', 'route' => 'whatsapp.messages.index', 'can' => 'settings.manage', 'active' => ['whatsapp.messages.*']],
         ]],
 ];
 

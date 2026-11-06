@@ -43,7 +43,9 @@ class SecurityHeaders
         $h->set('X-Content-Type-Options', 'nosniff');
         $h->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $h->set('Permissions-Policy', 'camera=(self), microphone=(), geolocation=(), payment=(), usb=()');
-        $h->set('Cross-Origin-Opener-Policy', 'same-origin');
+        // Meta's Embedded Signup opens a Facebook popup that must talk back to this page.
+        $metaSignup = $request->routeIs('whatsapp.connect*');
+        $h->set('Cross-Origin-Opener-Policy', $metaSignup ? 'same-origin-allow-popups' : 'same-origin');
         $h->remove('X-Powered-By');
 
         if ($request->isSecure() || $production) {
@@ -52,13 +54,13 @@ class SecurityHeaders
 
         if ($mode !== 'off') {
             $header = $mode === 'report-only' ? 'Content-Security-Policy-Report-Only' : 'Content-Security-Policy';
-            $h->set($header, $this->policy($production));
+            $h->set($header, $this->policy($production, $metaSignup));
         }
 
         return $response;
     }
 
-    private function policy(bool $production): string
+    private function policy(bool $production, bool $metaSignup = false): string
     {
         $nonce = Vite::cspNonce();
         $script = ["'self'", "'nonce-{$nonce}'", "'unsafe-eval'"];
@@ -74,11 +76,20 @@ class SecurityHeaders
             array_push($connect, $hot, $ws);
         }
 
+        $frame = ["'none'"];
+        if ($metaSignup) {
+            // Only the owner's Connect WhatsApp page loads the Facebook JS SDK (crm/WHATSAPP-*.md).
+            array_push($script, 'https://connect.facebook.net');
+            array_push($connect, 'https://*.facebook.com', 'https://connect.facebook.net', 'https://graph.facebook.com');
+            $frame = ['https://*.facebook.com', 'https://web.facebook.com'];
+        }
+
         $directives = [
             "default-src 'self'",
+            'frame-src '.implode(' ', $frame),
             'script-src '.implode(' ', $script),
             'style-src '.implode(' ', $style),
-            "img-src 'self' data: blob:",
+            "img-src 'self' data: blob:".($metaSignup ? ' https://*.facebook.com https://*.fbcdn.net' : ''),
             "font-src 'self' data:",
             'connect-src '.implode(' ', $connect),
             "object-src 'none'",
