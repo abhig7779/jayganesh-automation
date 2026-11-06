@@ -48,6 +48,9 @@ final class ErrorMap
         'opted_out' => 'The customer has opted out of WhatsApp messages (they sent STOP), so nothing was sent.',
         'no_document' => 'The bill PDF could not be made, so the e-bill was not sent. Send manually.',
         'no_number' => 'No valid WhatsApp number for this customer.',
+        'signup_no_waba' => 'Meta did not send a WhatsApp account id. Start "Connect WhatsApp" again and finish every step.',
+        'signup_no_number' => 'No phone number is attached to this WhatsApp account yet. Start "Connect WhatsApp" again and pick the number.',
+        'signup_no_token' => 'Meta did not return an access token (the sign-up code expires in 30 seconds). Please try again.',
     ];
 
     /** Codes worth retrying: rate limits, Meta outages, our network. Everything else needs a person. */

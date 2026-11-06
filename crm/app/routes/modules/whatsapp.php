@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\WhatsApp\ConnectController;
 use App\Http\Controllers\WhatsApp\MessageLogController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,4 +19,13 @@ Route::prefix('whatsapp')->name('whatsapp.')->group(function () {
 
     Route::post('/test', [MessageLogController::class, 'test'])
         ->middleware(['role:owner', 'throttle:10,1'])->name('test');
+
+    // Connect the shop number (Embedded Signup, coexistence) and the AI reply switch: Owner only.
+    Route::middleware('role:owner')->group(function () {
+        Route::get('/connect', [ConnectController::class, 'show'])->name('connect');
+        Route::post('/connect', [ConnectController::class, 'store'])->middleware('throttle:10,1')->name('connect.store');
+        Route::post('/connect/event', [ConnectController::class, 'event'])->middleware('throttle:60,1')->name('connect.event');
+        Route::post('/connect/sync', [ConnectController::class, 'sync'])->middleware('throttle:5,1')->name('connect.sync');
+        Route::post('/ai', [ConnectController::class, 'ai'])->name('ai');
+    });
 });

@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Handles a verified Meta webhook body (field "messages"): delivery statuses for our messages and
- * inbound customer messages. Safe to run twice on the same body (Meta re-delivers on timeouts):
+ * inbound customer messages (handed to the AI agent), and coexistence echoes of messages sent from
+ * the WhatsApp Business app (field "smb_message_echoes"). Safe to run twice on the same body (Meta re-delivers on timeouts):
  * statuses only move forward, inbound messages are unique by wamid, and STOP/START act once.
  */
 class WebhookProcessor
@@ -36,6 +37,10 @@ class WebhookProcessor
                 $names = collect($value['contacts'] ?? [])->mapWithKeys(fn ($c) => [($c['wa_id'] ?? '') => $c['profile']['name'] ?? null]);
                 foreach ($value['messages'] ?? [] as $message) {
                     $this->inbound($message, $names[$message['from'] ?? ''] ?? null);
+                }
+                // Coexistence: messages the shop sent from the WhatsApp Business app on the phone.
+                foreach ($value['message_echoes'] ?? [] as $echo) {
+                    $this->echo($echo);
                 }
             }
         }
@@ -99,6 +104,10 @@ class WebhookProcessor
                     'type' => $m['type'] ?? 'text',
                     'profile_name' => $profileName,
                     'keyword' => $keyword,
+                    // Click-to-WhatsApp ad the customer came from (ad id, headline, click id).
+                    'referral' => isset($m['referral']) ? array_filter(array_intersect_key($m['referral'], array_flip([
+                        'source_id', 'source_type', 'source_url', 'headline', 'ctwa_clid',
+                    ]))) : null,
                 ], fn ($v) => $v !== null),
                 'status' => 'delivered',
                 'delivered_at' => isset($m['timestamp']) ? Carbon::createFromTimestamp((int) $m['timestamp']) : now(),
@@ -109,6 +118,41 @@ class WebhookProcessor
         if ($log->wasRecentlyCreated && $keyword && $customer) {
             $customer->whatsapp_opt_in = $keyword === 'start';
             $customer->save();
+        }
+
+        if ($log->wasRecentlyCreated) {
+            app(AiReplyAgent::class)->onInbound($log, $m['referral'] ?? null);
+        }
+    }
+
+    /** A message sent from the WhatsApp Business app (coexistence echo): log it, and the AI steps back. */
+    private function echo(array $m): void
+    {
+        $id = $m['id'] ?? null;
+        $to = Phone::normalize($m['to'] ?? null);
+        if (! $id || ! $to) {
+            return;
+        }
+
+        $customer = Customer::query()->where('mobile', $to)->first();
+        $at = isset($m['timestamp']) ? Carbon::createFromTimestamp((int) $m['timestamp']) : now();
+
+        $log = MessageLog::query()->firstOrCreate(
+            ['wa_message_id' => $id, 'direction' => 'out'],
+            [
+                'branch_id' => $customer?->branch_id ?? Branch::query()->value('id'),
+                'customer_id' => $customer?->id,
+                'to' => $to,
+                'channel' => 'business_app',
+                'category' => 'service',
+                'body' => ['text' => mb_substr((string) ($m['text']['body'] ?? '['.($m['type'] ?? 'message').']'), 0, 4000), 'type' => $m['type'] ?? 'text'],
+                'status' => 'sent',
+                'sent_at' => $at,
+            ],
+        );
+
+        if ($log->wasRecentlyCreated && $at->gt(now()->subHours(1))) {
+            app(AiReplyAgent::class)->personReplied($to);
         }
     }
 

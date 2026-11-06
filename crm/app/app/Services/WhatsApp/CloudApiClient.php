@@ -18,7 +18,31 @@ class CloudApiClient
 {
     public function isConfigured(): bool
     {
-        return filled(config('whatsapp.token')) && filled(config('whatsapp.phone_number_id'));
+        return filled($this->token()) && filled($this->phoneNumberId());
+    }
+
+    /** .env first; otherwise the number connected from the "Connect WhatsApp" page. */
+    private function token(): ?string
+    {
+        return config('whatsapp.token') ?: WhatsAppConnection::current()?->token;
+    }
+
+    public function phoneNumberId(): ?string
+    {
+        return config('whatsapp.phone_number_id') ?: WhatsAppConnection::current()?->phone_number_id;
+    }
+
+    /** Free-form text, allowed inside the customer-service window (24 h, 72 h after an ad click). */
+    public function sendText(string $toE164, string $body, ?string $replyTo = null): string
+    {
+        return $this->sendMessage(array_filter([
+            'messaging_product' => 'whatsapp',
+            'recipient_type' => 'individual',
+            'to' => preg_replace('/\D+/', '', $toE164),
+            'type' => 'text',
+            'text' => ['preview_url' => false, 'body' => $body],
+            'context' => $replyTo ? ['message_id' => $replyTo] : null,
+        ]));
     }
 
     /** Upload a file to /{phone-number-id}/media and return the media id. */
@@ -64,7 +88,7 @@ class CloudApiClient
         }
 
         return Http::baseUrl(rtrim(config('whatsapp.graph_url'), '/').'/'.config('whatsapp.graph_version'))
-            ->withToken(config('whatsapp.token'))
+            ->withToken((string) $this->token())
             ->acceptJson()
             ->timeout((int) config('whatsapp.http.timeout', 20))
             ->connectTimeout((int) config('whatsapp.http.connect_timeout', 5))
@@ -79,7 +103,7 @@ class CloudApiClient
 
     private function phonePath(string $edge): string
     {
-        return '/'.config('whatsapp.phone_number_id').'/'.$edge;
+        return '/'.$this->phoneNumberId().'/'.$edge;
     }
 
     /** Run a request and turn every failure into a WhatsAppException with Meta's error code. */
