@@ -82,7 +82,23 @@
       "at": "2026-11-06T15:52:20.419Z"
     }
   },
-  "day-09": {},
+  "day-09": {
+    "instagram": {
+      "id": "17997416295021907",
+      "url": "https://www.instagram.com/p/DfcVZyWFOHI/",
+      "at": "2026-11-07T13:53:52.241Z"
+    },
+    "facebook": {
+      "id": "105450074857682_1602261105249894",
+      "url": "https://www.facebook.com/105450074857682_1602261105249894",
+      "at": "2026-11-07T13:54:00.095Z"
+    },
+    "gbp": {
+      "name": "accounts/118415286605190585622/locations/664794718368427985/localPosts/2053433315428965223",
+      "url": "https://local.google.com/place?id=7001168110915760232&use=posts&lpsid=CAIQACoeChxtc3BfaDpzSEp2OXN4Q1BtZHdUWXBRVUtVNUl3",
+      "at": "2026-11-07T13:54:05.747Z"
+    }
+  },
   "day-10": {},
   "day-11": {},
   "day-12": {},
