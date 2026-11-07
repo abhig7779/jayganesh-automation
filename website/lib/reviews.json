@@ -1,9 +1,99 @@
 {
   "rating": 4.9,
-  "count": 814,
-  "updatedAt": "2026-11-06",
+  "count": 824,
+  "updatedAt": "2026-11-07",
   "source": "google",
   "reviews": [
+    {
+      "id": "jayaprakash-srinivasa-reddy",
+      "name": "Jayaprakash Srinivasa Reddy",
+      "stars": 5,
+      "text": "Went in for LED lights for my Jazz and they had it done quicker than I expected. The work came out neat and tidy.",
+      "when": "",
+      "publishTime": "2026-11-07T15:54:21.053477Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocJSfEiu0oAbfeCZD5iU1HLRAjYj0HyKfFtw_Wmokn9iOd-_Pw=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "nileash-bhagat",
+      "name": "Nileash Bhagat",
+      "stars": 4,
+      "text": "Went in for LED lights for my Swift. Light is bright and clean, they got the fitting done fast, and the price after discount was fair.",
+      "when": "",
+      "publishTime": "2026-11-07T15:05:43.846277Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocJfxuZsBLgYPPtZZNeG7vr9X6BoqnLumrIHdDH28_f-YxO2Ow=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "rahul-patole",
+      "name": "Rahul Patole",
+      "stars": 5,
+      "text": "Put LED lights in my Sonet and the road looks much clearer at night now. fitting was quick, and the price was easier on the pocket than I expected.",
+      "when": "",
+      "publishTime": "2026-11-07T14:43:48.022413Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocJsxYTrn10Bar2pBpt7faci05IAoSZpSl7IoxORKlJqvokHgA=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "ashok-patole",
+      "name": "Ashok Patole",
+      "stars": 5,
+      "text": "came in to get led lights put in my celerio. fitting was quick, the lights look good and the discount was nice",
+      "when": "",
+      "publishTime": "2026-11-07T14:40:25.781184Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocIkRujsoAQi2d7HEWhRtA4i8mmqL3Rp1DhNT8MMwuLuGRqB1w=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "lord-of-bulls-basu-swami",
+      "name": "LORD OF BULLS - Basu Swami",
+      "stars": 5,
+      "text": "Sun film on my Exter, and the staff were really helpful through the whole thing.",
+      "when": "",
+      "publishTime": "2026-11-07T14:07:56.084446Z",
+      "photo": "https://lh3.googleusercontent.com/a-/ALV-UjXEB-wyJNASoaB1g0MG_TdqPk5uIr9sGPYccRg_bkectnB1P5lW=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "ajay-helkar",
+      "name": "Ajay Helkar",
+      "stars": 5,
+      "text": "Put LED lights in my Ertiga here. Fitting was quick and the quality looks good. They also gave me proper advice before I chose.",
+      "when": "",
+      "publishTime": "2026-11-07T13:21:01.480881Z",
+      "photo": "https://lh3.googleusercontent.com/a-/ALV-UjX8WW30XnI_KA_gamaQWRRQPkf1a8TyWuzdO-kjnZl7BfKEN5EH=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "sachin-makar",
+      "name": "sachin makar",
+      "stars": 5,
+      "text": "Excellent service and work Quality",
+      "when": "",
+      "publishTime": "2026-11-07T12:44:22.059187Z",
+      "photo": "https://lh3.googleusercontent.com/a-/ALV-UjXRTVtTauUFQAq9UfrC7J8WpdIQA0UqDPxZEpCBj8oAryej-eJB=s120-c-rp-mo-ba12-br100"
+    },
+    {
+      "id": "sanjay-pawar",
+      "name": "SANJAY PAWAR",
+      "stars": 5,
+      "text": "got accessories for my wagon r. the quality is good.",
+      "when": "",
+      "publishTime": "2026-11-07T12:18:24.372631Z",
+      "photo": "https://lh3.googleusercontent.com/a-/ALV-UjX1j4iA6j3H9Pdf23Z8-XagFEYYT8BCpoOU4q9IMwpAsyCtzlI-=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "aashpak-shaikh",
+      "name": "AASHPAK SHAIKH",
+      "stars": 5,
+      "text": "the music system in my wagon r was done quickly, and the wiring underneath is tidy. sound is clear too",
+      "when": "",
+      "publishTime": "2026-11-07T12:00:15.441589Z",
+      "photo": "https://lh3.googleusercontent.com/a-/ALV-UjX3tk30OhEIFl8gCQDF3WOAyS4ArDWBwoZ80YdmnGiilXYeJ-1a=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "madan-kawarkhe",
+      "name": "madan kawarkhe",
+      "stars": 5,
+      "text": "Ertiga gadi aahe mazi dhc 250 w yekadm mast light padat aahe offar cha labh ghya sagali nkki ya mast light aahe DHC 250W",
+      "when": "",
+      "publishTime": "2026-11-07T09:47:11.489008Z",
+      "photo": "https://lh3.googleusercontent.com/a-/ALV-UjW2-3X67dgiozCzpSFZkGYWUAfY0K8GLyE7XyluPbzCd5CZxGyZSA=s120-c-rp-mo-br100"
+    },
     {
       "id": "atharva-kumbhar",
       "name": "ATHARVA KUMBHAR",
