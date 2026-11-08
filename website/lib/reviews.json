@@ -1,9 +1,18 @@
 {
   "rating": 4.9,
-  "count": 825,
+  "count": 826,
   "updatedAt": "2026-11-08",
   "source": "google",
   "reviews": [
+    {
+      "id": "onkar-hajare",
+      "name": "Onkar Hajare",
+      "stars": 5,
+      "text": "Got accessories done on my Safari. Quality is solid, the discount was nice and they fitted everything quickly.",
+      "when": "",
+      "publishTime": "2026-11-08T12:31:42.762539Z",
+      "photo": "https://lh3.googleusercontent.com/a-/ALV-UjVnfut29QMrDL1TBJpCjVsdOeJUAq34szVWyKzgxq7Iaqy2H2k=s120-c-rp-mo-br100"
+    },
     {
       "id": "jayaprakash-srinivasa-reddy",
       "name": "Jayaprakash Srinivasa Reddy",
