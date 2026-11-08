@@ -1,5 +1,13 @@
 [
   {
+    "id": "Dfe-VEvjAFV",
+    "title": "Hyundai Creta · Autoform seat covers",
+    "car": "Hyundai Creta",
+    "category": "interior",
+    "video": false,
+    "timestamp": "2026-11-08T14:30:55+0000"
+  },
+  {
     "id": "DfXdDW-GQOV",
     "title": "Auxiliary lights",
     "category": "lights",
@@ -116,13 +124,5 @@
     "category": "accessories",
     "video": true,
     "timestamp": "2026-10-03T13:04:26+0000"
-  },
-  {
-    "id": "Dd_lc1gKzGi",
-    "title": "Tata Harrier · Moto Ranger headlights",
-    "car": "Tata Harrier",
-    "category": "lights",
-    "video": true,
-    "timestamp": "2026-10-02T13:25:30+0000"
   }
 ]
