@@ -1,9 +1,45 @@
 {
   "rating": 4.9,
-  "count": 827,
+  "count": 831,
   "updatedAt": "2026-11-09",
   "source": "google",
   "reviews": [
+    {
+      "id": "ujwala-ganorkar",
+      "name": "ujwala ganorkar",
+      "stars": 5,
+      "text": "Excellent work and service, highly recommended!",
+      "when": "",
+      "publishTime": "2026-11-09T18:14:52.633822Z",
+      "photo": "https://lh3.googleusercontent.com/a-/ALV-UjUP_-gNMcqnwAI2e_s9_BX7V49ESQfyYLQ1ZUozaOcQ9Nx5kSIqUw=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "kalidas-randive",
+      "name": "Kalidas Randive",
+      "stars": 5,
+      "text": "Service is very Good & Fantastic",
+      "when": "",
+      "publishTime": "2026-11-09T13:37:55.910023Z",
+      "photo": "https://lh3.googleusercontent.com/a-/ALV-UjVOJjFWJmtdRPm-Kjs9Lwa60HZxj5KUhyZ8tRpAkHbS69Yxr_oN=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "rahul-sakulkar",
+      "name": "rahul sakulkar",
+      "stars": 5,
+      "text": "Good experience",
+      "when": "",
+      "publishTime": "2026-11-09T10:11:56.914050Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocLAHGs0T1th9BC9aOi7OSXJWzsEpaCqaoW4wLZK8ng0ML7IhA=s120-c-rp-mo-ba12-br100"
+    },
+    {
+      "id": "suresh-mali",
+      "name": "Suresh Mali",
+      "stars": 5,
+      "text": "Interior styling on my Victorios. Fitting was quick, the quality of the material looks good, and the staff were helpful when I had questions",
+      "when": "",
+      "publishTime": "2026-11-09T08:38:48.694677Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocJg4V_xWQUimPhymkyNZNw2rcbVTSx2HaqBlcGxasV20B-7u2k=s120-c-rp-mo-br100"
+    },
     {
       "id": "ganesh-pund",
       "name": "Ganesh Pund",
