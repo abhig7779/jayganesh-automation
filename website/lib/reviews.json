@@ -1,9 +1,18 @@
 {
   "rating": 4.9,
-  "count": 826,
-  "updatedAt": "2026-11-08",
+  "count": 827,
+  "updatedAt": "2026-11-09",
   "source": "google",
   "reviews": [
+    {
+      "id": "ganesh-pund",
+      "name": "Ganesh Pund",
+      "stars": 5,
+      "text": "Got my LED lights fitted here and the work is good. Fitting was quick and the discount was nice too, quality looks solid.",
+      "when": "",
+      "publishTime": "2026-11-09T06:22:54.280274Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocIpdY1sC5LjHsc8izgdmeHtJoFLUCN1RAb-h5lvRbYZS2owug=s120-c-rp-mo-br100"
+    },
     {
       "id": "onkar-hajare",
       "name": "Onkar Hajare",
