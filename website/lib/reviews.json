@@ -1,9 +1,27 @@
 {
   "rating": 4.9,
-  "count": 832,
+  "count": 834,
   "updatedAt": "2026-11-10",
   "source": "google",
   "reviews": [
+    {
+      "id": "bhakti-vani",
+      "name": "Bhakti Vani",
+      "stars": 5,
+      "text": "Seltos ke liye LED lights lagwaye. Light ki quality achhi hai aur kaam bhi saaf hai.",
+      "when": "",
+      "publishTime": "2026-11-10T14:55:19.000257Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocIvRmFEkxIihZKSfh6rfMH3jyriGlash3M9Gq4gDniJ7F9skQ=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "rahul-bhosale",
+      "name": "Rahul Bhosale",
+      "stars": 5,
+      "text": "put led lights in my sonet here. fitting took no time and the light is clearly brighter than the old bulbs. got a good rate on it as well.",
+      "when": "",
+      "publishTime": "2026-11-10T07:19:38.986504Z",
+      "photo": "https://lh3.googleusercontent.com/a-/ALV-UjWj0l0fDaQ-NdBFMEHWpZ8nN1b3LLN8cUtBrpDvphg0tqk3k6q2=s120-c-rp-mo-br100"
+    },
     {
       "id": "ujwala-ganorkar",
       "name": "ujwala ganorkar",
