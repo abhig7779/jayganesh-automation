@@ -1,9 +1,18 @@
 {
   "rating": 4.9,
-  "count": 834,
-  "updatedAt": "2026-11-10",
+  "count": 835,
+  "updatedAt": "2026-11-11",
   "source": "google",
   "reviews": [
+    {
+      "id": "ajay-devkar",
+      "name": "Ajay Devkar",
+      "stars": 5,
+      "text": "Innova Crysta, the rates were fair. The people here were helpful and told me straight what the car actually needed.",
+      "when": "",
+      "publishTime": "2026-11-11T11:55:05.108264Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocJ3ePtdUjNA-NNTeoRlkp1u2cmgT0HiFGH-uD6AG8JEix0vDg=s120-c-rp-mo-br100"
+    },
     {
       "id": "bhakti-vani",
       "name": "Bhakti Vani",
