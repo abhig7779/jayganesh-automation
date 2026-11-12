@@ -181,32 +181,33 @@
     },
     {
       "day": 11,
-      "date": "2026-11-11",
-      "time": "17:30",
+      "date": "2026-11-12",
+      "time": "23:00",
       "occasion": "",
       "type": "reel",
-      "format": "Polished reel (our edit)",
-      "business": "Studio",
+      "format": "Car-edit reel",
+      "business": "Accessories",
       "made_by": "Jay Ganesh team",
-      "title": "Polished reel #2: 5 checks before you take delivery (needs footage)",
+      "title": "Mahindra 17-inch alloy wheel offer",
       "platforms": [
         "instagram",
         "facebook",
         "youtube"
       ],
-      "approved": false,
-      "caption": "[Caption to write when the reel is edited]\n\n{{FOOTER}}",
+      "approved": true,
+      "caption": "₹25,000 off Mahindra 17-inch alloy wheels. 🛞\n\nOur Diwali offer on the Mahindra 17\" alloy wheel: price ₹75,000, now ₹49,999 only. Black finish with a machined face, at our Loni Kalbhor shop.\n\nWant it for your Mahindra? WhatsApp us and we will share the details.\n\n{{FOOTER}}\n\n#mahindra #alloywheels #17inchalloywheels #mahindracars #caraccessoriespune #jayganeshcaraccessories",
       "first_comment": "",
       "collaborators": [],
       "vars": {},
       "youtube": {
-        "title": "5 checks before you take delivery of a new car | Pune #Shorts",
-        "description": "A reel from the Jay Ganesh Car Accessories and detailing studio, Kawadipat Toll Naka, Loni Kalbhor (Pune–Solapur Road).\n\n{{FOOTER}}",
+        "title": "Mahindra 17-inch alloy wheel: ₹25,000 off | Pune #Shorts",
+        "description": "Diwali offer on the Mahindra 17-inch alloy wheel at Jay Ganesh Car Accessories, Kawadipat Toll Naka, Loni Kalbhor (Pune–Solapur Road): price ₹75,000, now ₹49,999 only.\n\n{{FOOTER}}",
         "tags": [
-          "Jay Ganesh Car Accessories",
-          "car detailing Pune",
-          "Loni Kalbhor",
-          "PPF Pune"
+          "Mahindra alloy wheels",
+          "17 inch alloy wheels",
+          "alloy wheels Pune",
+          "car accessories Pune",
+          "Jay Ganesh Car Accessories"
         ]
       }
     },
