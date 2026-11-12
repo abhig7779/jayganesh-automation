@@ -120,6 +120,19 @@
     "alerts": {
       "WAITING": "due 11 Nov, 05:30 pm IST but its files are not in the Google Drive folder yet (or set \"approved\": true)",
       "MISSED": "was due 11 Nov, 05:30 pm IST; post it by hand or run with FORCE_DAY=11"
+    },
+    "instagram": {
+      "id": "18104449052554159",
+      "url": "https://www.instagram.com/reel/DfpjJgujT2y/",
+      "at": "2026-11-12T17:04:37.250Z"
+    },
+    "facebook_error": {
+      "message": "Meta API 105450074857682/videos: Unable to fetch video file from URL. (code 389/1363057)",
+      "at": "2026-11-12T17:04:49.820Z"
+    },
+    "youtube_error": {
+      "message": "fetch failed",
+      "at": "2026-11-12T17:04:50.712Z"
     }
   },
   "day-12": {},

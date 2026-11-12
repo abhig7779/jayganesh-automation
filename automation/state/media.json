@@ -160,6 +160,20 @@
       "md5": "ae4991e7f20fec5f8e2394a7919306a1",
       "size": 514541,
       "at": "2026-11-04T21:49:22.566Z"
+    },
+    "day-11/video.mp4": {
+      "driveId": "1zR1mizt0klvnB_P3iL-f5gH3YlOjEPqP",
+      "name": "mahindra-17-alloy-reel.mp4",
+      "md5": "2dee093f8eacf2b5dd47f63a59f31bea",
+      "size": 56570999,
+      "at": "2026-11-12T17:03:21.036Z"
+    },
+    "day-11/cover.jpg": {
+      "driveId": "161c-a4WeqaD4b0BlRe_nhwbmf9nJvjBS",
+      "name": "cover.jpg",
+      "md5": "accd5d44df99198ad5d8ce9ebb0f77d8",
+      "size": 323471,
+      "at": "2026-11-12T17:03:24.898Z"
     }
   }
 }
