@@ -1,9 +1,45 @@
 {
   "rating": 4.9,
-  "count": 835,
-  "updatedAt": "2026-11-11",
+  "count": 841,
+  "updatedAt": "2026-11-12",
   "source": "google",
   "reviews": [
+    {
+      "id": "shantanu-gogawale",
+      "name": "shantanu gogawale",
+      "stars": 5,
+      "text": "My Punch accessories were fitted fast and there was a good choice for my car. Stock was well maintained and the quality looked good",
+      "when": "",
+      "publishTime": "2026-11-12T15:54:26.655102Z",
+      "photo": "https://lh3.googleusercontent.com/a-/ALV-UjXmtO4sdzjlTgaZdMjVyI54_H2WqlXteoomu_TKzJ_8fKieXO4M=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "ganesh-salunke",
+      "name": "ganesh salunke",
+      "stars": 5,
+      "text": "for my punch seat covers, fitting was quick and the material looks good. they gave a decent discount also.",
+      "when": "",
+      "publishTime": "2026-11-12T15:16:34.203012Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocLrAaxLaB6j3TmmluXwTE0XEihxp42TxO3kn5bFoUwGRsBVNw=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "avdhoot-more",
+      "name": "Avdhoot More",
+      "stars": 5,
+      "text": "My Creta accessories came out really nice and the work was neat. also got a decent discount.\nYou should also visit jay ganesh car accessories",
+      "when": "",
+      "publishTime": "2026-11-12T12:37:34.940496Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocIAdM0bC85AYats1lGFGjp7uzniJ5LIC4FLOtYU4NJEZYmy3A=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "shekhar-pandarkar",
+      "name": "Shekhar Pandarkar",
+      "stars": 5,
+      "text": "creta accessories fitted properly, quality is good and they gave decent discount too. work was neat.",
+      "when": "",
+      "publishTime": "2026-11-12T12:36:13.164378Z",
+      "photo": "https://lh3.googleusercontent.com/a-/ALV-UjX4vDOvZZGu3TbRu3vSDixPia4Ot4OaMo0fvNB3xyhukk8SYzg8=s120-c-rp-mo-br100"
+    },
     {
       "id": "ajay-devkar",
       "name": "Ajay Devkar",
@@ -3621,7 +3657,7 @@
       "topics": []
     },
     {
-      "id": "shantanu-gogawale",
+      "id": "shantanu-gogawale-2",
       "name": "Shantanu Gogawale",
       "stars": 5,
       "text": "Nice place to car accessories…friendly staff …and owner is very helpful n supportive.. nice good job",
