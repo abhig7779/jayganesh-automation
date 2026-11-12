@@ -126,13 +126,16 @@
       "url": "https://www.instagram.com/reel/DfpjJgujT2y/",
       "at": "2026-11-12T17:04:37.250Z"
     },
-    "facebook_error": {
-      "message": "Meta API 105450074857682/videos: Unable to fetch video file from URL. (code 389/1363057)",
-      "at": "2026-11-12T17:04:49.820Z"
+    "facebook": {
+      "id": "2157442791831371",
+      "url": "https://www.facebook.com/105450074857682/videos/2157442791831371",
+      "at": "2026-11-12T17:08:52.044Z"
     },
-    "youtube_error": {
-      "message": "fetch failed",
-      "at": "2026-11-12T17:04:50.712Z"
+    "youtube": {
+      "id": "prdBUnYEPlQ",
+      "url": "https://youtube.com/shorts/prdBUnYEPlQ",
+      "privacy": "public",
+      "at": "2026-11-12T17:08:59.518Z"
     }
   },
   "day-12": {},
