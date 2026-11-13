@@ -1,9 +1,27 @@
 {
   "rating": 4.9,
-  "count": 841,
-  "updatedAt": "2026-11-12",
+  "count": 843,
+  "updatedAt": "2026-11-13",
   "source": "google",
   "reviews": [
+    {
+      "id": "prashant-mhaske",
+      "name": "Prashant Mhaske",
+      "stars": 5,
+      "text": "My i20 got the coating done and it looks really good now. the quality is solid, and the discount and rates were fair too",
+      "when": "",
+      "publishTime": "2026-11-13T13:12:20.015863Z",
+      "photo": "https://lh3.googleusercontent.com/a-/ALV-UjVv5WoEyUpeSnYXLhTMVBtrLU6ZGz4grY6xc1vYi9j-lgHme1M=s120-c-rp-mo-br100"
+    },
+    {
+      "id": "santosh-bargaje",
+      "name": "santosh bargaje",
+      "stars": 5,
+      "text": "Good",
+      "when": "",
+      "publishTime": "2026-11-13T08:39:51.504018Z",
+      "photo": "https://lh3.googleusercontent.com/a/ACg8ocKNxgBjUUbPTcGaSv2xxxBOYB2id-hK1BzImbJ_PuQQshfaMA=s120-c-rp-mo-br100"
+    },
     {
       "id": "shantanu-gogawale",
       "name": "shantanu gogawale",
